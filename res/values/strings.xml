@@ -20,7 +20,7 @@
     <string name="about_title">About WWII</string>
     <string name="about_credits">Game development, game engine, assets and music\nby <a href="http://www.linkedin.com/profile/view?id=144913212">Guillaume Gouchon</a>.</string>
     <string name="about_blog">Check out <a href="http://glevelapps.blogspot.co.uk">my Blog</a> !</string>
-    <string name="about_contact">Do not hesitate to contact me if you have any issue or question.</string>
+    <string name="about_contact">Do not hesitate to\n<a href="mailto:guillaume.gouchon@gmail.com">contact me</a> if you have any issue or question.</string>
     <string name="about_other_sources">Historical video footages from National Archives.\nHistorical sources from Wikipedia.</string>
     <string name="about_version">App version : 1.0</string>
 
@@ -30,12 +30,10 @@
     <string name="settings">Settings</string>
     <string name="campaign">Campaign</string>
     <string name="battle_mode">Battle Mode</string>
-    <string name="back">Back</string>
-
-    <!-- Settings -->
-    <string name="musicVolume">Music</string>
-    <string name="musicOff">Off</string>
-    <string name="musicOn">On</string>
+    <string name="back">Back</string> <!-- Settings -->
+    <string name="music_volume">Music</string>
+    <string name="music_off">Off</string>
+    <string name="music_on">On</string>
     <string name="difficulty">Difficulty</string>
     <string name="about">About WWII</string>
     <string name="easy">Easy</string>

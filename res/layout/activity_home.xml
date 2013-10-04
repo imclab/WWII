@@ -12,7 +12,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:background="@color/bg_home" >
 
         <com.glevel.wwii.views.CustomTextView
             style="@style/SettingsLabel"
@@ -98,7 +99,7 @@
                 style="@style/SettingsLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/musicVolume" />
+                android:text="@string/music_volume" />
 
             <RadioGroup
                 android:id="@+id/musicVolume"
@@ -114,7 +115,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="5dp"
                     android:layout_weight="1"
-                    android:text="@string/musicOff" />
+                    android:text="@string/music_off" />
 
                 <com.glevel.wwii.views.CustomRadioButton
                     android:id="@+id/musicOn"
@@ -122,7 +123,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/musicOn" />
+                    android:text="@string/music_on" />
             </RadioGroup>
 
             <com.glevel.wwii.views.CustomTextView

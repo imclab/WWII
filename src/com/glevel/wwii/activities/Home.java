@@ -6,6 +6,7 @@ import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -55,6 +56,7 @@ public class Home extends WWActivity implements OnClickListener {
 		setupUI();
 
 		ApplicationUtils.showRateDialogIfNeeded(this);
+		showMainHomeButtons();
 	}
 
 	private void setupUI() {
@@ -156,8 +158,6 @@ public class Home extends WWActivity implements OnClickListener {
 		Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/"
 				+ R.raw.video_bg_home);
 		mBackgroundVideoView.setVideoURI(videoUri);
-		mBackgroundVideoView.start();
-
 		mAboutButton = (Button) findViewById(R.id.aboutButton);
 		mAboutButton.setOnClickListener(this);
 	}
@@ -165,7 +165,7 @@ public class Home extends WWActivity implements OnClickListener {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		showMainHomeButtons();
+		mBackgroundVideoView.start();
 	}
 
 	@Override
@@ -213,6 +213,9 @@ public class Home extends WWActivity implements OnClickListener {
 		creditsTV.setMovementMethod(LinkMovementMethod.getInstance());
 		TextView blogTV = (TextView) mAboutDialog.findViewById(R.id.aboutBlog);
 		blogTV.setMovementMethod(LinkMovementMethod.getInstance());
+		TextView contactTV = (TextView) mAboutDialog
+				.findViewById(R.id.aboutContact);
+		contactTV.setMovementMethod(LinkMovementMethod.getInstance());
 		mAboutDialog.show();
 	}
 
