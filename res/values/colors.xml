@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="bg_btn_pressed">#aa000000</color>
-    <color name="bg_btn_green_pressed">#aa1E4224</color>
+    <color name="bg_btn_pressed">#88000000</color>
+    <color name="bg_btn_green_pressed">#881E4224</color>
     <color name="bg_btn_green">#1E4224</color>
     <color name="bg_home">#55000000</color>
-
+    <color name="link">#1E5224</color>
+    
 </resources>

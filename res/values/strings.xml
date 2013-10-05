@@ -30,8 +30,10 @@
     <string name="settings">Settings</string>
     <string name="campaign">Campaign</string>
     <string name="battle_mode">Battle Mode</string>
-    <string name="back">Back</string> <!-- Settings -->
-    <string name="music_volume">Music</string>
+    <string name="back">Back</string>
+
+    <!-- Settings -->
+    <string name="music_volume">Music / Sound</string>
     <string name="music_off">Off</string>
     <string name="music_on">On</string>
     <string name="difficulty">Difficulty</string>

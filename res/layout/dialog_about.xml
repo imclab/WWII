@@ -11,6 +11,7 @@
         style="@style/AboutDialogText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
         android:text="@string/about_title"
         android:textSize="32sp" />
 
@@ -45,6 +46,7 @@
         style="@style/AboutDialogText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:gravity="left|center_vertical"
         android:text="@string/about_version"
         android:textSize="15sp" />

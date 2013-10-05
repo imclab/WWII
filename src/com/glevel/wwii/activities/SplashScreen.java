@@ -18,8 +18,7 @@ import com.glevel.wwii.utils.WWActivity;
 
 public class SplashScreen extends WWActivity {
 
-	private static final int DELAY_AFTER_ANIMATION = 300,
-			DELAY_BEFORE_ANIMATION = 200;
+	private static final int DELAY_AFTER_ANIMATION = 300, DELAY_BEFORE_ANIMATION = 200;
 	private ViewGroup mTitleLayout;
 	private Animation mLetterAnimation, mBounceAnimation;
 	private int mCurrentAnimationPlaying = 0;
@@ -34,7 +33,7 @@ public class SplashScreen extends WWActivity {
 		prefs.edit().putInt(ApplicationUtils.PREFS_NB_LAUNCHES, ++nbLaunches);
 
 		// do not show splashscreen after a few launches
-		if (true || nbLaunches >= ApplicationUtils.NB_LAUNCHES_SPLASHSCREEN_APPEARS) {
+		if (nbLaunches >= ApplicationUtils.NB_LAUNCHES_SPLASHSCREEN_APPEARS) {
 			goToHomeScreen();
 		}
 
@@ -60,11 +59,9 @@ public class SplashScreen extends WWActivity {
 	private void setupUI() {
 		mTitleLayout = (ViewGroup) findViewById(R.id.title);
 
-		mBounceAnimation = AnimationUtils.loadAnimation(this,
-				R.anim.bounce_effect);
+		mBounceAnimation = AnimationUtils.loadAnimation(this, R.anim.bounce_effect);
 
-		mLetterAnimation = AnimationUtils.loadAnimation(this,
-				R.anim.falling_letter);
+		mLetterAnimation = AnimationUtils.loadAnimation(this, R.anim.falling_letter);
 		mLetterAnimation.setAnimationListener(new AnimationListener() {
 			@Override
 			public void onAnimationStart(Animation animation) {
@@ -101,14 +98,11 @@ public class SplashScreen extends WWActivity {
 		if (mCurrentAnimationPlaying < mTitleLayout.getChildCount()) {
 			// reset previous view's animation
 			if (mCurrentAnimationPlaying > 0) {
-				mTitleLayout.getChildAt(mCurrentAnimationPlaying - 1)
-						.setAnimation(null);
+				mTitleLayout.getChildAt(mCurrentAnimationPlaying - 1).setAnimation(null);
 			}
 			// play next animation
-			mTitleLayout.getChildAt(mCurrentAnimationPlaying).setVisibility(
-					View.VISIBLE);
-			mTitleLayout.getChildAt(mCurrentAnimationPlaying).startAnimation(
-					mLetterAnimation);
+			mTitleLayout.getChildAt(mCurrentAnimationPlaying).setVisibility(View.VISIBLE);
+			mTitleLayout.getChildAt(mCurrentAnimationPlaying).startAnimation(mLetterAnimation);
 			mCurrentAnimationPlaying++;
 		} else {
 			Handler handler = new Handler();

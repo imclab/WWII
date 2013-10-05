@@ -25,11 +25,11 @@
 
     <!-- HOMESCREEN -->
     <style name="HomeScreenButton">
-        <item name="android:width">260dp</item>
+        <item name="android:width">265dp</item>
         <item name="android:textSize">35sp</item>
         <item name="android:background">@drawable/bg_btn_home</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:padding">11dp</item>
+        <item name="android:padding">12dp</item>
         <item name="android:gravity">center</item>
     </style>
 
@@ -40,7 +40,7 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="android:button">@null</item>
         <item name="android:gravity">center</item>
-        <item name="android:padding">11dp</item>
+        <item name="android:padding">12dp</item>
     </style>
 
     <style name="SettingsLabel">
@@ -56,6 +56,8 @@
     <style name="AboutDialogText" parent="@style/SettingsLabel">
         <item name="android:gravity">center</item>
         <item name="android:padding">5dp</item>
+        <item name="android:textColorHighlight">@color/bg_btn_green</item>
+        <item name="android:textColorLink">@color/link</item>
     </style>
 
     <!-- DIALOGS -->

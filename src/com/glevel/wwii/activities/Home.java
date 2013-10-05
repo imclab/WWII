@@ -1,12 +1,14 @@
 package com.glevel.wwii.activities;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -33,13 +35,11 @@ public class Home extends WWActivity implements OnClickListener {
 
 	private SharedPreferences mSharedPrefs;
 
-	private Animation mMainButtonAnimationRightIn,
-			mMainButtonAnimationRightOut, mMainButtonAnimationLeftIn,
-			mMainButtonAnimationLeftOut;
+	private Animation mMainButtonAnimationRightIn, mMainButtonAnimationRightOut, mMainButtonAnimationLeftIn,
+	        mMainButtonAnimationLeftOut;
 	private Animation mFadeOutAnimation, mFadeInAnimation;
 
-	private Button mSoloButton, mMultiplayerButton, mSettingsButton,
-			mCampaignButton, mBattleModeButton, mAboutButton;
+	private Button mSoloButton, mMultiplayerButton, mSettingsButton, mCampaignButton, mBattleModeButton, mAboutButton;
 	private ViewGroup mSettingsLayout;
 	private View mBackButton;
 	private RadioGroup mRadioMusicvolume, mRadioDifficulty;
@@ -60,19 +60,14 @@ public class Home extends WWActivity implements OnClickListener {
 	}
 
 	private void setupUI() {
-		mSharedPrefs = getSharedPreferences(GameUtils.GAME_PREFS_FILENAME,
-				MODE_PRIVATE);
+		mSharedPrefs = getSharedPreferences(GameUtils.GAME_PREFS_FILENAME, MODE_PRIVATE);
 
 		mSettingsLayout = (ViewGroup) findViewById(R.id.settingsLayout);
 
-		mMainButtonAnimationRightIn = AnimationUtils.loadAnimation(this,
-				R.anim.main_btn_right_in);
-		mMainButtonAnimationLeftIn = AnimationUtils.loadAnimation(this,
-				R.anim.main_btn_left_in);
-		mMainButtonAnimationRightOut = AnimationUtils.loadAnimation(this,
-				R.anim.main_btn_right_out);
-		mMainButtonAnimationLeftOut = AnimationUtils.loadAnimation(this,
-				R.anim.main_btn_left_out);
+		mMainButtonAnimationRightIn = AnimationUtils.loadAnimation(this, R.anim.main_btn_right_in);
+		mMainButtonAnimationLeftIn = AnimationUtils.loadAnimation(this, R.anim.main_btn_left_in);
+		mMainButtonAnimationRightOut = AnimationUtils.loadAnimation(this, R.anim.main_btn_right_out);
+		mMainButtonAnimationLeftOut = AnimationUtils.loadAnimation(this, R.anim.main_btn_left_out);
 		mFadeOutAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_out);
 		mFadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_in);
 
@@ -96,68 +91,62 @@ public class Home extends WWActivity implements OnClickListener {
 
 		mRadioDifficulty = (RadioGroup) findViewById(R.id.radioDifficulty);
 		// update radio buttons states according to the game difficulty
-		int gameDifficulty = mSharedPrefs.getInt(
-				GameUtils.GAME_PREFS_KEY_DIFFICULTY,
-				GameUtils.DifficultyLevel.medium.ordinal());
-		((RadioButton) mRadioDifficulty.getChildAt(gameDifficulty))
-				.setChecked(true);
-		mRadioDifficulty
-				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(RadioGroup group, int checkedId) {
-						// update game difficulty in preferences
-						Editor editor = mSharedPrefs.edit();
-						switch (checkedId) {
-						case R.id.easyRadioBtn:
-							editor.putInt(GameUtils.GAME_PREFS_KEY_DIFFICULTY,
-									GameUtils.DifficultyLevel.easy.ordinal());
-							break;
-						case R.id.mediumRadioBtn:
-							editor.putInt(GameUtils.GAME_PREFS_KEY_DIFFICULTY,
-									GameUtils.DifficultyLevel.medium.ordinal());
-							break;
-						case R.id.hardRadioBtn:
-							editor.putInt(GameUtils.GAME_PREFS_KEY_DIFFICULTY,
-									GameUtils.DifficultyLevel.hard.ordinal());
-							break;
-						}
-						editor.commit();
-					}
-				});
+		int gameDifficulty = mSharedPrefs.getInt(GameUtils.GAME_PREFS_KEY_DIFFICULTY,
+		        GameUtils.DifficultyLevel.medium.ordinal());
+		((RadioButton) mRadioDifficulty.getChildAt(gameDifficulty)).setChecked(true);
+		mRadioDifficulty.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				// update game difficulty in preferences
+				Editor editor = mSharedPrefs.edit();
+				switch (checkedId) {
+				case R.id.easyRadioBtn:
+					editor.putInt(GameUtils.GAME_PREFS_KEY_DIFFICULTY, GameUtils.DifficultyLevel.easy.ordinal());
+					break;
+				case R.id.mediumRadioBtn:
+					editor.putInt(GameUtils.GAME_PREFS_KEY_DIFFICULTY, GameUtils.DifficultyLevel.medium.ordinal());
+					break;
+				case R.id.hardRadioBtn:
+					editor.putInt(GameUtils.GAME_PREFS_KEY_DIFFICULTY, GameUtils.DifficultyLevel.hard.ordinal());
+					break;
+				}
+				editor.commit();
+			}
+		});
 
 		mRadioMusicvolume = (RadioGroup) findViewById(R.id.musicVolume);
 		// update radio buttons states according to the music preference
-		int musicVolume = mSharedPrefs.getInt(
-				GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME, 0);
-		((RadioButton) mRadioMusicvolume.getChildAt(musicVolume))
-				.setChecked(true);
-		mRadioMusicvolume
-				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(RadioGroup group, int checkedId) {
-						// update game difficulty in preferences
-						Editor editor = mSharedPrefs.edit();
-						switch (checkedId) {
-						case R.id.musicOff:
-							editor.putInt(
-									GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME,
-									GameUtils.MusicState.off.ordinal());
-							break;
-						case R.id.musicOn:
-							editor.putInt(
-									GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME,
-									GameUtils.MusicState.on.ordinal());
-							break;
-						}
-						editor.commit();
-					}
-				});
+		int musicVolume = mSharedPrefs.getInt(GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME, 0);
+		((RadioButton) mRadioMusicvolume.getChildAt(musicVolume)).setChecked(true);
+		mRadioMusicvolume.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				// update game difficulty in preferences
+				Editor editor = mSharedPrefs.edit();
+				switch (checkedId) {
+				case R.id.musicOff:
+					editor.putInt(GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME, GameUtils.MusicState.off.ordinal());
+					break;
+				case R.id.musicOn:
+					editor.putInt(GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME, GameUtils.MusicState.on.ordinal());
+					break;
+				}
+				editor.commit();
+			}
+		});
 
 		// setup background video
 		mBackgroundVideoView = (VideoView) findViewById(R.id.backgroundVideo);
-		Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/"
-				+ R.raw.video_bg_home);
+		Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.video_bg_home);
 		mBackgroundVideoView.setVideoURI(videoUri);
+		mBackgroundVideoView.setOnPreparedListener(mPreparedListener);
+		// repeat the video
+		mBackgroundVideoView.setOnCompletionListener(new OnCompletionListener() {
+			@Override
+			public void onCompletion(MediaPlayer mp) {
+				mBackgroundVideoView.start();
+			}
+		});
 		mAboutButton = (Button) findViewById(R.id.aboutButton);
 		mAboutButton.setOnClickListener(this);
 	}
@@ -185,8 +174,7 @@ public class Home extends WWActivity implements OnClickListener {
 				showSoloButtons();
 				break;
 			case R.id.multiplayerButton:
-				Toast.makeText(Home.this, "Coming soon...", Toast.LENGTH_LONG)
-						.show();
+				Toast.makeText(Home.this, "Coming soon...", Toast.LENGTH_LONG).show();
 				break;
 			case R.id.settingsButton:
 				showSettings();
@@ -196,6 +184,12 @@ public class Home extends WWActivity implements OnClickListener {
 				break;
 			case R.id.aboutButton:
 				openAboutDialog();
+				break;
+			case R.id.campaignButton:
+				Toast.makeText(Home.this, "Coming soon...", Toast.LENGTH_LONG).show();
+				break;
+			case R.id.battleButton:
+				startActivity(new Intent(this, BattleChooser.class));
 				break;
 			default:
 				break;
@@ -208,13 +202,11 @@ public class Home extends WWActivity implements OnClickListener {
 		mAboutDialog.setCancelable(true);
 		mAboutDialog.setContentView(R.layout.dialog_about);
 		// activate the dialog links
-		TextView creditsTV = (TextView) mAboutDialog
-				.findViewById(R.id.aboutCredits);
+		TextView creditsTV = (TextView) mAboutDialog.findViewById(R.id.aboutCredits);
 		creditsTV.setMovementMethod(LinkMovementMethod.getInstance());
 		TextView blogTV = (TextView) mAboutDialog.findViewById(R.id.aboutBlog);
 		blogTV.setMovementMethod(LinkMovementMethod.getInstance());
-		TextView contactTV = (TextView) mAboutDialog
-				.findViewById(R.id.aboutContact);
+		TextView contactTV = (TextView) mAboutDialog.findViewById(R.id.aboutContact);
 		contactTV.setMovementMethod(LinkMovementMethod.getInstance());
 		mAboutDialog.show();
 	}
@@ -299,5 +291,24 @@ public class Home extends WWActivity implements OnClickListener {
 		}
 
 	}
+
+	// remove background video sound
+	MediaPlayer.OnPreparedListener mPreparedListener = new MediaPlayer.OnPreparedListener() {
+		@Override
+		public void onPrepared(MediaPlayer m) {
+			try {
+				if (m.isPlaying()) {
+					m.stop();
+					m.release();
+					m = new MediaPlayer();
+				}
+				m.setVolume(0f, 0f);
+				m.setLooping(false);
+				m.start();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	};
 
 }
