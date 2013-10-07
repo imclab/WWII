@@ -1,4 +1,6 @@
-package com.glevel.wwii.game.model;
+package com.glevel.wwii.game.model.map;
+
+import com.glevel.wwii.game.model.GameElement;
 
 public class Tile {
 	

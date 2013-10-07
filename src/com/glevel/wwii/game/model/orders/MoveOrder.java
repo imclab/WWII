@@ -1,7 +1,6 @@
 package com.glevel.wwii.game.model.orders;
 
-import com.glevel.wwii.game.model.Order;
-import com.glevel.wwii.game.model.armies.Unit;
+import com.glevel.wwii.game.model.units.Unit;
 
 public class MoveOrder extends Order {
 

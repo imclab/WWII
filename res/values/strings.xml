@@ -2,6 +2,7 @@
 
     <string name="app_name">WWII</string>
     <string name="app_maker">G-Level</string>
+    <string name="id">id</string>
 
     <!-- Contact -->
     <string name="mail_address">guillaume.gouchon@gmail.com</string>
@@ -41,5 +42,16 @@
     <string name="easy">Easy</string>
     <string name="medium">Medium</string>
     <string name="difficult">Hard</string>
+
+    <!-- Battle Chooser -->
+    <string name="choose_army">Choose your side</string>
+    <string name="choose_map">Pick a map</string>
+
+    <!-- Army Builder -->
+    <string name="hireTroops">Hire troops</string>
+
+    <!-- Armies -->
+    <string name="german_army">Germany</string>
+    <string name="usa_army">USA</string>
 
 </resources>

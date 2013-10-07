@@ -41,6 +41,7 @@
         <item name="android:button">@null</item>
         <item name="android:gravity">center</item>
         <item name="android:padding">12dp</item>
+        <item name="android:drawablePadding">8dp</item>
     </style>
 
     <style name="SettingsLabel">
@@ -58,6 +59,20 @@
         <item name="android:padding">5dp</item>
         <item name="android:textColorHighlight">@color/bg_btn_green</item>
         <item name="android:textColorLink">@color/link</item>
+    </style>
+
+    <!-- BATTLE CHOOSER -->
+    <style name="BattleChooserTitle" parent="@style/SettingsLabel">
+        <item name="android:background">@drawable/bg_title</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="MapTitle" parent="@style/SettingsLabel">
+        <item name="android:textSize">26sp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:gravity">center</item>
     </style>
 
     <!-- DIALOGS -->

@@ -30,7 +30,7 @@ import com.glevel.wwii.utils.WWActivity;
 public class Home extends WWActivity implements OnClickListener {
 
 	private static enum ScreenState {
-		home, solo, settings
+		HOME, SOLO, SETTINGS
 	}
 
 	private SharedPreferences mSharedPrefs;
@@ -46,7 +46,7 @@ public class Home extends WWActivity implements OnClickListener {
 	private VideoView mBackgroundVideoView;
 	private Dialog mAboutDialog = null;
 
-	private ScreenState mScreenState = ScreenState.home;
+	private ScreenState mScreenState = ScreenState.HOME;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -212,7 +212,7 @@ public class Home extends WWActivity implements OnClickListener {
 	}
 
 	private void showSoloButtons() {
-		mScreenState = ScreenState.solo;
+		mScreenState = ScreenState.SOLO;
 		hideMainHomeButtons();
 		mCampaignButton.setVisibility(View.VISIBLE);
 		mCampaignButton.startAnimation(mMainButtonAnimationLeftIn);
@@ -232,7 +232,7 @@ public class Home extends WWActivity implements OnClickListener {
 	}
 
 	private void showMainHomeButtons() {
-		mScreenState = ScreenState.home;
+		mScreenState = ScreenState.HOME;
 		mSoloButton.setVisibility(View.VISIBLE);
 		mMultiplayerButton.setVisibility(View.VISIBLE);
 		mSettingsButton.setVisibility(View.VISIBLE);
@@ -261,7 +261,7 @@ public class Home extends WWActivity implements OnClickListener {
 	}
 
 	private void showSettings() {
-		mScreenState = ScreenState.settings;
+		mScreenState = ScreenState.SETTINGS;
 		mSettingsLayout.setVisibility(View.VISIBLE);
 		mSettingsLayout.startAnimation(mFadeInAnimation);
 		hideMainHomeButtons();
@@ -275,14 +275,14 @@ public class Home extends WWActivity implements OnClickListener {
 	@Override
 	public void onBackPressed() {
 		switch (mScreenState) {
-		case home:
+		case HOME:
 			super.onBackPressed();
 			break;
-		case solo:
+		case SOLO:
 			showMainHomeButtons();
 			hideSoloButtons();
 			break;
-		case settings:
+		case SETTINGS:
 			showMainHomeButtons();
 			hideSettings();
 			break;

@@ -1,5 +1,7 @@
 package com.glevel.wwii.game.model;
 
+import com.glevel.wwii.game.model.map.Tile;
+
 import android.graphics.Canvas;
 
 public abstract class GameElement {

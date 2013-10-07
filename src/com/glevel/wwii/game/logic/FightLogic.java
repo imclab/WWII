@@ -1,8 +1,8 @@
 package com.glevel.wwii.game.logic;
 
-import com.glevel.wwii.game.model.armies.Soldier;
-import com.glevel.wwii.game.model.armies.Unit;
-import com.glevel.wwii.game.model.armies.Weapon;
+import com.glevel.wwii.game.model.units.Soldier;
+import com.glevel.wwii.game.model.units.Unit;
+import com.glevel.wwii.game.model.units.Weapon;
 
 public class FightLogic {
 

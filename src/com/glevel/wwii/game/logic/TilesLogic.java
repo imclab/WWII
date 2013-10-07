@@ -3,8 +3,8 @@ package com.glevel.wwii.game.logic;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.glevel.wwii.game.model.Map;
-import com.glevel.wwii.game.model.Tile;
+import com.glevel.wwii.game.model.map.Map;
+import com.glevel.wwii.game.model.map.Tile;
 
 public class TilesLogic {
 

@@ -1,10 +1,10 @@
-package com.glevel.wwii.game.model.armies;
+package com.glevel.wwii.game.model.units;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.glevel.wwii.game.model.GameElement;
-import com.glevel.wwii.game.model.Order;
+import com.glevel.wwii.game.model.orders.Order;
 
 public abstract class Unit extends GameElement {
 

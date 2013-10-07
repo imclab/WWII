@@ -1,4 +1,4 @@
-package com.glevel.wwii.game.model.armies;
+package com.glevel.wwii.game.model.units;
 
 public abstract class Vehicle extends Unit {
 

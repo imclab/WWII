@@ -1,6 +1,8 @@
-package com.glevel.wwii.game.model;
+package com.glevel.wwii.game.model.map;
 
 import java.util.List;
+
+import com.glevel.wwii.game.model.GameElement;
 
 public class Map {
 
