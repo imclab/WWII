@@ -3,8 +3,9 @@ package com.glevel.wwii.game.data;
 import com.glevel.wwii.R;
 
 public enum BattlesData {
-	ARNHEM_BRIDGE(R.string.about, R.drawable.map_0, 0), ARNHEM_BRIDGE2(R.string.about, R.drawable.ic_launcher, 0), ARNHEM_BRIDGE3(
-	        R.string.about, R.drawable.ic_launcher, 0);
+	ARNHEM_BRIDGE(R.string.about, R.drawable.map_0, 10), ARNHEM_BRIDGE2(
+			R.string.about, R.drawable.ic_launcher, 25), ARNHEM_BRIDGE3(
+			R.string.about, R.drawable.ic_launcher, 20);
 
 	private final int name;
 	private final int image;

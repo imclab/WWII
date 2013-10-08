@@ -1,8 +1,10 @@
 <resources>
 
-    <string name="app_name">WWII</string>
+    <string name="app_name">WWII Squad</string>
     <string name="app_maker">G-Level</string>
     <string name="id">id</string>
+    <string name="placeholder">placeholder</string>
+    <string name="viewholder">placeholder</string>
 
     <!-- Contact -->
     <string name="mail_address">guillaume.gouchon@gmail.com</string>
@@ -48,10 +50,56 @@
     <string name="choose_map">Pick a map</string>
 
     <!-- Army Builder -->
-    <string name="hireTroops">Hire troops</string>
+    <string name="hire_troops">Hire your troops</string>
+    <string name="requisition_points">Requisition Points :</string>
+    <string name="your_army">Your Squad</string>
+    <string name="available_troops">Available Troops</string>
+    <string name="start_battle">Start Battle !</string>
+    <string name="no_troops">Hire some troops before !</string>
+    <string name="confirm_battle_message">You have some unused requisition points, continue to battlefield ?</string>
+    <string name="no_slots_left">No more unit slot left&#8230;\nSell one of your unit !</string>
+    <string name="not_enough_requisition">You do not have enough requisition point\nto hire this unit !</string>
+    <string name="buy">Hire</string>
+    <string name="sell">Remove</string>
+    <string name="confirm_transaction">%1$s %2$s for %3$s requisition points ?</string>
+    <string name="unit_image">Unit image</string>
+    <string name="frags_number">Frags : %1$s</string>
+    <string name="points">%1$s pts</string>
+    <string name="ap">AP</string>
+    <string name="at">AT</string>
 
     <!-- Armies -->
     <string name="german_army">Germany</string>
     <string name="usa_army">USA</string>
+
+    <!-- Weapons -->
+    <string name="grenade">Hand Grenade</string>
+    <string name="cannon75">Cannon 75mm</string>
+    <!-- USA -->
+    <string name="garandM1">Garand M1</string>
+    <string name="thompson">Thompson</string>
+    <string name="browningM2">Browning M2</string>
+    <string name="mortar50">Mortar 50mm</string>
+    <string name="bazookaM1A">Bazooka</string>
+    <!-- Germany -->
+    <string name="mauser">Mauser G98</string>
+    <string name="mp40">MP 40</string>
+    <string name="mg42">MG 42</string>
+    <string name="mortar81">Mortar 81mm</string>
+    <string name="panzerschreck">Panzerschreck</string>
+    <string name="panzerfaust">Panzerfaust</string>
+    <string name="pak43">Pak43 88mm</string>
+
+    <!-- Units -->
+    <string name="rifleman">Rifleman</string>
+    <string name="scout">Scout</string>
+    <string name="hmg">Heavy MG</string>
+    <string name="mortar">Mortar</string>
+    <string name="at_cannon">Anti-tank Cannon</string>
+    <!-- USA -->
+    <string name="bazooka">Bazooka</string>
+    <string name="shermanM4A1">Sherman M4A1</string>
+    <!-- Germany -->
+    <string name="pantherG">Panther G</string>
 
 </resources>

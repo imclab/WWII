@@ -6,19 +6,19 @@ import android.graphics.Canvas;
 
 public abstract class GameElement {
 
-	private String name;
+	private final int name;
 	private int xAbsolutePosition;
 	private int yAbsolutePosition;
 	private int orientation;
 
 	private Tile tilePosition;
 
-	public String getName() {
-		return name;
+	public GameElement(int name) {
+		this.name = name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public int getName() {
+		return name;
 	}
 
 	public int getxAbsolutePosition() {

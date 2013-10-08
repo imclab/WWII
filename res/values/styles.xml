@@ -62,11 +62,8 @@
     </style>
 
     <!-- BATTLE CHOOSER -->
-    <style name="BattleChooserTitle" parent="@style/SettingsLabel">
+    <style name="BattleChooserTitle" parent="@style/ArmyBuilderTitle">
         <item name="android:background">@drawable/bg_title</item>
-        <item name="android:textSize">32sp</item>
-        <item name="android:padding">8dp</item>
-        <item name="android:gravity">center</item>
     </style>
 
     <style name="MapTitle" parent="@style/SettingsLabel">
@@ -75,12 +72,67 @@
         <item name="android:gravity">center</item>
     </style>
 
+    <!-- ARMY BUILDER -->
+    <style name="ArmyBuilderTitle" parent="@style/SettingsLabel">
+        <item name="android:textSize">32sp</item>
+        <item name="android:padding">8dp</item>
+    </style>
+
+    <style name="ArmyBuilderSubTitle" parent="@style/SettingsLabel">
+        <item name="android:textSize">20sp</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="ArmyBuilderText" parent="@style/SettingsLabel">
+        <item name="android:textSize">16sp</item>
+        <item name="android:padding">3dp</item>
+    </style>
+
+    <style name="ArmyBuilderColumn">
+        <item name="android:background">@drawable/bg_army_column</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="ArmyBuilderTroopsList">
+        <item name="android:scrollbarSize">1dp</item>
+        <item name="android:overScrollMode">never</item>
+        <item name="android:divider">@android:color/transparent</item>
+        <item name="android:cacheColorHint">@android:color/transparent</item>
+        <item name="android:listSelector">@android:color/transparent</item>
+        <item name="android:padding">3dp</item>
+        <item name="android:dividerHeight">5.0sp</item>
+    </style>
+
+    <style name="ArmyBuilderSmallButton">
+        <item name="android:textSize">22sp</item>
+        <item name="android:background">@drawable/bg_btn_home</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="UnitText">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:drawablePadding">3dp</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="UnitEfficiency" parent="@style/UnitText">
+        <item name="android:textSize">11sp</item>
+        <item name="android:width">20dp</item>
+        <item name="android:height">20dp</item>
+        <item name="android:padding">3dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/bg_unit_efficiency_black</item>
+    </style>
+
     <!-- DIALOGS -->
-    <style name="FullScreenDialog" parent="@android:style/Theme.Holo.Light.Dialog.NoActionBar">
+    <style name="FullScreenDialog" parent="@android:style/Theme.Holo.Dialog.NoActionBar">
         <item name="android:windowAnimationStyle">@style/DialogAnimation</item>
     </style>
 
-    <style name="Dialog" parent="@android:style/Theme.Holo.Light.Dialog">
+    <style name="Dialog" parent="@android:style/Theme.Holo.Dialog.NoActionBar">
         <item name="android:windowAnimationStyle">@style/DialogAnimation</item>
         <item name="@android:windowBackground">@android:color/transparent</item>
     </style>

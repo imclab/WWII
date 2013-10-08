@@ -1,19 +1,69 @@
 package com.glevel.wwii.game.model.units;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import com.glevel.wwii.R;
+import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.model.GameElement;
 import com.glevel.wwii.game.model.orders.Order;
 
 public abstract class Unit extends GameElement {
+
+	private int image;
+	private int moveSpeed;
+	private List<Weapon> weapons;
+	private Experience experience;
+
+	private int requisitionPrice;
+	private InjuryState health;
+	private int frags;
+	private boolean isAvailable;
+	private Order order;
+	private CurrentAction currentAction;
+
+	public Unit(int name, int image, Experience experience,
+			List<Weapon> weapons, int moveSpeed) {
+		super(name);
+		this.image = image;
+		this.experience = experience;
+		this.weapons = weapons;
+		this.moveSpeed = moveSpeed;
+		this.health = InjuryState.none;
+		this.frags = 0;
+		this.requisitionPrice = calculateUnitPrice();
+	}
+
+	private int calculateUnitPrice() {
+		int basePrice = 5;
+		switch (experience) {
+		case adhoc:
+			basePrice *= 0.5;
+			break;
+		case elite:
+			basePrice *= 2.5;
+			break;
+		}
+		// TODO
+		return basePrice;
+	}
 
 	public static enum InjuryState {
 		none, injured, badlyInjured, dead
 	}
 
 	public static enum Experience {
-		adhoc, normal, experimented, elite
+		adhoc(R.color.adhoc), veteran(R.color.veteran), elite(R.color.elite);
+
+		private final int color;
+
+		private Experience(int color) {
+			this.color = color;
+		}
+
+		public int getColor() {
+			return color;
+		}
+
 	}
 
 	public static enum CurrentAction {
@@ -23,17 +73,6 @@ public abstract class Unit extends GameElement {
 	public static enum Rank {
 		ally, enemy, neutral
 	}
-
-	private InjuryState health = InjuryState.none;
-	private int moveSpeed;
-	private List<Weapon> weapons = new ArrayList<Weapon>();
-	private Experience experience;
-
-	private Order order;
-	private CurrentAction currentAction;
-
-	private int requisitionPrice;
-	private boolean isAvailable;
 
 	public InjuryState getHealth() {
 		return health;
@@ -107,5 +146,20 @@ public abstract class Unit extends GameElement {
 		this.frags = frags;
 	}
 
-	private int frags;
+	public int getImage() {
+		return image;
+	}
+
+	public void setImage(int image) {
+		this.image = image;
+	}
+
+	public int getRealSellPrice(boolean isSelling) {
+		if (isSelling) {
+			return (int) (requisitionPrice * GameUtils.SELL_PRICE_FACTOR);
+		} else {
+			return requisitionPrice;
+		}
+	}
+
 }

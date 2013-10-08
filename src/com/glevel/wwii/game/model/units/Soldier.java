@@ -1,13 +1,42 @@
 package com.glevel.wwii.game.model.units;
 
+import java.util.List;
+
+import com.glevel.wwii.game.data.ArmiesData;
+import com.glevel.wwii.game.data.NamesData;
+
 import android.graphics.Canvas;
 
 public class Soldier extends Unit {
 
+	private String realName;
+
+	public Soldier(ArmiesData army, int name, int image, Experience experience,
+			List<Weapon> weapons, int moveSpeed) {
+		super(name, image, experience, weapons, moveSpeed);
+	}
+
+	public String getRealName() {
+		return realName;
+	}
+
 	@Override
 	public void draw(Canvas canvas) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	public void createRandomRealName(ArmiesData army) {
+		String[] names = null;
+		switch (army) {
+		case GERMANY:
+			names = NamesData.GERMAN_NAMES;
+			break;
+		case USA:
+			names = NamesData.AMERICAN_NAMES;
+			break;
+		}
+		this.realName = names[(int) (Math.random() * (names.length - 1))];
 	}
 
 }

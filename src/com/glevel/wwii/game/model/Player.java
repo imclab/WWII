@@ -10,6 +10,7 @@ public class Player {
 
 	private String name;
 	private int requisition;
+
 	private ArmiesData army;
 	private List<Unit> units = new ArrayList<Unit>();
 	private boolean isAI;
@@ -18,6 +19,62 @@ public class Player {
 
 	public boolean checkIfPlayerWon(Battle battle) {
 		return victoryCondition.checkVictory(armyIndex, battle);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getRequisition() {
+		return requisition;
+	}
+
+	public void setRequisition(int requisition) {
+		this.requisition = requisition;
+	}
+
+	public ArmiesData getArmy() {
+		return army;
+	}
+
+	public void setArmy(ArmiesData army) {
+		this.army = army;
+	}
+
+	public List<Unit> getUnits() {
+		return units;
+	}
+
+	public void setUnits(List<Unit> units) {
+		this.units = units;
+	}
+
+	public boolean isAI() {
+		return isAI;
+	}
+
+	public void setAI(boolean isAI) {
+		this.isAI = isAI;
+	}
+
+	public VictoryCondition getVictoryCondition() {
+		return victoryCondition;
+	}
+
+	public void setVictoryCondition(VictoryCondition victoryCondition) {
+		this.victoryCondition = victoryCondition;
+	}
+
+	public int getArmyIndex() {
+		return armyIndex;
+	}
+
+	public void setArmyIndex(int armyIndex) {
+		this.armyIndex = armyIndex;
 	}
 
 }

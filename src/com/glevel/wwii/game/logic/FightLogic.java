@@ -6,7 +6,6 @@ import com.glevel.wwii.game.model.units.Weapon;
 
 public class FightLogic {
 
-	public static final int RANGE_FACTOR = 2;
 	public static final int RANGE_CATEGORY_NUMBER = 5;
 
 	/**
@@ -18,6 +17,7 @@ public class FightLogic {
 	 * @return most efficient weapon
 	 */
 	public static Weapon chooseBestWeapon(Unit shooter, Unit target, int range) {
+		// TODO
 		Weapon bestWeapon = null;
 		int bestPower = 0;
 		// check each shooter's weapon
@@ -42,28 +42,20 @@ public class FightLogic {
 	 */
 	public static void fire(Unit shooter, Unit target, int range) {
 		// unit chooses its most efficient weapon
+		// TODO
+
 		Weapon weapon = chooseBestWeapon(shooter, target, range);
 		if (weapon != null) {
-			// check cadence delay
-			if (weapon.getCurrentCadence() == 0) {
-				// remove ammo
-				weapon.setAmmoAmount(weapon.getAmmoAmount() - 1);
 
-				// reset cadence delay
-				weapon.setCurrentCadence(weapon.getCadence());
-				
-			} else {
-				weapon.setCurrentCadence(weapon.getCurrentCadence() - 1);
-			}
 		}
 	}
 
 	public static final int getWeaponPower(Weapon weapon, Unit target, int range) {
-		int index = Math.min(RANGE_CATEGORY_NUMBER, range / RANGE_FACTOR);
+		// TODO
 		if (target instanceof Soldier) {
-			return weapon.getApPower()[index];
+			return weapon.getApPower();
 		} else {
-			return weapon.getAtPower()[index];
+			return weapon.getAtPower();
 		}
 	}
 

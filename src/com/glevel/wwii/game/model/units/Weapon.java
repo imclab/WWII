@@ -1,28 +1,65 @@
 package com.glevel.wwii.game.model.units;
 
+import com.glevel.wwii.R;
+
 public class Weapon {
 
-	private String name;
+	private int name;
+	private int image;
+	private int apPower;
+	private int atPower;
+	private int range;
 	private int ammoAmount;
-	private int[] apPower;
-	private int[] atPower;
 	private int cadence;
-	private int currentCadence;
+	private int magazineSize;
+	private int reloadSpeed;
+	private int reloadCounter;// while > 0 there are ammo left, while < 0
+								// reloading
 
-	public int getCurrentCadence() {
-		return currentCadence;
+	public Weapon(int name, int image, int apPower, int atPower, int range,
+			int ammoAmount, int cadence, int magazineSize, int reloadSpeed) {
+		this.name = name;
+		this.image = image;
+		this.apPower = apPower;
+		this.atPower = atPower;
+		this.range = range;
+		this.ammoAmount = ammoAmount;
+		this.cadence = cadence;
+		this.magazineSize = magazineSize;
+		this.reloadCounter = magazineSize / cadence;
+		this.reloadSpeed = reloadSpeed;
 	}
 
-	public void setCurrentCadence(int currentCadence) {
-		this.currentCadence = currentCadence;
+	public int getMagazineSize() {
+		return magazineSize;
 	}
 
-	public String getName() {
+	public void setMagazineSize(int magazineSize) {
+		this.magazineSize = magazineSize;
+	}
+
+	public int getReloadCounter() {
+		return reloadCounter;
+	}
+
+	public void setReloadCounter(int reloadCounter) {
+		this.reloadCounter = reloadCounter;
+	}
+
+	public int getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(int name) {
 		this.name = name;
+	}
+
+	public int getImage() {
+		return image;
+	}
+
+	public void setImage(int image) {
+		this.image = image;
 	}
 
 	public int getAmmoAmount() {
@@ -33,22 +70,6 @@ public class Weapon {
 		this.ammoAmount = ammoAmount;
 	}
 
-	public int[] getApPower() {
-		return apPower;
-	}
-
-	public void setApPower(int[] apPower) {
-		this.apPower = apPower;
-	}
-
-	public int[] getAtPower() {
-		return atPower;
-	}
-
-	public void setAtPower(int[] atPower) {
-		this.atPower = atPower;
-	}
-
 	public int getCadence() {
 		return cadence;
 	}
@@ -56,4 +77,62 @@ public class Weapon {
 	public void setCadence(int cadence) {
 		this.cadence = cadence;
 	}
+
+	public int getApPower() {
+		return apPower;
+	}
+
+	public void setApPower(int apPower) {
+		this.apPower = apPower;
+	}
+
+	public int getAtPower() {
+		return atPower;
+	}
+
+	public void setAtPower(int atPower) {
+		this.atPower = atPower;
+	}
+
+	public int getRange() {
+		return range;
+	}
+
+	public void setRange(int range) {
+		this.range = range;
+	}
+
+	public int getReloadSpeed() {
+		return reloadSpeed;
+	}
+
+	public void setReloadSpeed(int reloadSpeed) {
+		this.reloadSpeed = reloadSpeed;
+	}
+
+	public int getAPColorEfficiency() {
+		return efficiencyValueToColor(apPower);
+	}
+
+	public int getATColorEfficiency() {
+		return efficiencyValueToColor(atPower);
+	}
+
+	private int efficiencyValueToColor(int efficiency) {
+		switch (efficiency) {
+		case 1:
+			return R.drawable.bg_unit_efficiency_grey;
+		case 2:
+			return R.drawable.bg_unit_efficiency_red;
+		case 3:
+			return R.drawable.bg_unit_efficiency_orange;
+		case 4:
+			return R.drawable.bg_unit_efficiency_yellow;
+		case 5:
+			return R.drawable.bg_unit_efficiency_green;
+		default:
+			return R.drawable.bg_unit_efficiency_black;
+		}
+	}
+
 }
