@@ -8,14 +8,14 @@ import com.glevel.wwii.WWApplication.FONTS;
 
 public class CustomTextView extends TextView {
 
-	public CustomTextView(Context context) {
-		super(context);
-		setTypeface(FONTS.main);
-	}
+    public CustomTextView(Context context) {
+        super(context);
+        setTypeface(FONTS.main);
+    }
 
-	public CustomTextView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		setTypeface(FONTS.main);
-	}
+    public CustomTextView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        setTypeface(FONTS.main);
+    }
 
 }

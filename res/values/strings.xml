@@ -1,7 +1,7 @@
 <resources>
 
     <string name="app_name">WWII Squad</string>
-    <string name="app_maker">G-Level</string>
+    <string name="app_publisher">G-Level</string>
     <string name="id">id</string>
     <string name="placeholder">placeholder</string>
     <string name="viewholder">placeholder</string>
@@ -21,10 +21,11 @@
 
     <!-- About Dialog -->
     <string name="about_title">About WWII</string>
-    <string name="about_credits">Game development, game engine, assets and music\nby <a href="http://www.linkedin.com/profile/view?id=144913212">Guillaume Gouchon</a>.</string>
+    <string name="about_credits">Game, assets and music\nby <a href="http://www.linkedin.com/profile/view?id=144913212">Guillaume Gouchon</a>.</string>
     <string name="about_blog">Check out <a href="http://glevelapps.blogspot.co.uk">my Blog</a> !</string>
     <string name="about_contact">Do not hesitate to\n<a href="mailto:guillaume.gouchon@gmail.com">contact me</a> if you have any issue or question.</string>
-    <string name="about_other_sources">Historical video footages from National Archives.\nHistorical sources from Wikipedia.</string>
+    <string name="about_contact">The game is using And Engine by Nicolas Gramlich.</string>
+    <string name="about_other_sources">Historical sources from National Archives and Wikipedia.</string>
     <string name="about_version">App version : 1.0</string>
 
     <!-- Home Screen -->
@@ -67,6 +68,10 @@
     <string name="points">%1$s pts</string>
     <string name="ap">AP</string>
     <string name="at">AT</string>
+
+    <!-- Game -->
+    <string name="loadingGame">Loading</string>
+    <string name="loadingDots">. . .</string>
 
     <!-- Armies -->
     <string name="german_army">Germany</string>

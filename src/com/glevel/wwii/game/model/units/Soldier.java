@@ -13,7 +13,8 @@ public class Soldier extends Unit {
 
 	public Soldier(ArmiesData army, int name, int image, Experience experience,
 			List<Weapon> weapons, int moveSpeed) {
-		super(name, image, experience, weapons, moveSpeed);
+		super(army, name, image, experience, weapons, moveSpeed);
+		this.realName = createRandomRealName();
 	}
 
 	public String getRealName() {
@@ -26,8 +27,8 @@ public class Soldier extends Unit {
 
 	}
 
-	public void createRandomRealName(ArmiesData army) {
-		String[] names = null;
+	private String createRandomRealName() {
+		String[][] names = null;
 		switch (army) {
 		case GERMANY:
 			names = NamesData.GERMAN_NAMES;
@@ -36,7 +37,9 @@ public class Soldier extends Unit {
 			names = NamesData.AMERICAN_NAMES;
 			break;
 		}
-		this.realName = names[(int) (Math.random() * (names.length - 1))];
+		// get the column corresponding to the experience
+		String[] h = names[experience.ordinal()];
+		return h[(int) (Math.random() * (h.length - 1))];
 	}
 
 }

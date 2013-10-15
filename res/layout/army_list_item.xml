@@ -33,13 +33,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:text="@string/placeholder" />
+        android:text="@string/placeholder"
+        android:textSize="12sp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/unitImage"
+        android:layout_toLeftOf="@+id/unitPrice"
         android:gravity="right|center_vertical"
         android:orientation="vertical" >
 
@@ -47,6 +48,7 @@
             android:id="@+id/unitMainWeapon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
             android:orientation="horizontal" >
 
             <com.glevel.wwii.views.CustomTextView
@@ -105,21 +107,14 @@
     </LinearLayout>
 
     <com.glevel.wwii.views.CustomTextView
-        android:id="@+id/unitFrags"
-        style="@style/UnitText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/unitExperience"
-        android:text="@string/placeholder" />
-
-    <com.glevel.wwii.views.CustomTextView
         android:id="@+id/unitPrice"
+        style="@style/UnitText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:text="@string/placeholder"
-        android:textColor="@color/requisitionPoints" />
+        android:textColor="@color/requisitionPoints"
+        android:textSize="12sp" />
 
 </RelativeLayout>

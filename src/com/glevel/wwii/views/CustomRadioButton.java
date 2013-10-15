@@ -8,14 +8,14 @@ import com.glevel.wwii.WWApplication.FONTS;
 
 public class CustomRadioButton extends RadioButton {
 
-	public CustomRadioButton(Context context) {
-		super(context);
-		setTypeface(FONTS.main);
-	}
+    public CustomRadioButton(Context context) {
+        super(context);
+        setTypeface(FONTS.main);
+    }
 
-	public CustomRadioButton(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		setTypeface(FONTS.main);
-	}
+    public CustomRadioButton(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        setTypeface(FONTS.main);
+    }
 
 }

@@ -10,10 +10,10 @@
     <color name="grey">#D4CDCD</color>
     <color name="red">#D10000</color>
     <color name="orange">#FF9F38</color>
-    <color name="yellow">#FFF838</color>
-    <color name="green">#84FF38</color>
-    <color name="adhoc">#6BB3D6</color>
-    <color name="veteran">#eeeeee</color>
-    <color name="elite">#aaaaaa</color>
+    <color name="yellow">#EDEA39</color>
+    <color name="green">#84dd38</color>
+    <color name="recruit">#6BB3D6</color>
+    <color name="veteran">#ffffff</color>
+    <color name="elite">#999999</color>
 
 </resources>

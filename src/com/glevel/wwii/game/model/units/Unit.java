@@ -4,15 +4,17 @@ import java.util.List;
 
 import com.glevel.wwii.R;
 import com.glevel.wwii.game.GameUtils;
+import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.model.GameElement;
 import com.glevel.wwii.game.model.orders.Order;
 
 public abstract class Unit extends GameElement {
 
-	private int image;
-	private int moveSpeed;
+	protected final ArmiesData army;
+	private final int image;
+	private final int moveSpeed;
 	private List<Weapon> weapons;
-	private Experience experience;
+	protected Experience experience;
 
 	private int requisitionPrice;
 	private InjuryState health;
@@ -21,9 +23,10 @@ public abstract class Unit extends GameElement {
 	private Order order;
 	private CurrentAction currentAction;
 
-	public Unit(int name, int image, Experience experience,
+	public Unit(ArmiesData army, int name, int image, Experience experience,
 			List<Weapon> weapons, int moveSpeed) {
 		super(name);
+		this.army = army;
 		this.image = image;
 		this.experience = experience;
 		this.weapons = weapons;
@@ -36,7 +39,7 @@ public abstract class Unit extends GameElement {
 	private int calculateUnitPrice() {
 		int basePrice = 5;
 		switch (experience) {
-		case adhoc:
+		case recruit:
 			basePrice *= 0.5;
 			break;
 		case elite:
@@ -52,7 +55,7 @@ public abstract class Unit extends GameElement {
 	}
 
 	public static enum Experience {
-		adhoc(R.color.adhoc), veteran(R.color.veteran), elite(R.color.elite);
+		recruit(R.color.recruit), veteran(R.color.veteran), elite(R.color.elite);
 
 		private final int color;
 
@@ -84,10 +87,6 @@ public abstract class Unit extends GameElement {
 
 	public int getMoveSpeed() {
 		return moveSpeed;
-	}
-
-	public void setMoveSpeed(int moveSpeed) {
-		this.moveSpeed = moveSpeed;
 	}
 
 	public List<Weapon> getWeapons() {
@@ -150,8 +149,8 @@ public abstract class Unit extends GameElement {
 		return image;
 	}
 
-	public void setImage(int image) {
-		this.image = image;
+	public ArmiesData getArmy() {
+		return army;
 	}
 
 	public int getRealSellPrice(boolean isSelling) {
@@ -160,6 +159,25 @@ public abstract class Unit extends GameElement {
 		} else {
 			return requisitionPrice;
 		}
+	}
+
+	/**
+	 * Create a new instance of Unit. Used when we buy a unit.
+	 * 
+	 * @param army
+	 * @return
+	 */
+	public Unit copy() {
+		Unit unit = null;
+		if (this instanceof Soldier) {
+			unit = new Soldier(army, name, image, experience, weapons,
+					moveSpeed);
+		} else if (this instanceof Tank) {
+			Vehicle vehicle = (Vehicle) this;
+			unit = new Tank(army, name, image, experience, weapons, moveSpeed,
+					vehicle.getArmor());
+		}
+		return unit;
 	}
 
 }

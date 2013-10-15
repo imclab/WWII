@@ -114,7 +114,7 @@
     <style name="UnitText">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:drawablePadding">3dp</item>
+        <item name="android:drawablePadding">5dp</item>
         <item name="android:gravity">center_vertical</item>
     </style>
 
@@ -127,8 +127,15 @@
         <item name="android:background">@drawable/bg_unit_efficiency_black</item>
     </style>
 
+    <!-- ARMY BUILDER -->
+    <style name="Quote" parent="@style/SettingsLabel">
+        <item name="android:textSize">20sp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
     <!-- DIALOGS -->
-    <style name="FullScreenDialog" parent="@android:style/Theme.Holo.Dialog.NoActionBar">
+    <style name="FullScreenDialog" parent="@android:style/Theme.Black.NoTitleBar.Fullscreen">
         <item name="android:windowAnimationStyle">@style/DialogAnimation</item>
     </style>
 
@@ -140,6 +147,12 @@
     <style name="DialogAnimation">
         <item name="android:windowEnterAnimation">@anim/fade_in</item>
         <item name="android:windowExitAnimation">@anim/fade_out</item>
+    </style>
+
+    <style name="AlertDialogButton">
+        <item name="android:background">@drawable/bg_alert_dialog_btn</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
 </resources>

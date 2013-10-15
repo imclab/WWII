@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.glevel.wwii.R;
 import com.glevel.wwii.game.model.units.Soldier;
+import com.glevel.wwii.game.model.units.Tank;
 import com.glevel.wwii.game.model.units.Unit;
 import com.glevel.wwii.game.model.units.Unit.Experience;
 import com.glevel.wwii.game.model.units.Weapon;
@@ -16,18 +17,28 @@ public class UnitsData {
 		List<Unit> lstUnits = new ArrayList<Unit>();
 		switch (army) {
 		case GERMANY:
-
-			break;
-		case USA:
-			lstUnits.add(buildRifleMan(army, Experience.adhoc));
+			lstUnits.add(buildRifleMan(army, Experience.recruit));
 			lstUnits.add(buildRifleMan(army, Experience.veteran));
 			lstUnits.add(buildScout(army, Experience.veteran));
 			lstUnits.add(buildScout(army, Experience.elite));
 			lstUnits.add(buildHMG(army, Experience.veteran));
-			lstUnits.add(buildBazooka(army, Experience.adhoc));
+			lstUnits.add(buildBazooka(army, Experience.recruit));
 			lstUnits.add(buildBazooka(army, Experience.veteran));
 			lstUnits.add(buildMortar(army, Experience.veteran));
 			lstUnits.add(buildATCannon(army, Experience.veteran));
+			lstUnits.add(buildPantherG(army, Experience.veteran));
+			break;
+		case USA:
+			lstUnits.add(buildRifleMan(army, Experience.recruit));
+			lstUnits.add(buildRifleMan(army, Experience.veteran));
+			lstUnits.add(buildScout(army, Experience.veteran));
+			lstUnits.add(buildScout(army, Experience.elite));
+			lstUnits.add(buildHMG(army, Experience.veteran));
+			lstUnits.add(buildBazooka(army, Experience.recruit));
+			lstUnits.add(buildBazooka(army, Experience.veteran));
+			lstUnits.add(buildMortar(army, Experience.veteran));
+			lstUnits.add(buildATCannon(army, Experience.veteran));
+			lstUnits.add(buildShermanM4A1(army, Experience.veteran));
 			break;
 		}
 		return lstUnits;
@@ -55,7 +66,7 @@ public class UnitsData {
 		switch (army) {
 		case GERMANY:
 			weapons.add(WeaponsData.buildMP40());
-			weapons.add(WeaponsData.buildHandGrenades(army));
+			weapons.add(WeaponsData.buildPanzerfaust());
 			return new Soldier(army, R.string.scout, R.drawable.ic_launcher,
 					experience, weapons, 3);
 		case USA:
@@ -125,5 +136,21 @@ public class UnitsData {
 					R.drawable.ic_launcher, experience, weapons, 1);
 		}
 		return null;
+	}
+
+	public static Unit buildShermanM4A1(ArmiesData army, Experience experience) {
+		List<Weapon> weapons = new ArrayList<Weapon>();
+		weapons.add(WeaponsData.buildCannon75());
+		weapons.add(WeaponsData.buildBrowningM2());
+		return new Tank(army, R.string.shermanM4A1, R.drawable.ic_launcher,
+				experience, weapons, 4, 2);
+	}
+
+	public static Unit buildPantherG(ArmiesData army, Experience experience) {
+		List<Weapon> weapons = new ArrayList<Weapon>();
+		weapons.add(WeaponsData.buildCannon75());
+		weapons.add(WeaponsData.buildMG42());
+		return new Tank(army, R.string.pantherG, R.drawable.ic_launcher,
+				experience, weapons, 3, 3);
 	}
 }

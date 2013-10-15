@@ -6,12 +6,12 @@ import android.support.v4.app.FragmentActivity;
 
 public abstract class WWActivity extends FragmentActivity {
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		// allow user to change the music volume with his phone's buttons
-		setVolumeControlStream(AudioManager.STREAM_MUSIC);
-	}
+        // allow user to change the music volume with his phone's buttons
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+    }
 
 }

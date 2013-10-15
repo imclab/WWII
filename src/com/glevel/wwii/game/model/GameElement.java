@@ -1,12 +1,12 @@
 package com.glevel.wwii.game.model;
 
-import com.glevel.wwii.game.model.map.Tile;
-
 import android.graphics.Canvas;
+
+import com.glevel.wwii.game.model.map.Tile;
 
 public abstract class GameElement {
 
-	private final int name;
+	protected final int name;
 	private int xAbsolutePosition;
 	private int yAbsolutePosition;
 	private int orientation;
