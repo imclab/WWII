@@ -5,6 +5,7 @@
     <string name="id">id</string>
     <string name="placeholder">placeholder</string>
     <string name="viewholder">placeholder</string>
+    <string name="cancel">Cancel</string>
 
     <!-- Contact -->
     <string name="mail_address">guillaume.gouchon@gmail.com</string>
@@ -35,6 +36,7 @@
     <string name="campaign">Campaign</string>
     <string name="battle_mode">Battle Mode</string>
     <string name="back">Back</string>
+    <string name="resume_saved_battle">There is a saved ongoing battle available. Do you want to finish it ? It will be erased if you start another game.</string>
 
     <!-- Settings -->
     <string name="music_volume">Music / Sound</string>
@@ -70,8 +72,13 @@
     <string name="at">AT</string>
 
     <!-- Game -->
-    <string name="loadingGame">Loading</string>
-    <string name="loadingDots">. . .</string>
+    <string name="loading_game">Loading</string>
+    <string name="loading_dots">. . .</string>
+    <string name="game_paused">Pause</string>
+    <string name="surrender">Surrender</string>
+    <string name="confirm_surrender_message">Are you sure you want to surrender ?</string>
+    <string name="resume_game">Resume Game</string>
+    <string name="save_exit">Exit</string>
 
     <!-- Armies -->
     <string name="german_army">Germany</string>

@@ -4,7 +4,7 @@ import com.glevel.wwii.game.model.GameElement;
 
 public class Tile {
 
-	public int getxPosition() {
+	public int getXPosition() {
 		return xPosition;
 	}
 
@@ -12,7 +12,7 @@ public class Tile {
 		this.xPosition = xPosition;
 	}
 
-	public int getyPosition() {
+	public int getYPosition() {
 		return yPosition;
 	}
 

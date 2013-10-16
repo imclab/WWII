@@ -15,8 +15,8 @@ public class TilesLogic {
 	}
 
 	public static int getDistance(Tile from, Tile to) {
-		int dy = Math.abs(to.getyPosition() - from.getyPosition());
-		int dx = Math.abs(to.getxPosition() - from.getxPosition());
+		int dy = Math.abs(to.getYPosition() - from.getYPosition());
+		int dx = Math.abs(to.getXPosition() - from.getXPosition());
 		return dx + Math.max(0, dy - dx);// TODO
 	}
 
@@ -27,21 +27,21 @@ public class TilesLogic {
 	public static Tile getNeighbor(Map map, Tile tile, Direction direction) {
 		switch (direction) {
 		case up:
-			return map.getTiles()[tile.getxPosition()][tile.getyPosition() + 1];
+			return map.getTiles()[tile.getXPosition()][tile.getYPosition() + 1];
 		case down:
-			return map.getTiles()[tile.getxPosition()][tile.getyPosition() - 1];
+			return map.getTiles()[tile.getXPosition()][tile.getYPosition() - 1];
 		case leftUp:
-			return map.getTiles()[tile.getxPosition() - 1][tile.getyPosition()
-					- (isOdd(tile.getxPosition()) ? 1 : 0)];
+			return map.getTiles()[tile.getXPosition() - 1][tile.getYPosition()
+					- (isOdd(tile.getXPosition()) ? 1 : 0)];
 		case leftDown:
-			return map.getTiles()[tile.getxPosition() - 1][tile.getyPosition()
-					- (isOdd(tile.getxPosition()) ? 0 : 1)];
+			return map.getTiles()[tile.getXPosition() - 1][tile.getYPosition()
+					- (isOdd(tile.getXPosition()) ? 0 : 1)];
 		case rightUp:
-			return map.getTiles()[tile.getxPosition() + 1][tile.getyPosition()
-					- (isOdd(tile.getxPosition()) ? 0 : 1)];
+			return map.getTiles()[tile.getXPosition() + 1][tile.getYPosition()
+					- (isOdd(tile.getXPosition()) ? 0 : 1)];
 		case rightDown:
-			return map.getTiles()[tile.getxPosition() + 1][tile.getyPosition()
-					- (isOdd(tile.getxPosition()) ? 1 : 0)];
+			return map.getTiles()[tile.getXPosition() + 1][tile.getYPosition()
+					- (isOdd(tile.getXPosition()) ? 1 : 0)];
 		default:
 			return null;
 		}
@@ -49,25 +49,25 @@ public class TilesLogic {
 
 	public static List<Tile> getNeighbors(Map map, Tile tile) {
 		List<Tile> neighbors = new ArrayList<Tile>();
-		if (tile.getyPosition() > 0) {
+		if (tile.getYPosition() > 0) {
 			neighbors.add(getNeighbor(map, tile, Direction.down));
 		}
-		if (tile.getyPosition() < map.getHeight() - 1) {
+		if (tile.getYPosition() < map.getHeight() - 1) {
 			neighbors.add(getNeighbor(map, tile, Direction.up));
 		}
-		if (tile.getxPosition() > 0) {
-			if (tile.getyPosition() > 0) {
+		if (tile.getXPosition() > 0) {
+			if (tile.getYPosition() > 0) {
 				neighbors.add(getNeighbor(map, tile, Direction.leftDown));
 			}
-			if (tile.getyPosition() < map.getHeight() - 1) {
+			if (tile.getYPosition() < map.getHeight() - 1) {
 				neighbors.add(getNeighbor(map, tile, Direction.leftUp));
 			}
 		}
-		if (tile.getxPosition() < map.getWidth() - 1) {
-			if (tile.getyPosition() > 0) {
+		if (tile.getXPosition() < map.getWidth() - 1) {
+			if (tile.getYPosition() > 0) {
 				neighbors.add(getNeighbor(map, tile, Direction.rightDown));
 			}
-			if (tile.getyPosition() < map.getHeight() - 1) {
+			if (tile.getYPosition() < map.getHeight() - 1) {
 				neighbors.add(getNeighbor(map, tile, Direction.rightUp));
 			}
 		}

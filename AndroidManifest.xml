@@ -37,15 +37,18 @@
         <activity
             android:name=".activities.ArmyBuilderActivity"
             android:screenOrientation="landscape" >
+        </activity>
+        <activity
+            android:name=".activities.GameActivity"
+            android:clearTaskOnLaunch="true"
+            android:configChanges="orientation|keyboard|keyboardHidden"
+            android:noHistory="true"
+            android:screenOrientation="landscape" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".activities.GameActivity"
-            android:screenOrientation="landscape" >
         </activity>
     </application>
 

@@ -1,58 +1,43 @@
 package com.glevel.wwii.game.model;
 
-import android.graphics.Canvas;
+import org.andengine.entity.sprite.Sprite;
 
 import com.glevel.wwii.game.model.map.Tile;
 
 public abstract class GameElement {
 
-	protected final int name;
-	private int xAbsolutePosition;
-	private int yAbsolutePosition;
-	private int orientation;
+    protected final int name;
+    private final String spriteName;
+    private Tile tilePosition;
+    protected Sprite sprite;
 
-	private Tile tilePosition;
+    public Sprite getSprite() {
+        return sprite;
+    }
 
-	public GameElement(int name) {
-		this.name = name;
-	}
+    public void setSprite(Sprite sprite) {
+        this.sprite = sprite;
+    }
 
-	public int getName() {
-		return name;
-	}
+    public GameElement(int name, String spriteName) {
+        this.name = name;
+        this.spriteName = spriteName;
+    }
 
-	public int getxAbsolutePosition() {
-		return xAbsolutePosition;
-	}
+    public int getName() {
+        return name;
+    }
 
-	public void setxAbsolutePosition(int xAbsolutePosition) {
-		this.xAbsolutePosition = xAbsolutePosition;
-	}
+    public Tile getTilePosition() {
+        return tilePosition;
+    }
 
-	public int getyAbsolutePosition() {
-		return yAbsolutePosition;
-	}
+    public void setTilePosition(Tile tilePosition) {
+        this.tilePosition = tilePosition;
+    }
 
-	public void setyAbsolutePosition(int yAbsolutePosition) {
-		this.yAbsolutePosition = yAbsolutePosition;
-	}
-
-	public int getOrientation() {
-		return orientation;
-	}
-
-	public void setOrientation(int orientation) {
-		this.orientation = orientation;
-	}
-
-	public Tile getTilePosition() {
-		return tilePosition;
-	}
-
-	public void setTilePosition(Tile tilePosition) {
-		this.tilePosition = tilePosition;
-	}
-
-	public abstract void draw(Canvas canvas);
+    public String getSpriteName() {
+        return spriteName;
+    }
 
 }

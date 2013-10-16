@@ -8,73 +8,77 @@ import com.glevel.wwii.game.model.units.Unit;
 
 public class Player {
 
-	private String name;
-	private int requisition;
+    private String name;
+    private int requisition;
 
-	private ArmiesData army;
-	private List<Unit> units = new ArrayList<Unit>();
-	private boolean isAI;
-	private VictoryCondition victoryCondition;
-	private int armyIndex;
+    private ArmiesData army;
+    private List<Unit> units = new ArrayList<Unit>();
+    private boolean isAI;
+    private VictoryCondition victoryCondition;
+    private int armyIndex;
 
-	public boolean checkIfPlayerWon(Battle battle) {
-		return victoryCondition.checkVictory(armyIndex, battle);
-	}
+    public boolean checkIfPlayerWon(Battle battle) {
+        return victoryCondition.checkVictory(armyIndex, battle);
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public int getRequisition() {
-		return requisition;
-	}
+    public int getRequisition() {
+        return requisition;
+    }
 
-	public void setRequisition(int requisition) {
-		this.requisition = requisition;
-	}
+    public void setRequisition(int requisition) {
+        this.requisition = requisition;
+    }
 
-	public ArmiesData getArmy() {
-		return army;
-	}
+    public ArmiesData getArmy() {
+        return army;
+    }
 
-	public void setArmy(ArmiesData army) {
-		this.army = army;
-	}
+    public void setArmy(ArmiesData army) {
+        this.army = army;
+    }
 
-	public List<Unit> getUnits() {
-		return units;
-	}
+    public List<Unit> gameElement() {
+        return units;
+    }
 
-	public void setUnits(List<Unit> units) {
-		this.units = units;
-	}
+    public void setUnits(List<Unit> units) {
+        this.units = units;
+    }
 
-	public boolean isAI() {
-		return isAI;
-	}
+    public boolean isAI() {
+        return isAI;
+    }
 
-	public void setAI(boolean isAI) {
-		this.isAI = isAI;
-	}
+    public void setAI(boolean isAI) {
+        this.isAI = isAI;
+    }
 
-	public VictoryCondition getVictoryCondition() {
-		return victoryCondition;
-	}
+    public VictoryCondition getVictoryCondition() {
+        return victoryCondition;
+    }
 
-	public void setVictoryCondition(VictoryCondition victoryCondition) {
-		this.victoryCondition = victoryCondition;
-	}
+    public void setVictoryCondition(VictoryCondition victoryCondition) {
+        this.victoryCondition = victoryCondition;
+    }
 
-	public int getArmyIndex() {
-		return armyIndex;
-	}
+    public int getArmyIndex() {
+        return armyIndex;
+    }
 
-	public void setArmyIndex(int armyIndex) {
-		this.armyIndex = armyIndex;
-	}
+    public void setArmyIndex(int armyIndex) {
+        this.armyIndex = armyIndex;
+    }
+
+    public List<Unit> getUnits() {
+        return units;
+    }
 
 }

@@ -4,4 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <org.andengine.opengl.view.RenderSurfaceView
+        android:id="@+id/surfaceView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <include
+        android:id="@+id/selectedUnit"
+        android:layout_width="240dp"
+        android:layout_height="110dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="2dp"
+        layout="@layout/in_game_unit_layout"
+        android:visibility="gone" />
+
 </RelativeLayout>

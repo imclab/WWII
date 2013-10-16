@@ -4,16 +4,16 @@ import com.glevel.wwii.game.model.units.Unit;
 
 public class MoveOrder extends Order {
 
-	private int xDestination;
-	private int yDestination;
+	private float xDestination;
+	private float yDestination;
 
-	public MoveOrder(Unit unit, int xDestination, int yDestination) {
+	public MoveOrder(Unit unit, float xDestination, float yDestination) {
 		this.unit = unit;
 		this.xDestination = xDestination;
 		this.yDestination = yDestination;
 	}
 
-	public int getxDestination() {
+	public float getxDestination() {
 		return xDestination;
 	}
 
@@ -21,7 +21,7 @@ public class MoveOrder extends Order {
 		this.xDestination = xDestination;
 	}
 
-	public int getyDestination() {
+	public float getyDestination() {
 		return yDestination;
 	}
 

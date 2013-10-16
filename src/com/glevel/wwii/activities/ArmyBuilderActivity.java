@@ -105,6 +105,8 @@ public class ArmyBuilderActivity extends WWActivity {
 
     private void startGame() {
         Intent intent = new Intent(this, GameActivity.class);
+        // clear activity stack
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
     }

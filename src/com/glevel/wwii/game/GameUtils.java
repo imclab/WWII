@@ -15,7 +15,6 @@ public class GameUtils {
     }
 
     public static final int MAX_UNIT_PER_ARMY = 8;
-
     public static final float SELL_PRICE_FACTOR = 0.5f;
 
 }

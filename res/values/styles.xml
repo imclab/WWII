@@ -137,6 +137,7 @@
     <!-- DIALOGS -->
     <style name="FullScreenDialog" parent="@android:style/Theme.Black.NoTitleBar.Fullscreen">
         <item name="android:windowAnimationStyle">@style/DialogAnimation</item>
+        <item name="@android:windowBackground">@android:color/transparent</item>
     </style>
 
     <style name="Dialog" parent="@android:style/Theme.Holo.Dialog.NoActionBar">
@@ -153,6 +154,16 @@
         <item name="android:background">@drawable/bg_alert_dialog_btn</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- IN GAME -->
+    <style name="WeaponAmmo" parent="@style/UnitText">
+        <item name="android:textSize">10sp</item>
+        <item name="android:width">16dp</item>
+        <item name="android:height">10dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/bg_weapon_ammo</item>
+        <item name="android:textColor">@android:color/black</item>
     </style>
 
 </resources>
