@@ -25,7 +25,7 @@ public class GraphicElementFactory {
     private TextureManager mTextureManager;
 
     private BitmapTextureAtlas mTexture;
-    public HashMap<String, TextureRegion> mGfxMap = new HashMap<String, TextureRegion>();
+    public static HashMap<String, TextureRegion> mGfxMap = new HashMap<String, TextureRegion>();
 
     public GraphicElementFactory(Context context, VertexBufferObjectManager vertexBufferObjectManager,
             TextureManager textureManager) {
@@ -43,8 +43,10 @@ public class GraphicElementFactory {
             }
         }
 
-        // selection circle
+        // stuff to load
         loadGfx(128, 128, "selection.png");
+        loadGfx(128, 128, "crosshair.png");
+        loadGfx(64, 64, "muzzle_flash.png");
     }
 
     private void loadGfx(int textureWidth, int textureHeight, String imageName) {
@@ -57,18 +59,20 @@ public class GraphicElementFactory {
         }
     }
 
-    public void addGameElement(Scene scene, GameElement gameElement, InputManager inputManager) {
+    public GameSprite addGameElement(Scene scene, GameElement gameElement, InputManager inputManager) {
         // create sprite
-        final Sprite sprite = new GameSprite(gameElement, inputManager, gameElement.getTilePosition().getXPosition(),
-                gameElement.getTilePosition().getYPosition(), mGfxMap.get(gameElement.getSpriteName()),
-                mVertexBufferObjectManager);
+        final GameSprite sprite = new GameSprite(gameElement, inputManager, gameElement.getTilePosition()
+                .getXPosition(), gameElement.getTilePosition().getYPosition(),
+                mGfxMap.get(gameElement.getSpriteName()), mVertexBufferObjectManager);
         gameElement.setSprite(sprite);
         scene.attachChild(sprite);
         scene.registerTouchArea(sprite);
+        return sprite;
     }
 
-    public Sprite createSprite(float x, float y, String spriteName) {
-        return new Sprite(x, y, mGfxMap.get(spriteName), mVertexBufferObjectManager);
+    public static Sprite createSprite(float x, float y, String spriteName,
+            VertexBufferObjectManager vertexBufferObjectManager) {
+        return new Sprite(x, y, GraphicElementFactory.mGfxMap.get(spriteName), vertexBufferObjectManager);
     }
 
 }

@@ -5,21 +5,28 @@ import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
+import android.util.Log;
+
+import com.glevel.wwii.game.GraphicElementFactory;
 import com.glevel.wwii.game.InputManager;
 
 public class GameSprite extends Sprite {
 
     private final GameElement mGameElement;
-    private static final int ACTION_MOVE_THRESHOLD = 150;
+    private static final int ACTION_MOVE_THRESHOLD = 100;
     private static final int VALID_ORDER_THRESHOLD = 100;
     private InputManager mInputManager;
-    private boolean isGrabbed = false;
+    private boolean mIsGrabbed = false;
+    private boolean mIsSelected = false;
+    private Sprite specialSprite;
+    public boolean isFiring;
 
     public GameSprite(GameElement gameElement, InputManager inputManager, float pX, float pY,
             ITextureRegion pTextureRegion, VertexBufferObjectManager mVertexBufferObjectManager) {
         super(pX, pY, pTextureRegion, mVertexBufferObjectManager);
         mGameElement = gameElement;
         mInputManager = inputManager;
+        addMuzzleFlashSprite();
     }
 
     @Override
@@ -30,27 +37,32 @@ public class GameSprite extends Sprite {
             // element is selected
             mInputManager.onSelectGameElement(this);
             this.setAlpha(0.8f);
+            mIsSelected = true;
             break;
         case TouchEvent.ACTION_MOVE:
-            if (!isGrabbed && Math.abs(pTouchAreaLocalX) + Math.abs(pTouchAreaLocalY) > ACTION_MOVE_THRESHOLD) {
+            if (mIsSelected && !mIsGrabbed
+                    && Math.abs(pTouchAreaLocalX) + Math.abs(pTouchAreaLocalY) > ACTION_MOVE_THRESHOLD) {
                 // element is dragged
-                isGrabbed = true;
+                mIsGrabbed = true;
             }
-            mInputManager.updateOrderLine(this, pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
+            if (mIsSelected && mIsGrabbed) {
+                mInputManager.updateOrderLine(this, pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
+            }
             break;
         case TouchEvent.ACTION_UP:
-            if (isGrabbed) {
+            if (mIsGrabbed) {
                 // cancel if small distance
                 if (Math.abs(pSceneTouchEvent.getX() - getX()) + Math.abs(pSceneTouchEvent.getY() - getY()) > VALID_ORDER_THRESHOLD) {
                     // give order to unit
                     mInputManager.giveOrderToUnit(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
                 }
-            } else {
-                // mInputManager.giveHideOrder(this);
             }
             mInputManager.hideOrderLine();
-            isGrabbed = false;
-            this.setAlpha(1.0f);
+            mIsGrabbed = false;
+            if (mIsSelected) {
+                this.setAlpha(1.0f);
+                mIsSelected = false;
+            }
             break;
         }
         return true;
@@ -58,6 +70,24 @@ public class GameSprite extends Sprite {
 
     public GameElement getGameElement() {
         return mGameElement;
+    }
+
+    public void addMuzzleFlashSprite() {
+
+        specialSprite = GraphicElementFactory.createSprite(0, 0, "muzzle_flash.png", getVertexBufferObjectManager());
+        specialSprite.setVisible(false);
+        attachChild(specialSprite);
+    }
+
+    @Override
+    protected void onManagedUpdate(float pSecondsElapsed) {
+        super.onManagedUpdate(pSecondsElapsed);
+        if (isFiring) {
+            specialSprite.setVisible(true);
+            isFiring = false;
+        } else if (specialSprite.isVisible()) {
+            specialSprite.setVisible(false);
+        }
     }
 
 }

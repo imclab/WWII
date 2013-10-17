@@ -1,6 +1,7 @@
 package com.glevel.wwii.activities;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.andengine.engine.camera.ZoomCamera;
 import org.andengine.engine.handler.timer.ITimerCallback;
@@ -26,6 +27,7 @@ import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.ui.activity.LayoutGameActivity;
+import org.andengine.util.color.Color;
 import org.andengine.util.debug.Debug;
 
 import android.app.Dialog;
@@ -47,16 +49,16 @@ import com.glevel.wwii.game.GraphicElementFactory;
 import com.glevel.wwii.game.InputManager;
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.data.UnitsData;
+import com.glevel.wwii.game.graphics.Crosshair;
 import com.glevel.wwii.game.graphics.SelectionCircle;
 import com.glevel.wwii.game.model.Battle;
 import com.glevel.wwii.game.model.GameElement;
 import com.glevel.wwii.game.model.GameSprite;
 import com.glevel.wwii.game.model.Player;
 import com.glevel.wwii.game.model.map.Tile;
-import com.glevel.wwii.game.model.orders.DefendOrder;
 import com.glevel.wwii.game.model.orders.FireOrder;
 import com.glevel.wwii.game.model.orders.MoveOrder;
-import com.glevel.wwii.game.model.orders.RunOrder;
+import com.glevel.wwii.game.model.orders.Order;
 import com.glevel.wwii.game.model.units.Soldier;
 import com.glevel.wwii.game.model.units.Unit;
 import com.glevel.wwii.game.model.units.Unit.Experience;
@@ -70,7 +72,7 @@ public class GameActivity extends LayoutGameActivity {
     private static final float CAMERA_ZOOM_MAX = 2.0f;
     private static final float CAMERA_ZOOM_MIN = 0.5f;
 
-    private Scene mScene;
+    public Scene mScene;
     private ZoomCamera mCamera;
 
     private Dialog mLoadingScreen;
@@ -82,6 +84,8 @@ public class GameActivity extends LayoutGameActivity {
 
     private Battle battle;
     public ViewGroup mSelectedUnitLayout;
+
+    public List<GameSprite> lstUnits = new ArrayList<GameSprite>();
 
     @Override
     public EngineOptions onCreateEngineOptions() {
@@ -101,6 +105,12 @@ public class GameActivity extends LayoutGameActivity {
         Unit e = UnitsData.buildScout(ArmiesData.USA, Experience.elite).copy();
         e.setTilePosition(t);
         lstUnits.add(e);
+        Tile t2 = new Tile();
+        t2.setxPosition(200);
+        t2.setyPosition(200);
+        Unit e2 = UnitsData.buildHMG(ArmiesData.USA, Experience.elite).copy();
+        e2.setTilePosition(t2);
+        lstUnits.add(e2);
         p.setUnits(lstUnits);
         battle.getPlayers().add(p);
     }
@@ -136,6 +146,7 @@ public class GameActivity extends LayoutGameActivity {
             public void run() {
                 if (selectedElement == null) {
                     mSelectedUnitLayout.setVisibility(View.GONE);
+                    crosshair.setVisible(false);
                     return;
                 }
                 Unit unit = (Unit) selectedElement.getGameElement();
@@ -200,6 +211,27 @@ public class GameActivity extends LayoutGameActivity {
                 ((TextView) mSelectedUnitLayout.findViewById(R.id.unitAction)).setText(unit.getCurrentAction().name());
 
                 mSelectedUnitLayout.setVisibility(View.VISIBLE);
+
+                Order o = unit.getOrder();
+                if (o != null) {
+                    if (o instanceof FireOrder) {
+                        FireOrder f = (FireOrder) o;
+                        crosshair.setColor(Color.RED);
+                        crosshair.setPosition(f.getTarget().getSprite().getX() - crosshair.getWidth() / 2, f
+                                .getTarget().getSprite().getY()
+                                - crosshair.getHeight() / 2);
+                        crosshair.setVisible(true);
+                    } else if (o instanceof MoveOrder) {
+                        MoveOrder f = (MoveOrder) o;
+                        crosshair.setColor(Color.GREEN);
+                        crosshair.setPosition(f.getxDestination() - crosshair.getWidth() / 2, f.getyDestination()
+                                - crosshair.getHeight() / 2);
+                        crosshair.setVisible(true);
+                    }
+                } else {
+                    crosshair.setVisible(false);
+                }
+
             }
         });
     }
@@ -209,53 +241,27 @@ public class GameActivity extends LayoutGameActivity {
     private GraphicElementFactory gameElementFactory;
     private InputManager mInputManager;
     private Dialog mGameMenuDialog;
+    public Crosshair crosshair, crossHairLine;
+
+    public static int gameCounter = 0;
 
     private void updateGame() {
+        gameCounter++;
+        if (gameCounter > 999) {
+            gameCounter = 0;
+        }
         for (Player player : battle.getPlayers()) {
             for (Unit unit : player.getUnits()) {
                 if (unit.getOrder() != null) {
                     // resolve unit action
-                    resolveUnitOrder(unit);
+                    unit.resolveOrder();
                 } else {
                     // no order : take initiative
-                    makeUnitTakeInitiative(unit);
+                    unit.takeInitiative();
                 }
             }
         }
         updateSelectedElementLayout(mInputManager.selectedElement);
-    }
-
-    private void resolveUnitOrder(Unit unit) {
-        if (unit.getPanic() > 0) {
-            // test if the unit can react
-            if (unit.getExperience().ordinal() < unit.getPanic()) {
-                // the unit is hiding
-                unit.hide();
-                return;
-            }
-        }
-
-        if (unit.getOrder() instanceof MoveOrder) {
-            // unit is moving
-            unit.move(false);
-        } else if (unit.getOrder() instanceof RunOrder) {
-            // unit is running
-            unit.move(true);
-        } else if (unit.getOrder() instanceof DefendOrder) {
-            // TODO check if there are enemies to be shot
-            unit.hide();
-        } else if (unit.getOrder() instanceof FireOrder) {
-            // TODO check if unit can still shoot on enemy
-            unit.hide();
-            unit.setOrder(new DefendOrder(unit));
-        }
-    }
-
-    private void makeUnitTakeInitiative(Unit unit) {
-        // TODO
-        // add order
-        unit.setOrder(new DefendOrder(unit));
-        resolveUnitOrder(unit);
     }
 
     @Override
@@ -342,17 +348,25 @@ public class GameActivity extends LayoutGameActivity {
 
         for (Player player : battle.getPlayers()) {
             for (GameElement gameElement : player.getUnits()) {
-                gameElementFactory.addGameElement(mScene, gameElement, mInputManager);
+                lstUnits.add(gameElementFactory.addGameElement(mScene, gameElement, mInputManager));
             }
         }
 
         selectionCircle = new SelectionCircle(gameElementFactory.mGfxMap.get("selection.png"),
                 getVertexBufferObjectManager());
 
+        crosshair = new Crosshair(gameElementFactory.mGfxMap.get("crosshair.png"), getVertexBufferObjectManager());
+        crosshair.setVisible(false);
+        mScene.attachChild(crosshair);
+        crossHairLine = new Crosshair(gameElementFactory.mGfxMap.get("crosshair.png"), getVertexBufferObjectManager());
+        crossHairLine.setVisible(false);
+        mScene.attachChild(crossHairLine);
+
         orderLine = new Line(0, 0, 0, 0, getVertexBufferObjectManager());
         orderLine.setColor(0.5f, 1f, 0.3f);
         orderLine.setLineWidth(50.0f);
         mScene.attachChild(orderLine);
+        
         pOnCreateSceneCallback.onCreateSceneFinished(mScene);
     }
 
@@ -371,8 +385,8 @@ public class GameActivity extends LayoutGameActivity {
         mGameMenuDialog.setContentView(R.layout.dialog_game_menu);
         mGameMenuDialog.setCancelable(true);
         // surrender button
-        Animation a = AnimationUtils.loadAnimation(this, R.anim.bottom_in);
-        mGameMenuDialog.findViewById(R.id.surrenderButton).setAnimation(a);
+        Animation menuButtonAnimation = AnimationUtils.loadAnimation(this, R.anim.bottom_in);
+        mGameMenuDialog.findViewById(R.id.surrenderButton).setAnimation(menuButtonAnimation);
         mGameMenuDialog.findViewById(R.id.surrenderButton).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -390,7 +404,7 @@ public class GameActivity extends LayoutGameActivity {
             }
         });
         // resume game button
-        mGameMenuDialog.findViewById(R.id.resumeGameButton).setAnimation(a);
+        mGameMenuDialog.findViewById(R.id.resumeGameButton).setAnimation(menuButtonAnimation);
         mGameMenuDialog.findViewById(R.id.resumeGameButton).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -398,7 +412,7 @@ public class GameActivity extends LayoutGameActivity {
             }
         });
         // exit button
-        mGameMenuDialog.findViewById(R.id.exitButton).setAnimation(a);
+        mGameMenuDialog.findViewById(R.id.exitButton).setAnimation(menuButtonAnimation);
         mGameMenuDialog.findViewById(R.id.exitButton).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -408,7 +422,7 @@ public class GameActivity extends LayoutGameActivity {
             }
         });
         mGameMenuDialog.show();
-        a.start();
+        menuButtonAnimation.start();
     }
 
     @Override

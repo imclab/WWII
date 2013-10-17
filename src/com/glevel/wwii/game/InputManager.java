@@ -9,12 +9,14 @@ import org.andengine.input.touch.detector.PinchZoomDetector.IPinchZoomDetectorLi
 import org.andengine.input.touch.detector.ScrollDetector;
 import org.andengine.input.touch.detector.ScrollDetector.IScrollDetectorListener;
 import org.andengine.input.touch.detector.SurfaceScrollDetector;
+import org.andengine.util.color.Color;
 
 import android.view.MotionEvent;
 
 import com.glevel.wwii.activities.GameActivity;
 import com.glevel.wwii.game.model.GameSprite;
 import com.glevel.wwii.game.model.orders.DefendOrder;
+import com.glevel.wwii.game.model.orders.FireOrder;
 import com.glevel.wwii.game.model.orders.MoveOrder;
 import com.glevel.wwii.game.model.units.Unit;
 
@@ -151,7 +153,12 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
         if (selectedElement != null) {
             if (selectedElement.getGameElement() instanceof Unit) {
                 Unit unit = (Unit) selectedElement.getGameElement();
-                unit.setOrder(new MoveOrder(unit, x, y));
+                GameSprite g = getElementAtCoordinates(x, y);
+                if (g != null && g.getGameElement() instanceof Unit && g != selectedElement) {
+                    unit.setOrder(new FireOrder(unit, (Unit) g.getGameElement()));
+                } else {
+                    unit.setOrder(new MoveOrder(unit, x, y));
+                }
             }
         }
     }
@@ -160,11 +167,37 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
         mGameActivity.orderLine.setPosition(gameSprite.getX(), gameSprite.getY(), x, y);
         // TODO set color
         // add anims
+        GameSprite g = getElementAtCoordinates(x, y);
+        if (g != null && g != gameSprite) {
+            mGameActivity.orderLine.setColor(Color.RED);
+            mGameActivity.crossHairLine.setColor(Color.RED);
+            mGameActivity.crossHairLine.setPosition(x - mGameActivity.crossHairLine.getWidth() / 2, y
+                    - mGameActivity.crossHairLine.getHeight() / 2);
+            mGameActivity.crossHairLine.setVisible(true);
+        } else {
+            mGameActivity.orderLine.setColor(Color.GREEN);
+            mGameActivity.crossHairLine.setColor(Color.GREEN);
+            mGameActivity.crossHairLine.setPosition(x - mGameActivity.crossHairLine.getWidth() / 2, y
+                    - mGameActivity.crossHairLine.getHeight() / 2);
+            mGameActivity.crossHairLine.setVisible(true);
+        }
         mGameActivity.orderLine.setVisible(true);
     }
 
     public void hideOrderLine() {
         mGameActivity.orderLine.setVisible(false);
+        mGameActivity.crossHairLine.setVisible(false);
     }
 
+    private static final int HOVER_UNIT_RADIUS_THRESHOLD = 60;
+
+    private GameSprite getElementAtCoordinates(float x, float y) {
+        for (GameSprite g : mGameActivity.lstUnits) {
+            if (Math.abs(g.getX() - x) < HOVER_UNIT_RADIUS_THRESHOLD
+                    && Math.abs(g.getY() - y) < HOVER_UNIT_RADIUS_THRESHOLD) {
+                return g;
+            }
+        }
+        return null;
+    }
 }

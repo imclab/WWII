@@ -1,7 +1,5 @@
 package com.glevel.wwii.game.model;
 
-import org.andengine.entity.sprite.Sprite;
-
 import com.glevel.wwii.game.model.map.Tile;
 
 public abstract class GameElement {
@@ -9,13 +7,13 @@ public abstract class GameElement {
     protected final int name;
     private final String spriteName;
     private Tile tilePosition;
-    protected Sprite sprite;
+    protected GameSprite sprite;
 
-    public Sprite getSprite() {
+    public GameSprite getSprite() {
         return sprite;
     }
 
-    public void setSprite(Sprite sprite) {
+    public void setSprite(GameSprite sprite) {
         this.sprite = sprite;
     }
 
