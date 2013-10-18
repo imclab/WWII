@@ -41,7 +41,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.glevel.wwii.R;
@@ -52,7 +51,6 @@ import com.glevel.wwii.game.data.UnitsData;
 import com.glevel.wwii.game.graphics.Crosshair;
 import com.glevel.wwii.game.graphics.SelectionCircle;
 import com.glevel.wwii.game.model.Battle;
-import com.glevel.wwii.game.model.GameElement;
 import com.glevel.wwii.game.model.GameSprite;
 import com.glevel.wwii.game.model.Player;
 import com.glevel.wwii.game.model.map.Tile;
@@ -97,7 +95,9 @@ public class GameActivity extends LayoutGameActivity {
 
     private void createTestData() {
         battle = new Battle();
+        // me
         Player p = new Player();
+        p.setArmy(ArmiesData.USA);
         ArrayList<Unit> lstUnits = new ArrayList<Unit>();
         Tile t = new Tile();
         t.setxPosition(100);
@@ -108,10 +108,31 @@ public class GameActivity extends LayoutGameActivity {
         Tile t2 = new Tile();
         t2.setxPosition(200);
         t2.setyPosition(200);
-        Unit e2 = UnitsData.buildHMG(ArmiesData.USA, Experience.elite).copy();
+        Unit e2 = UnitsData.buildRifleMan(ArmiesData.USA, Experience.veteran).copy();
         e2.setTilePosition(t2);
         lstUnits.add(e2);
         p.setUnits(lstUnits);
+        p.setArmyIndex(0);
+        battle.getPlayers().add(p);
+
+        // enemy
+        p = new Player();
+        p.setArmy(ArmiesData.GERMANY);
+        lstUnits = new ArrayList<Unit>();
+        t = new Tile();
+        t.setxPosition(400);
+        t.setyPosition(400);
+        e = UnitsData.buildScout(ArmiesData.GERMANY, Experience.recruit).copy();
+        e.setTilePosition(t);
+        lstUnits.add(e);
+        t2 = new Tile();
+        t2.setxPosition(600);
+        t2.setyPosition(600);
+        e2 = UnitsData.buildRifleMan(ArmiesData.GERMANY, Experience.veteran).copy();
+        e2.setTilePosition(t2);
+        lstUnits.add(e2);
+        p.setUnits(lstUnits);
+        p.setArmyIndex(1);
         battle.getPlayers().add(p);
     }
 
@@ -151,8 +172,8 @@ public class GameActivity extends LayoutGameActivity {
                 }
                 Unit unit = (Unit) selectedElement.getGameElement();
 
-                // image
-                ((ImageView) mSelectedUnitLayout.findViewById(R.id.unitImage)).setImageResource(unit.getImage());
+                // hide enemies info
+                updateUnitInfoVisibility(unit.getArmy() == battle.getPlayers().get(0).getArmy());
 
                 // name
                 if (unit instanceof Soldier) {
@@ -227,6 +248,8 @@ public class GameActivity extends LayoutGameActivity {
                         crosshair.setPosition(f.getxDestination() - crosshair.getWidth() / 2, f.getyDestination()
                                 - crosshair.getHeight() / 2);
                         crosshair.setVisible(true);
+                    } else {
+                        crosshair.setVisible(false);
                     }
                 } else {
                     crosshair.setVisible(false);
@@ -234,6 +257,14 @@ public class GameActivity extends LayoutGameActivity {
 
             }
         });
+    }
+
+    private void updateUnitInfoVisibility(boolean isAlly) {
+        int visibility = isAlly ? View.VISIBLE : View.GONE;
+        ((TextView) mSelectedUnitLayout.findViewById(R.id.unitExperience)).setVisibility(visibility);
+        ((TextView) mSelectedUnitLayout.findViewById(R.id.unitMainWeaponAmmo)).setVisibility(visibility);
+        ((TextView) mSelectedUnitLayout.findViewById(R.id.unitSecondaryWeaponAmmo)).setVisibility(visibility);
+        ((TextView) mSelectedUnitLayout.findViewById(R.id.unitFrags)).setVisibility(visibility);
     }
 
     private Font mFont;
@@ -347,18 +378,20 @@ public class GameActivity extends LayoutGameActivity {
         mScene.attachChild(fpsText);
 
         for (Player player : battle.getPlayers()) {
-            for (GameElement gameElement : player.getUnits()) {
-                lstUnits.add(gameElementFactory.addGameElement(mScene, gameElement, mInputManager));
+            for (Unit unit : player.getUnits()) {
+                lstUnits.add(gameElementFactory.addGameElement(mScene, unit, mInputManager,
+                        (player.getArmyIndex() == 0)));
             }
         }
 
-        selectionCircle = new SelectionCircle(gameElementFactory.mGfxMap.get("selection.png"),
+        selectionCircle = new SelectionCircle(GraphicElementFactory.mGfxMap.get("selection.png"),
                 getVertexBufferObjectManager());
 
-        crosshair = new Crosshair(gameElementFactory.mGfxMap.get("crosshair.png"), getVertexBufferObjectManager());
+        crosshair = new Crosshair(GraphicElementFactory.mGfxMap.get("crosshair.png"), getVertexBufferObjectManager());
         crosshair.setVisible(false);
         mScene.attachChild(crosshair);
-        crossHairLine = new Crosshair(gameElementFactory.mGfxMap.get("crosshair.png"), getVertexBufferObjectManager());
+        crossHairLine = new Crosshair(GraphicElementFactory.mGfxMap.get("crosshair.png"),
+                getVertexBufferObjectManager());
         crossHairLine.setVisible(false);
         mScene.attachChild(crossHairLine);
 
@@ -366,7 +399,7 @@ public class GameActivity extends LayoutGameActivity {
         orderLine.setColor(0.5f, 1f, 0.3f);
         orderLine.setLineWidth(50.0f);
         mScene.attachChild(orderLine);
-        
+
         pOnCreateSceneCallback.onCreateSceneFinished(mScene);
     }
 

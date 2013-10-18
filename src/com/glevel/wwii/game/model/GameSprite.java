@@ -5,8 +5,6 @@ import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
-import android.util.Log;
-
 import com.glevel.wwii.game.GraphicElementFactory;
 import com.glevel.wwii.game.InputManager;
 
@@ -18,6 +16,9 @@ public class GameSprite extends Sprite {
     private InputManager mInputManager;
     private boolean mIsGrabbed = false;
     private boolean mIsSelected = false;
+    private boolean canBeDragged = false;
+    private boolean wasSelected = false;
+
     private Sprite specialSprite;
     public boolean isFiring;
 
@@ -35,12 +36,13 @@ public class GameSprite extends Sprite {
         switch (pSceneTouchEvent.getAction()) {
         case TouchEvent.ACTION_DOWN:
             // element is selected
+            wasSelected = mInputManager.selectedElement != null;
             mInputManager.onSelectGameElement(this);
             this.setAlpha(0.8f);
             mIsSelected = true;
             break;
         case TouchEvent.ACTION_MOVE:
-            if (mIsSelected && !mIsGrabbed
+            if (canBeDragged && mIsSelected && !mIsGrabbed
                     && Math.abs(pTouchAreaLocalX) + Math.abs(pTouchAreaLocalY) > ACTION_MOVE_THRESHOLD) {
                 // element is dragged
                 mIsGrabbed = true;
@@ -56,6 +58,9 @@ public class GameSprite extends Sprite {
                     // give order to unit
                     mInputManager.giveOrderToUnit(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
                 }
+            } else if (wasSelected
+                    && Math.abs(pSceneTouchEvent.getX() - getX()) + Math.abs(pSceneTouchEvent.getY() - getY()) < VALID_ORDER_THRESHOLD) {
+                mInputManager.giveHideOrder(this);
             }
             mInputManager.hideOrderLine();
             mIsGrabbed = false;
@@ -73,8 +78,7 @@ public class GameSprite extends Sprite {
     }
 
     public void addMuzzleFlashSprite() {
-
-        specialSprite = GraphicElementFactory.createSprite(0, 0, "muzzle_flash.png", getVertexBufferObjectManager());
+        specialSprite = GraphicElementFactory.createSprite(35, -50, "muzzle_flash.png", getVertexBufferObjectManager());
         specialSprite.setVisible(false);
         attachChild(specialSprite);
     }
@@ -88,6 +92,10 @@ public class GameSprite extends Sprite {
         } else if (specialSprite.isVisible()) {
             specialSprite.setVisible(false);
         }
+    }
+
+    public void setCanBeDragged(boolean canBeDragged) {
+        this.canBeDragged = canBeDragged;
     }
 
 }

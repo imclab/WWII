@@ -19,6 +19,7 @@ import com.glevel.wwii.game.model.orders.DefendOrder;
 import com.glevel.wwii.game.model.orders.FireOrder;
 import com.glevel.wwii.game.model.orders.MoveOrder;
 import com.glevel.wwii.game.model.units.Unit;
+import com.glevel.wwii.game.model.units.Unit.InjuryState;
 
 public class InputManager implements IOnSceneTouchListener, IScrollDetectorListener, IPinchZoomDetectorListener {
 
@@ -137,8 +138,9 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
             selectedElement.detachChild(mGameActivity.selectionCircle);
         }
         selectedElement = gameSprite;
-        gameSprite.attachChild(mGameActivity.selectionCircle);
+        mGameActivity.selectionCircle.setColor(selectedElement.getGameElement().getSelectionColor());
         mGameActivity.selectionCircle.setZIndex(-10);
+        gameSprite.attachChild(mGameActivity.selectionCircle);
     }
 
     public void giveHideOrder(GameSprite gameSprite) {
@@ -154,7 +156,9 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
             if (selectedElement.getGameElement() instanceof Unit) {
                 Unit unit = (Unit) selectedElement.getGameElement();
                 GameSprite g = getElementAtCoordinates(x, y);
-                if (g != null && g.getGameElement() instanceof Unit && g != selectedElement) {
+                if (g != null && g.getGameElement() instanceof Unit && g != selectedElement
+                        && ((Unit) g.getGameElement()).getHealth() != InjuryState.dead
+                        && ((Unit) g.getGameElement()).getArmy() != ((Unit) selectedElement.getGameElement()).getArmy()) {
                     unit.setOrder(new FireOrder(unit, (Unit) g.getGameElement()));
                 } else {
                     unit.setOrder(new MoveOrder(unit, x, y));
@@ -168,7 +172,9 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
         // TODO set color
         // add anims
         GameSprite g = getElementAtCoordinates(x, y);
-        if (g != null && g != gameSprite) {
+        if (g != null && g != gameSprite && g.getGameElement() instanceof Unit
+                && ((Unit) g.getGameElement()).getHealth() != InjuryState.dead
+                && ((Unit) g.getGameElement()).getArmy() != ((Unit) selectedElement.getGameElement()).getArmy()) {
             mGameActivity.orderLine.setColor(Color.RED);
             mGameActivity.crossHairLine.setColor(Color.RED);
             mGameActivity.crossHairLine.setPosition(x - mGameActivity.crossHairLine.getWidth() / 2, y

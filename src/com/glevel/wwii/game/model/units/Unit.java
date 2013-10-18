@@ -28,6 +28,7 @@ public abstract class Unit extends GameElement {
     private Order order;
     private Action currentAction;
     private int panic;
+    private int aimCounter = 0;
 
     public Unit(ArmiesData army, int name, int image, Experience experience, List<Weapon> weapons, int moveSpeed) {
         super(name, "soldier.png");
@@ -242,17 +243,23 @@ public abstract class Unit extends GameElement {
         Weapon weapon = getWeapons().get(0);
 
         if (weapon.getAmmoAmount() > 0) {
-            updateUnitRotation(f.getTarget().getSprite().getX(), f.getTarget().getSprite().getY());
+            Unit target = f.getTarget();
+            if (target.getHealth() == InjuryState.dead) {
+                // if target is dead, stop to shoot
+                setOrder(new DefendOrder(this));
+            }
+
+            updateUnitRotation(target.getSprite().getX(), target.getSprite().getY());
 
             if (weapon.getReloadCounter() > 0) {
-                if (f.getAimCounter() == 0) {
-                    f.setAimCounter(-10);
+                if (aimCounter == 0) {
+                    aimCounter = -10;
                     // aiming
                     this.currentAction = Action.aiming;
-                } else if (f.getAimCounter() < 0) {
-                    f.setAimCounter(f.getAimCounter() + 1);
-                    if (f.getAimCounter() == 0) {
-                        f.setAimCounter(weapon.getCadence());
+                } else if (aimCounter < 0) {
+                    aimCounter++;
+                    if (aimCounter == 0) {
+                        aimCounter = weapon.getCadence();
                     }
                     // aiming
                     this.currentAction = Action.aiming;
@@ -264,50 +271,60 @@ public abstract class Unit extends GameElement {
 
                     weapon.setAmmoAmount(weapon.getAmmoAmount() - 1);
                     weapon.setReloadCounter(weapon.getReloadCounter() - 1);
-                    f.setAimCounter(f.getAimCounter() - 1);
+                    aimCounter--;
                     this.currentAction = Action.firing;
 
                     // if not a lot of ammo, more aiming !
                     if (weapon.getAmmoAmount() == weapon.getMagazineSize() * 2) {
-                        weapon.setCadence(weapon.getCadence() / 2);
+                        weapon.setCadence(Math.max(1, weapon.getCadence() / 2));
                     }
 
-                    Unit target = f.getTarget();
                     // increase target panic // TODO depends on experience
                     if (target.getPanic() < 10) {
                         target.setPanic(target.getPanic() + 1);
                     }
 
                     // does it touch the target ?
+                    if (target.getHealth() != InjuryState.dead) {
 
-                    float distance = GameUtils.getDistanceBetween(target, this);
-                    // TODO add protection
-                    int tohit = FightLogic.HIT_CHANCES[getExperience().ordinal()][FightLogic
-                            .distanceToRangeCategory(distance)];
-                    if (target.getCurrentAction() == Action.hiding || target.getCurrentAction() == Action.reloading) {
-                        // target is hiding
-                        tohit -= 10;
-                    }
+                        float distance = GameUtils.getDistanceBetween(target, this);
+                        // TODO add protection
+                        int tohit = FightLogic.HIT_CHANCES[getExperience().ordinal()][FightLogic
+                                .distanceToRangeCategory(distance)];
+                        if (target.getCurrentAction() == Action.hiding || target.getCurrentAction() == Action.reloading) {
+                            // target is hiding
+                            tohit -= 10;
+                        }
 
-                    // TODO tohit depends on target's experience
+                        // tohit depends on target's experience
+                        tohit -= 5 * target.getExperience().ordinal();
 
-                    int diceRoll = (int) (Math.random() * 100);
-                    if (diceRoll < tohit) {
-                        // hit !
-                        if (diceRoll < tohit / 4) {
-                            // critical !
-                            target.setHealth(InjuryState.dead);
-                        } else if (diceRoll < tohit / 2) {
-                            // heavy !
-                            target.setHealth(InjuryState.values()[Math.min(InjuryState.dead.ordinal(), target
-                                    .getHealth().ordinal() + 2)]);
-                        } else {
-                            if (Math.random() < 0.5) {
-                                // light injured
+                        int diceRoll = (int) (Math.random() * 100);
+                        if (diceRoll < tohit) {
+                            // hit !
+                            if (diceRoll < tohit / 4) {
+                                // critical !
+                                target.setHealth(InjuryState.dead);
+                            } else if (diceRoll < tohit / 2) {
+                                // heavy !
                                 target.setHealth(InjuryState.values()[Math.min(InjuryState.dead.ordinal(), target
-                                        .getHealth().ordinal() + 1)]);
+                                        .getHealth().ordinal() + 2)]);
                             } else {
-                                // nothing
+                                if (Math.random() < 0.5) {
+                                    // light injured
+                                    target.setHealth(InjuryState.values()[Math.min(InjuryState.dead.ordinal(), target
+                                            .getHealth().ordinal() + 1)]);
+                                } else {
+                                    // nothing
+                                }
+                            }
+
+                            if (target.getHealth() == InjuryState.dead) {
+                                // target is dead
+                                target.getSprite().setCanBeDragged(false);
+
+                                // add frag
+                                setFrags(getFrags() + 1);
                             }
                         }
                     }
@@ -337,8 +354,10 @@ public abstract class Unit extends GameElement {
     public void hide() {
         this.currentAction = Action.hiding;
 
-        if (this.panic > 0) {
-            this.panic--;
+        if (GameActivity.gameCounter % 3 == 0) {
+            if (this.panic > 0) {
+                this.panic--;
+            }
         }
     }
 
@@ -353,7 +372,7 @@ public abstract class Unit extends GameElement {
     public void resolveOrder() {
         if (this.panic > 0) {
             // test if the unit can react
-            if (this.experience.ordinal() < this.panic) {
+            if (Math.random() * 10 + getExperience().ordinal() < this.panic) {
                 // the unit is hiding
                 hide();
                 return;
@@ -367,9 +386,7 @@ public abstract class Unit extends GameElement {
             // TODO check if there are enemies to be shot
             hide();
         } else if (this.order instanceof FireOrder) {
-            // TODO check if unit can still shoot on enemy
             fire();
-            // this.order = new DefendOrder(this);
         }
     }
 
@@ -379,4 +396,11 @@ public abstract class Unit extends GameElement {
         // resolveUnitOrder(unit);
     }
 
+    public int getAimCounter() {
+        return aimCounter;
+    }
+
+    public void setAimCounter(int aimCounter) {
+        this.aimCounter = aimCounter;
+    }
 }

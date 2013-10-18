@@ -59,11 +59,12 @@ public class GraphicElementFactory {
         }
     }
 
-    public GameSprite addGameElement(Scene scene, GameElement gameElement, InputManager inputManager) {
+    public GameSprite addGameElement(Scene scene, GameElement gameElement, InputManager inputManager, boolean isMySquad) {
         // create sprite
         final GameSprite sprite = new GameSprite(gameElement, inputManager, gameElement.getTilePosition()
                 .getXPosition(), gameElement.getTilePosition().getYPosition(),
                 mGfxMap.get(gameElement.getSpriteName()), mVertexBufferObjectManager);
+        sprite.setCanBeDragged(isMySquad);
         gameElement.setSprite(sprite);
         scene.attachChild(sprite);
         scene.registerTouchArea(sprite);
