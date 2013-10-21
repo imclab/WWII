@@ -2,11 +2,14 @@ package com.glevel.wwii.game.model.units;
 
 import java.util.List;
 
+import org.andengine.extension.tmx.TMXLayer;
+
 import com.glevel.wwii.R;
 import com.glevel.wwii.activities.GameActivity;
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.logic.FightLogic;
+import com.glevel.wwii.game.model.Battle;
 import com.glevel.wwii.game.model.GameElement;
 import com.glevel.wwii.game.model.orders.DefendOrder;
 import com.glevel.wwii.game.model.orders.FireOrder;
@@ -43,6 +46,10 @@ public abstract class Unit extends GameElement {
         this.frags = 0;
         this.requisitionPrice = calculateUnitPrice();
     }
+
+    protected abstract float getUnitSpeed();
+
+    protected abstract float getUnitTerrainProtection();
 
     private int calculateUnitPrice() {
         int basePrice = 5;
@@ -90,10 +97,6 @@ public abstract class Unit extends GameElement {
 
     public static enum Action {
         waiting, walking, running, firing, hiding, reloading, aiming
-    }
-
-    public static enum Rank {
-        ally, enemy, neutral
     }
 
     public InjuryState getHealth() {
@@ -206,7 +209,7 @@ public abstract class Unit extends GameElement {
         float dx = moveOrder.getxDestination() - sprite.getX();
         float dy = moveOrder.getyDestination() - sprite.getY();
         double angle = Math.atan(dy / dx);
-        float dd = moveSpeed * 200 * 0.1f;
+        float dd = moveSpeed * 10 * 0.1f * getUnitSpeed();
         boolean hasArrived = false;
         if (Math.sqrt(dx * dx + dy * dy) <= dd) {
             hasArrived = true;
@@ -288,16 +291,22 @@ public abstract class Unit extends GameElement {
                     if (target.getHealth() != InjuryState.dead) {
 
                         float distance = GameUtils.getDistanceBetween(target, this);
-                        // TODO add protection
                         int tohit = FightLogic.HIT_CHANCES[getExperience().ordinal()][FightLogic
                                 .distanceToRangeCategory(distance)];
+
+                        // add terrain protection
+                        tohit *= target.getUnitTerrainProtection();
+
                         if (target.getCurrentAction() == Action.hiding || target.getCurrentAction() == Action.reloading) {
-                            // target is hiding
-                            tohit -= 10;
+                            // target is hiding : tohit depends on target's
+                            // experience
+                            tohit -= 5 * (target.getExperience().ordinal() + 1);
                         }
 
-                        // tohit depends on target's experience
-                        tohit -= 5 * target.getExperience().ordinal();
+                        // tohit depends on weapon range
+                        if (distance > weapon.getRange() / 2) {
+                            tohit -= 10;
+                        }
 
                         int diceRoll = (int) (Math.random() * 100);
                         if (diceRoll < tohit) {
@@ -307,13 +316,11 @@ public abstract class Unit extends GameElement {
                                 target.setHealth(InjuryState.dead);
                             } else if (diceRoll < tohit / 2) {
                                 // heavy !
-                                target.setHealth(InjuryState.values()[Math.min(InjuryState.dead.ordinal(), target
-                                        .getHealth().ordinal() + 2)]);
+                                target.applyDamage(2);
                             } else {
                                 if (Math.random() < 0.5) {
                                     // light injured
-                                    target.setHealth(InjuryState.values()[Math.min(InjuryState.dead.ordinal(), target
-                                            .getHealth().ordinal() + 1)]);
+                                    target.applyDamage(1);
                                 } else {
                                     // nothing
                                 }
@@ -322,6 +329,7 @@ public abstract class Unit extends GameElement {
                             if (target.getHealth() == InjuryState.dead) {
                                 // target is dead
                                 target.getSprite().setCanBeDragged(false);
+                                target.setOrder(null);
 
                                 // add frag
                                 setFrags(getFrags() + 1);
@@ -351,6 +359,10 @@ public abstract class Unit extends GameElement {
         }
     }
 
+    private void applyDamage(int damage) {
+        health = InjuryState.values()[Math.min(InjuryState.dead.ordinal(), health.ordinal() + damage)];
+    }
+
     public void hide() {
         this.currentAction = Action.hiding;
 
@@ -369,7 +381,7 @@ public abstract class Unit extends GameElement {
         this.panic = panic;
     }
 
-    public void resolveOrder() {
+    public void resolveOrder(Battle battle, TMXLayer tmxLayer) {
         if (this.panic > 0) {
             // test if the unit can react
             if (Math.random() * 10 + getExperience().ordinal() < this.panic) {
@@ -380,10 +392,14 @@ public abstract class Unit extends GameElement {
         }
 
         if (this.order instanceof MoveOrder) {
-            // unit is moving
-            move();
+            // TODO update A*
         } else if (this.order instanceof DefendOrder) {
-            // TODO check if there are enemies to be shot
+            for (Unit u : battle.getEnemies(this)) {
+                if (u.getHealth() != InjuryState.dead && GameUtils.canSee(battle.getMap(), this, u, tmxLayer)) {
+                    setOrder(new FireOrder(this, u));
+                    return;
+                }
+            }
             hide();
         } else if (this.order instanceof FireOrder) {
             fire();
@@ -391,9 +407,7 @@ public abstract class Unit extends GameElement {
     }
 
     public void takeInitiative() {
-        // TODO
-        // unit.setOrder(new DefendOrder(unit));
-        // resolveUnitOrder(unit);
+        setOrder(new DefendOrder(this));
     }
 
     public int getAimCounter() {

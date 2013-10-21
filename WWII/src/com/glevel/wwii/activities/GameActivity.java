@@ -1,9 +1,9 @@
 package com.glevel.wwii.activities;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.andengine.engine.camera.ZoomCamera;
+import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.engine.options.EngineOptions;
@@ -15,6 +15,9 @@ import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
 import org.andengine.entity.util.FPSCounter;
+import org.andengine.extension.physics.box2d.PhysicsConnector;
+import org.andengine.extension.physics.box2d.PhysicsFactory;
+import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.extension.tmx.TMXLayer;
 import org.andengine.extension.tmx.TMXLoader;
 import org.andengine.extension.tmx.TMXLoader.ITMXTilePropertiesListener;
@@ -36,6 +39,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -43,23 +47,33 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.glevel.wwii.R;
+import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.GraphicElementFactory;
 import com.glevel.wwii.game.InputManager;
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.data.UnitsData;
 import com.glevel.wwii.game.graphics.Crosshair;
+import com.glevel.wwii.game.graphics.Protection;
 import com.glevel.wwii.game.graphics.SelectionCircle;
 import com.glevel.wwii.game.model.Battle;
 import com.glevel.wwii.game.model.GameSprite;
 import com.glevel.wwii.game.model.Player;
+import com.glevel.wwii.game.model.GameElement.Rank;
+import com.glevel.wwii.game.model.map.Map;
 import com.glevel.wwii.game.model.map.Tile;
+import com.glevel.wwii.game.model.orders.DefendOrder;
 import com.glevel.wwii.game.model.orders.FireOrder;
 import com.glevel.wwii.game.model.orders.MoveOrder;
 import com.glevel.wwii.game.model.orders.Order;
 import com.glevel.wwii.game.model.units.Soldier;
 import com.glevel.wwii.game.model.units.Unit;
 import com.glevel.wwii.game.model.units.Unit.Experience;
+import com.glevel.wwii.game.model.units.Unit.InjuryState;
 import com.glevel.wwii.game.model.units.Weapon;
 import com.glevel.wwii.views.CustomAlertDialog;
 
@@ -75,15 +89,13 @@ public class GameActivity extends LayoutGameActivity {
 
     private Dialog mLoadingScreen;
 
-    private TMXTiledMap mTMXTiledMap;
+    public TMXTiledMap mTMXTiledMap;
 
     public Sprite selectionCircle;
     public Line orderLine;
 
-    private Battle battle;
+    public Battle battle;
     public ViewGroup mSelectedUnitLayout;
-
-    public List<GameSprite> lstUnits = new ArrayList<GameSprite>();
 
     @Override
     public EngineOptions onCreateEngineOptions() {
@@ -95,21 +107,14 @@ public class GameActivity extends LayoutGameActivity {
 
     private void createTestData() {
         battle = new Battle();
+
         // me
         Player p = new Player();
         p.setArmy(ArmiesData.USA);
         ArrayList<Unit> lstUnits = new ArrayList<Unit>();
-        Tile t = new Tile();
-        t.setxPosition(100);
-        t.setyPosition(100);
         Unit e = UnitsData.buildScout(ArmiesData.USA, Experience.elite).copy();
-        e.setTilePosition(t);
         lstUnits.add(e);
-        Tile t2 = new Tile();
-        t2.setxPosition(200);
-        t2.setyPosition(200);
         Unit e2 = UnitsData.buildRifleMan(ArmiesData.USA, Experience.veteran).copy();
-        e2.setTilePosition(t2);
         lstUnits.add(e2);
         p.setUnits(lstUnits);
         p.setArmyIndex(0);
@@ -119,21 +124,22 @@ public class GameActivity extends LayoutGameActivity {
         p = new Player();
         p.setArmy(ArmiesData.GERMANY);
         lstUnits = new ArrayList<Unit>();
-        t = new Tile();
-        t.setxPosition(400);
-        t.setyPosition(400);
         e = UnitsData.buildScout(ArmiesData.GERMANY, Experience.recruit).copy();
-        e.setTilePosition(t);
         lstUnits.add(e);
-        t2 = new Tile();
-        t2.setxPosition(600);
-        t2.setyPosition(600);
         e2 = UnitsData.buildRifleMan(ArmiesData.GERMANY, Experience.veteran).copy();
-        e2.setTilePosition(t2);
         lstUnits.add(e2);
         p.setUnits(lstUnits);
         p.setArmyIndex(1);
         battle.getPlayers().add(p);
+    }
+
+    private void placeElements() {
+        for (Player player : battle.getPlayers()) {
+            for (Unit unit : player.getUnits()) {
+                TMXTile t = tmxLayer.getTMXTile((int) (Math.random() * 20), (int) (Math.random() * 20));
+                unit.setTilePosition(battle.getMap().getTiles()[t.getTileRow()][t.getTileColumn()]);
+            }
+        }
     }
 
     @Override
@@ -234,7 +240,7 @@ public class GameActivity extends LayoutGameActivity {
                 mSelectedUnitLayout.setVisibility(View.VISIBLE);
 
                 Order o = unit.getOrder();
-                if (o != null) {
+                if (unit.getRank() == Rank.ally && o != null) {
                     if (o instanceof FireOrder) {
                         FireOrder f = (FireOrder) o;
                         crosshair.setColor(Color.RED);
@@ -273,6 +279,9 @@ public class GameActivity extends LayoutGameActivity {
     private InputManager mInputManager;
     private Dialog mGameMenuDialog;
     public Crosshair crosshair, crossHairLine;
+    public Protection protection;
+    public TMXLayer tmxLayer;
+    private PhysicsWorld mPhysicsWorld;
 
     public static int gameCounter = 0;
 
@@ -283,12 +292,31 @@ public class GameActivity extends LayoutGameActivity {
         }
         for (Player player : battle.getPlayers()) {
             for (Unit unit : player.getUnits()) {
-                if (unit.getOrder() != null) {
-                    // resolve unit action
-                    unit.resolveOrder();
-                } else {
-                    // no order : take initiative
-                    unit.takeInitiative();
+                if (unit.getHealth() != InjuryState.dead) {
+                    if (unit.getOrder() != null) {
+                        // resolve unit action
+                        unit.resolveOrder(battle, tmxLayer);
+                    } else {
+                        // no order : take initiative
+                        unit.takeInitiative();
+                    }
+                }
+            }
+        }
+        updateSelectedElementLayout(mInputManager.selectedElement);
+    }
+
+    private void updateMoves() {
+        for (Player player : battle.getPlayers()) {
+            for (Unit unit : player.getUnits()) {
+                if (unit.getOrder() != null && unit.getOrder() instanceof MoveOrder) {
+                    // move unit
+                    unit.move();
+                    TMXTile newTile = tmxLayer.getTMXTileAt(unit.getSprite().getX(), unit.getSprite().getY());
+                    if (newTile.getTileX() != unit.getTilePosition().getTileX()
+                            || newTile.getTileY() != unit.getTilePosition().getTileY()) {
+                        unit.setTilePosition(battle.getMap().getTiles()[newTile.getTileRow()][newTile.getTileColumn()]);
+                    }
                 }
             }
         }
@@ -319,9 +347,13 @@ public class GameActivity extends LayoutGameActivity {
         pOnCreateResourcesCallback.onCreateResourcesFinished();
     }
 
+    private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+
     @Override
     public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) throws Exception {
         mScene = new Scene();
+
+        this.mPhysicsWorld = new PhysicsWorld(new Vector2(0, 0), false);
 
         // update game logic loop
         TimerHandler spriteTimerHandler;
@@ -359,8 +391,19 @@ public class GameActivity extends LayoutGameActivity {
             Debug.e(e);
         }
 
-        final TMXLayer tmxLayer = this.mTMXTiledMap.getTMXLayers().get(0);
+        tmxLayer = this.mTMXTiledMap.getTMXLayers().get(0);
         mScene.attachChild(tmxLayer);
+
+        // init map
+        Map m = new Map();
+        Tile[][] lstTiles = new Tile[tmxLayer.getTileRows()][tmxLayer.getTileColumns()];
+        for (TMXTile[] tt : tmxLayer.getTMXTiles()) {
+            for (TMXTile t : tt) {
+                lstTiles[t.getTileRow()][t.getTileColumn()] = new Tile(t, mTMXTiledMap);
+            }
+        }
+        m.setTiles(lstTiles);
+        battle.setMap(m);
 
         /* Make the camera not exceed the bounds of the TMXEntity. */
         this.mCamera.setBounds(0, 0, tmxLayer.getHeight(), tmxLayer.getWidth());
@@ -377,10 +420,13 @@ public class GameActivity extends LayoutGameActivity {
         }));
         mScene.attachChild(fpsText);
 
+        placeElements();
         for (Player player : battle.getPlayers()) {
             for (Unit unit : player.getUnits()) {
-                lstUnits.add(gameElementFactory.addGameElement(mScene, unit, mInputManager,
-                        (player.getArmyIndex() == 0)));
+                GameSprite g = gameElementFactory.addGameElement(mScene, unit, mInputManager,
+                        (player.getArmyIndex() == 0));
+                Body body = PhysicsFactory.createCircleBody(this.mPhysicsWorld, g, BodyType.DynamicBody, FIXTURE_DEF);
+                this.mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(g, body, true, true));
             }
         }
 
@@ -394,11 +440,26 @@ public class GameActivity extends LayoutGameActivity {
                 getVertexBufferObjectManager());
         crossHairLine.setVisible(false);
         mScene.attachChild(crossHairLine);
+        protection = new Protection(GraphicElementFactory.mGfxMap.get("protection.png"), getVertexBufferObjectManager());
+        protection.setVisible(false);
+        mScene.attachChild(protection);
 
         orderLine = new Line(0, 0, 0, 0, getVertexBufferObjectManager());
         orderLine.setColor(0.5f, 1f, 0.3f);
         orderLine.setLineWidth(50.0f);
         mScene.attachChild(orderLine);
+
+        // Render loop
+        mScene.registerUpdateHandler(new IUpdateHandler() {
+            @Override
+            public void reset() {
+            }
+
+            @Override
+            public void onUpdate(final float pSecondsElapsed) {
+                updateMoves();
+            }
+        });
 
         pOnCreateSceneCallback.onCreateSceneFinished(mScene);
     }

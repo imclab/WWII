@@ -7,7 +7,21 @@ import com.glevel.wwii.game.data.NamesData;
 
 public class Soldier extends Unit {
 
-    private String realName;
+    // move
+    private static final float MOVE_INJURY_FACTOR = 0.25f;
+    private static final float MOVE_SPEED_ON_CONCRETE_FACTOR = 1.0f;
+    private static final float MOVE_SPEED_ON_GRASS_FACTOR = 1.0f;
+    private static final float MOVE_SPEED_ON_MUD_FACTOR = 0.5f;
+    private static final float MOVE_SPEED_ON_WATER_FACTOR = 0.1f;
+
+    // terrain protection
+    private static final float HOUSE_PROTECTION_FACTOR = 0.5f;
+    private static final float BUSH_PROTECTION_FACTOR = 0.9f;
+    private static final float FIELD_PROTECTION_FACTOR = 0.9f;
+    private static final float WALL_PROTECTION_FACTOR = 0.6f;
+    private static final float TREE_PROTECTION_FACTOR = 0.7f;
+
+    private final String realName;
 
     public Soldier(ArmiesData army, int name, int image, Experience experience, List<Weapon> weapons, int moveSpeed) {
         super(army, name, image, experience, weapons, moveSpeed);
@@ -18,6 +32,12 @@ public class Soldier extends Unit {
         return realName;
     }
 
+    /**
+     * Create a soldier's name with rank depending on nationality and
+     * experience.
+     * 
+     * @return name
+     */
     private String createRandomRealName() {
         String[][] names = null;
         switch (army) {
@@ -33,4 +53,40 @@ public class Soldier extends Unit {
         return h[(int) (Math.random() * (h.length - 1))];
     }
 
+    @Override
+    public float getUnitSpeed() {
+        // depends on health
+        float healthFactor = 1 - getHealth().ordinal() * MOVE_INJURY_FACTOR;
+        // depends on terrain
+        switch (getTilePosition().getGround()) {
+        case concrete:
+            return MOVE_SPEED_ON_CONCRETE_FACTOR * healthFactor;
+        case grass:
+            return MOVE_SPEED_ON_GRASS_FACTOR * healthFactor;
+        case mud:
+            return MOVE_SPEED_ON_MUD_FACTOR * healthFactor;
+        case water:
+            return MOVE_SPEED_ON_WATER_FACTOR * healthFactor;
+        }
+        return 0;
+    }
+
+    @Override
+    protected float getUnitTerrainProtection() {
+        if (getTilePosition().getTerrain() != null) {
+            switch (getTilePosition().getTerrain()) {
+            case house:
+                return HOUSE_PROTECTION_FACTOR;
+            case bush:
+                return BUSH_PROTECTION_FACTOR;
+            case wall:
+                return WALL_PROTECTION_FACTOR;
+            case field:
+                return FIELD_PROTECTION_FACTOR;
+            case tree:
+                return TREE_PROTECTION_FACTOR;
+            }
+        }
+        return 1.0f;
+    }
 }

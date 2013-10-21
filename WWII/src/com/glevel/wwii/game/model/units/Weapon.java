@@ -17,14 +17,14 @@ public class Weapon {
                               // reloading
     private int shootSpeed;
 
-    public Weapon(int name, int image, int apPower, int atPower, int range, int ammoAmount, int cadence,
+    public Weapon(int name, int image, int apPower, int atPower, int range, int nbMagazines, int cadence,
             int magazineSize, int reloadSpeed, int shootSpeed) {
         this.name = name;
         this.image = image;
         this.apPower = apPower;
         this.atPower = atPower;
         this.range = range;
-        this.ammoAmount = ammoAmount;
+        this.ammoAmount = nbMagazines * magazineSize;
         this.cadence = cadence;
         this.magazineSize = magazineSize;
         this.reloadCounter = magazineSize;
@@ -120,6 +120,14 @@ public class Weapon {
         return efficiencyValueToColor(atPower);
     }
 
+    public int getShootSpeed() {
+        return shootSpeed;
+    }
+
+    public void setShootSpeed(int shootSpeed) {
+        this.shootSpeed = shootSpeed;
+    }
+
     private int efficiencyValueToColor(int efficiency) {
         switch (efficiency) {
         case 1:
@@ -135,14 +143,6 @@ public class Weapon {
         default:
             return R.drawable.bg_unit_efficiency_black;
         }
-    }
-
-    public int getShootSpeed() {
-        return shootSpeed;
-    }
-
-    public void setShootSpeed(int shootSpeed) {
-        this.shootSpeed = shootSpeed;
     }
 
 }

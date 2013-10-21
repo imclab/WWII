@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.glevel.wwii.game.model.map.Map;
+import com.glevel.wwii.game.model.units.Unit;
 
 public class Battle {
 
@@ -60,6 +61,15 @@ public class Battle {
 
     public void setPlayers(List<Player> players) {
         this.players = players;
+    }
+
+    public List<Unit> getEnemies(Unit unit) {
+        for (Player p : players) {
+            if (p.getArmy() != unit.getArmy()) {
+                return p.getUnits();
+            }
+        }
+        return null;
     }
 
 }

@@ -1,5 +1,7 @@
 package com.glevel.wwii.game.model;
 
+import org.andengine.util.color.Color;
+
 import com.glevel.wwii.game.model.map.Tile;
 
 public abstract class GameElement {
@@ -8,6 +10,11 @@ public abstract class GameElement {
     private final String spriteName;
     private Tile tilePosition;
     protected GameSprite sprite;
+    private Rank rank;
+
+    public static enum Rank {
+        neutral, enemy, ally
+    }
 
     public GameSprite getSprite() {
         return sprite;
@@ -31,11 +38,32 @@ public abstract class GameElement {
     }
 
     public void setTilePosition(Tile tilePosition) {
+        if (this.tilePosition != null) {
+            this.tilePosition.setContent(null);
+        }
         this.tilePosition = tilePosition;
+        this.tilePosition.setContent(this);
     }
 
     public String getSpriteName() {
         return spriteName;
     }
 
+    public Color getSelectionColor() {
+        switch (rank) {
+        case enemy:
+            return Color.BLACK;
+        case ally:
+            return Color.WHITE;
+        }
+        return Color.YELLOW;
+    }
+
+    public Rank getRank() {
+        return rank;
+    }
+
+    public void setRank(Rank rank) {
+        this.rank = rank;
+    }
 }

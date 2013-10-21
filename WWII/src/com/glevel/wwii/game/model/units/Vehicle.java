@@ -6,43 +6,42 @@ import com.glevel.wwii.game.data.ArmiesData;
 
 public abstract class Vehicle extends Unit {
 
-	public Vehicle(ArmiesData army, int name, int image, Experience experience,
-			List<Weapon> weapons, int moveSpeed, VehicleType type, int armor,
-			int width, int height) {
-		super(army, name, image, experience, weapons, moveSpeed);
-		this.vehicleType = type;
-		this.armor = armor;
-		this.width = width;
-		this.height = height;
-	}
+    static enum VehicleType {
+        light, tank
+    }
 
-	static enum VehicleType {
-		light, tank
-	}
+    public Vehicle(ArmiesData army, int name, int image, Experience experience, List<Weapon> weapons, int moveSpeed,
+            VehicleType type, int armor, int width, int height) {
+        super(army, name, image, experience, weapons, moveSpeed);
+        this.vehicleType = type;
+        this.armor = armor;
+        this.width = width;
+        this.height = height;
+    }
 
-	private final VehicleType vehicleType;
-	private final int width;
-	private final int height;
-	private int armor;
+    private final VehicleType vehicleType;
+    private final int width;
+    private final int height;
+    private int armor;
 
-	public int getArmor() {
-		return armor;
-	}
+    public int getArmor() {
+        return armor;
+    }
 
-	public void setArmor(int armor) {
-		this.armor = armor;
-	}
+    public void setArmor(int armor) {
+        this.armor = armor;
+    }
 
-	public VehicleType getVehicleType() {
-		return vehicleType;
-	}
+    public VehicleType getVehicleType() {
+        return vehicleType;
+    }
 
-	public int getWidth() {
-		return width;
-	}
+    public int getWidth() {
+        return width;
+    }
 
-	public int getHeight() {
-		return height;
-	}
+    public int getHeight() {
+        return height;
+    }
 
 }

@@ -16,11 +16,11 @@ public class GameSprite extends Sprite {
     private InputManager mInputManager;
     private boolean mIsGrabbed = false;
     private boolean mIsSelected = false;
-    private boolean canBeDragged = false;
     private boolean wasSelected = false;
 
     private Sprite specialSprite;
     public boolean isFiring;
+    private boolean canBeDragged;
 
     public GameSprite(GameElement gameElement, InputManager inputManager, float pX, float pY,
             ITextureRegion pTextureRegion, VertexBufferObjectManager mVertexBufferObjectManager) {

@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 
 import com.glevel.wwii.activities.GameActivity;
 import com.glevel.wwii.game.model.GameSprite;
+import com.glevel.wwii.game.model.Player;
 import com.glevel.wwii.game.model.orders.DefendOrder;
 import com.glevel.wwii.game.model.orders.FireOrder;
 import com.glevel.wwii.game.model.orders.MoveOrder;
@@ -139,6 +140,7 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
         }
         selectedElement = gameSprite;
         mGameActivity.selectionCircle.setColor(selectedElement.getGameElement().getSelectionColor());
+        gameSprite.setZIndex(10);
         mGameActivity.selectionCircle.setZIndex(-10);
         gameSprite.attachChild(mGameActivity.selectionCircle);
     }
@@ -169,23 +171,34 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
 
     public void updateOrderLine(GameSprite gameSprite, float x, float y) {
         mGameActivity.orderLine.setPosition(gameSprite.getX(), gameSprite.getY(), x, y);
-        // TODO set color
-        // add anims
         GameSprite g = getElementAtCoordinates(x, y);
         if (g != null && g != gameSprite && g.getGameElement() instanceof Unit
                 && ((Unit) g.getGameElement()).getHealth() != InjuryState.dead
                 && ((Unit) g.getGameElement()).getArmy() != ((Unit) selectedElement.getGameElement()).getArmy()) {
+            // attack
             mGameActivity.orderLine.setColor(Color.RED);
             mGameActivity.crossHairLine.setColor(Color.RED);
             mGameActivity.crossHairLine.setPosition(x - mGameActivity.crossHairLine.getWidth() / 2, y
                     - mGameActivity.crossHairLine.getHeight() / 2);
             mGameActivity.crossHairLine.setVisible(true);
+            mGameActivity.protection.setVisible(false);
         } else {
-            mGameActivity.orderLine.setColor(Color.GREEN);
+            // move
+            if (mGameActivity.battle.getMap().getTiles()[mGameActivity.tmxLayer.getTMXTileAt(x, y).getTileRow()][mGameActivity.tmxLayer
+                    .getTMXTileAt(x, y).getTileColumn()].getTerrain() != null) {
+                // grants protection
+                mGameActivity.protection.setColor(Color.YELLOW);
+                mGameActivity.protection.setPosition(x - mGameActivity.protection.getWidth() / 2, y
+                        - mGameActivity.protection.getHeight() / 2);
+                mGameActivity.protection.setVisible(true);
+            }
+
             mGameActivity.crossHairLine.setColor(Color.GREEN);
             mGameActivity.crossHairLine.setPosition(x - mGameActivity.crossHairLine.getWidth() / 2, y
                     - mGameActivity.crossHairLine.getHeight() / 2);
             mGameActivity.crossHairLine.setVisible(true);
+
+            mGameActivity.orderLine.setColor(Color.GREEN);
         }
         mGameActivity.orderLine.setVisible(true);
     }
@@ -193,15 +206,18 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
     public void hideOrderLine() {
         mGameActivity.orderLine.setVisible(false);
         mGameActivity.crossHairLine.setVisible(false);
+        mGameActivity.protection.setVisible(false);
     }
 
     private static final int HOVER_UNIT_RADIUS_THRESHOLD = 60;
 
     private GameSprite getElementAtCoordinates(float x, float y) {
-        for (GameSprite g : mGameActivity.lstUnits) {
-            if (Math.abs(g.getX() - x) < HOVER_UNIT_RADIUS_THRESHOLD
-                    && Math.abs(g.getY() - y) < HOVER_UNIT_RADIUS_THRESHOLD) {
-                return g;
+        for (Player p : mGameActivity.battle.getPlayers()) {
+            for (Unit g : p.getUnits()) {
+                if (Math.abs(g.getSprite().getX() - x) < HOVER_UNIT_RADIUS_THRESHOLD
+                        && Math.abs(g.getSprite().getY() - y) < HOVER_UNIT_RADIUS_THRESHOLD) {
+                    return g.getSprite();
+                }
             }
         }
         return null;

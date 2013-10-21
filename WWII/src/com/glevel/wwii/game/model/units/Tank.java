@@ -14,4 +14,25 @@ public class Tank extends Vehicle {
                 TANK_VIRTUAL_HEIGHT);
     }
 
+    @Override
+    public float getUnitSpeed() {
+        // depends on health
+        float healthFactor = 1 - getHealth().ordinal() * 0.25f;
+        switch (getTilePosition().getGround()) {
+        case concrete:
+            return 1.0f * healthFactor;
+        case grass:
+            return 1.0f * healthFactor;
+        case mud:
+            return 0.6f * healthFactor;
+        case water:
+            return 0.1f * healthFactor;
+        }
+        return 0;
+    }
+
+    @Override
+    protected float getUnitTerrainProtection() {
+        return 1.0f;
+    }
 }

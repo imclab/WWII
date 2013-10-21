@@ -15,6 +15,7 @@ import android.content.Context;
 
 import com.glevel.wwii.game.model.Battle;
 import com.glevel.wwii.game.model.GameElement;
+import com.glevel.wwii.game.model.GameElement.Rank;
 import com.glevel.wwii.game.model.GameSprite;
 import com.glevel.wwii.game.model.Player;
 
@@ -47,6 +48,7 @@ public class GraphicElementFactory {
         loadGfx(128, 128, "selection.png");
         loadGfx(128, 128, "crosshair.png");
         loadGfx(64, 64, "muzzle_flash.png");
+        loadGfx(128, 128, "protection.png");
     }
 
     private void loadGfx(int textureWidth, int textureHeight, String imageName) {
@@ -61,9 +63,10 @@ public class GraphicElementFactory {
 
     public GameSprite addGameElement(Scene scene, GameElement gameElement, InputManager inputManager, boolean isMySquad) {
         // create sprite
-        final GameSprite sprite = new GameSprite(gameElement, inputManager, gameElement.getTilePosition()
-                .getXPosition(), gameElement.getTilePosition().getYPosition(),
-                mGfxMap.get(gameElement.getSpriteName()), mVertexBufferObjectManager);
+        final GameSprite sprite = new GameSprite(gameElement, inputManager, gameElement.getTilePosition().getTileX(),
+                gameElement.getTilePosition().getTileY(), mGfxMap.get(gameElement.getSpriteName()),
+                mVertexBufferObjectManager);
+        gameElement.setRank(isMySquad ? Rank.ally : Rank.enemy);
         sprite.setCanBeDragged(isMySquad);
         gameElement.setSprite(sprite);
         scene.attachChild(sprite);
