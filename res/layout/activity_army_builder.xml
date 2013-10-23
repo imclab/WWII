@@ -23,19 +23,13 @@
             android:gravity="left|center_vertical"
             android:text="@string/hire_troops" />
 
-        <com.glevel.wwii.views.CustomTextView
-            style="@style/ArmyBuilderSubTitle"
+        <com.glevel.wwii.views.CustomButton
+            android:id="@+id/startBattle"
+            style="@style/ArmyBuilderSmallButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/requisition_points" />
-
-        <com.glevel.wwii.views.CustomTextView
-            android:id="@+id/requisitionPoints"
-            style="@style/ArmyBuilderTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/requisitionPoints"
-            android:textSize="26sp" />
+            android:layout_marginRight="5dp"
+            android:text="@string/start_battle" />
     </LinearLayout>
 
     <LinearLayout
@@ -54,12 +48,36 @@
             android:layout_weight="1"
             android:orientation="vertical" >
 
-            <com.glevel.wwii.views.CustomTextView
-                style="@style/ArmyBuilderSubTitle"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:baselineAligned="false"
                 android:gravity="center"
-                android:text="@string/your_army" />
+                android:orientation="horizontal" >
+
+                <com.glevel.wwii.views.CustomTextView
+                    style="@style/ArmyBuilderSubTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left|center_vertical"
+                    android:text="@string/your_army" />
+
+                <com.glevel.wwii.views.CustomTextView
+                    style="@style/ArmyBuilderSubTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/requisition_points"
+                    android:textSize="14sp" />
+
+                <com.glevel.wwii.views.CustomTextView
+                    android:id="@+id/requisitionPoints"
+                    style="@style/ArmyBuilderTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/requisitionPoints"
+                    android:textSize="24sp" />
+            </LinearLayout>
 
             <ListView
                 android:id="@+id/myArmyList"
@@ -88,14 +106,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1" />
-
-            <com.glevel.wwii.views.CustomButton
-                android:id="@+id/startBattle"
-                style="@style/ArmyBuilderSmallButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center_horizontal"
-                android:text="@string/start_battle" />
         </LinearLayout>
     </LinearLayout>
 

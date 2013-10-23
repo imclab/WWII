@@ -14,7 +14,7 @@ import com.glevel.wwii.R;
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.model.units.Soldier;
 import com.glevel.wwii.game.model.units.Unit;
-import com.glevel.wwii.game.model.units.Weapon;
+import com.glevel.wwii.game.model.weapons.Weapon;
 
 public class UnitsArrayAdapter extends ArrayAdapter<Unit> {
 

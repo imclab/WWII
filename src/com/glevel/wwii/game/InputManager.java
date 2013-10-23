@@ -22,7 +22,6 @@ import com.glevel.wwii.game.model.orders.DefendOrder;
 import com.glevel.wwii.game.model.orders.FireOrder;
 import com.glevel.wwii.game.model.orders.MoveOrder;
 import com.glevel.wwii.game.model.units.Unit;
-import com.glevel.wwii.game.model.units.Unit.InjuryState;
 
 public class InputManager implements IOnSceneTouchListener, IScrollDetectorListener, IPinchZoomDetectorListener {
 
@@ -161,10 +160,10 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
                 Unit unit = (Unit) selectedElement.getGameElement();
                 GameSprite g = getElementAtCoordinates(x, y);
                 if (g != null && g.getGameElement() instanceof Unit && g != selectedElement
-                        && ((Unit) g.getGameElement()).getHealth() != InjuryState.dead
+                        && !((Unit) g.getGameElement()).isDead()
                         && ((Unit) g.getGameElement()).getArmy() != ((Unit) selectedElement.getGameElement()).getArmy()) {
                     unit.setOrder(new FireOrder(unit, (Unit) g.getGameElement()));
-                } else {
+                } else if (unit.canMove()) {
                     unit.setOrder(new MoveOrder(unit, x, y));
                 }
             }
@@ -176,8 +175,8 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
             // during deployment phase
             TMXTile tmxtile = mGameActivity.tmxLayer.getTMXTileAt(x, y);
             if (tmxtile != null
-                    && tmxtile.getTileColumn() >= mGameActivity.battle.getPlayers().get(0).getxPositionDeployment()
-                    && tmxtile.getTileColumn() <= mGameActivity.battle.getPlayers().get(0).getxPositionDeployment()
+                    && tmxtile.getTileColumn() >= mGameActivity.battle.getMe().getXPositionDeployment()
+                    && tmxtile.getTileColumn() <= mGameActivity.battle.getMe().getXPositionDeployment()
                             + GameUtils.DEPLOYMENT_ZONE_SIZE - 1) {
                 gameSprite.setPosition(x - gameSprite.getWidth() / 2, y - gameSprite.getHeight() / 2);
                 gameSprite.getGameElement().setTilePosition(
@@ -188,7 +187,7 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
             mGameActivity.orderLine.setPosition(gameSprite.getX(), gameSprite.getY(), x, y);
             GameSprite g = getElementAtCoordinates(x, y);
             if (g != null && g != gameSprite && g.getGameElement() instanceof Unit
-                    && ((Unit) g.getGameElement()).getHealth() != InjuryState.dead
+                    && !((Unit) g.getGameElement()).isDead()
                     && ((Unit) g.getGameElement()).getArmy() != ((Unit) selectedElement.getGameElement()).getArmy()) {
                 // attack
                 mGameActivity.orderLine.setColor(Color.RED);
@@ -196,6 +195,12 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
                 mGameActivity.crossHairLine.setPosition(x - mGameActivity.crossHairLine.getWidth() / 2, y
                         - mGameActivity.crossHairLine.getHeight() / 2);
                 mGameActivity.crossHairLine.setVisible(true);
+                mGameActivity.protection.setVisible(false);
+            } else if (!((Unit) gameSprite.getGameElement()).canMove()) {
+                // immobile units
+                mGameActivity.orderLine.setPosition(gameSprite.getX(), gameSprite.getY(), x, y);
+                mGameActivity.orderLine.setColor(Color.RED);
+                mGameActivity.crossHairLine.setVisible(false);
                 mGameActivity.protection.setVisible(false);
             } else {
                 // move

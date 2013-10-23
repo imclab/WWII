@@ -83,7 +83,7 @@ public class Player {
         return units;
     }
 
-    public int getxPositionDeployment() {
+    public int getXPositionDeployment() {
         return xPositionDeployment;
     }
 

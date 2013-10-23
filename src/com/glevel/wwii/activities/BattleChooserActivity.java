@@ -76,4 +76,10 @@ public class BattleChooserActivity extends WWActivity {
         }
     };
 
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, HomeActivity.class));
+        finish();
+    }
+
 }

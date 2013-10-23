@@ -3,6 +3,7 @@ package com.glevel.wwii.game.model.units;
 import java.util.List;
 
 import com.glevel.wwii.game.data.ArmiesData;
+import com.glevel.wwii.game.model.weapons.Weapon;
 
 public abstract class Vehicle extends Unit {
 

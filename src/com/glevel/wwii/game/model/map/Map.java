@@ -1,9 +1,12 @@
 package com.glevel.wwii.game.model.map;
 
+import org.andengine.extension.tmx.TMXLayer;
+
 public class Map {
 
     private Tile[][] tiles;
     private final boolean isAllyLeftSide = true;
+    private TMXLayer tmxLayer;
 
     public Tile[][] getTiles() {
         return tiles;
@@ -23,6 +26,14 @@ public class Map {
 
     public boolean isAllyLeftSide() {
         return isAllyLeftSide;
+    }
+
+    public TMXLayer getTmxLayer() {
+        return tmxLayer;
+    }
+
+    public void setTmxLayer(TMXLayer tmxLayer) {
+        this.tmxLayer = tmxLayer;
     }
 
 }

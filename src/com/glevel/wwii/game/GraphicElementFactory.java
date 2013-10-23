@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.extension.tmx.TMXTile;
 import org.andengine.opengl.texture.TextureManager;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
@@ -49,6 +50,7 @@ public class GraphicElementFactory {
         loadGfx(128, 128, "crosshair.png");
         loadGfx(64, 64, "muzzle_flash.png");
         loadGfx(128, 128, "protection.png");
+        loadGfx(128, 128, "explosion.png");
     }
 
     private void loadGfx(int textureWidth, int textureHeight, String imageName) {
@@ -61,11 +63,11 @@ public class GraphicElementFactory {
         }
     }
 
-    public GameSprite addGameElement(Scene scene, GameElement gameElement, InputManager inputManager, boolean isMySquad) {
+    public GameSprite addGameElement(Scene scene, GameElement gameElement, InputManager inputManager,
+            boolean isMySquad, TMXTile t) {
         // create sprite
-        final GameSprite sprite = new GameSprite(gameElement, inputManager, gameElement.getTilePosition().getTileX(),
-                gameElement.getTilePosition().getTileY(), mGfxMap.get(gameElement.getSpriteName()),
-                mVertexBufferObjectManager);
+        final GameSprite sprite = new GameSprite(gameElement, inputManager, t.getTileX(), t.getTileY(),
+                mGfxMap.get(gameElement.getSpriteName()), mVertexBufferObjectManager);
         gameElement.setSprite(sprite);
         gameElement.setRank(isMySquad ? Rank.ally : Rank.enemy);
         scene.attachChild(sprite);

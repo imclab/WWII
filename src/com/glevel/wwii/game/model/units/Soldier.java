@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.data.NamesData;
+import com.glevel.wwii.game.model.weapons.Weapon;
 
 public class Soldier extends Unit {
 
@@ -78,7 +79,7 @@ public class Soldier extends Unit {
     }
 
     @Override
-    protected float getUnitTerrainProtection() {
+    public float getUnitTerrainProtection() {
         if (getTilePosition().getTerrain() != null) {
             switch (getTilePosition().getTerrain()) {
             case house:

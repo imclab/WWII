@@ -3,6 +3,7 @@ package com.glevel.wwii.game.model.units;
 import java.util.List;
 
 import com.glevel.wwii.game.data.ArmiesData;
+import com.glevel.wwii.game.model.weapons.Weapon;
 
 public class Tank extends Vehicle {
 
@@ -32,7 +33,7 @@ public class Tank extends Vehicle {
     }
 
     @Override
-    protected float getUnitTerrainProtection() {
+    public float getUnitTerrainProtection() {
         return 1.0f;
     }
 

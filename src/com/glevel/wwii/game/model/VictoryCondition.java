@@ -11,7 +11,7 @@ public class VictoryCondition {
     }
 
     private VictoryType type;
-    private int pourcentageDestroyed;
+    private int percentageToKill;
     private int objectiveXPosition;
     private int objectiveYPosition;
     private int timeToHoldObjective;
@@ -20,11 +20,11 @@ public class VictoryCondition {
     /**
      * Constructor annihilation
      * 
-     * @param pourcentageDestroyed
+     * @param percentageToKill
      */
-    public VictoryCondition(int pourcentageDestroyed) {
+    public VictoryCondition(int percentageToKill) {
         type = VictoryType.annihilation;
-        this.pourcentageDestroyed = pourcentageDestroyed;
+        this.percentageToKill = percentageToKill;
     }
 
     /**
@@ -32,13 +32,14 @@ public class VictoryCondition {
      * 
      * @param objectiveXPosition
      * @param objectiveYPosition
-     * @param timeHold
+     * @param timeToHold
+     *            in seconds
      */
-    public VictoryCondition(int objectiveXPosition, int objectiveYPosition, int timeHold) {
+    public VictoryCondition(int objectiveXPosition, int objectiveYPosition, int timeToHold) {
         type = VictoryType.takenadhold;
         this.objectiveXPosition = objectiveXPosition;
         this.objectiveYPosition = objectiveYPosition;
-        this.timeToHoldObjective = timeHold;
+        this.timeToHoldObjective = timeToHold;
     }
 
     /**
@@ -73,7 +74,7 @@ public class VictoryCondition {
                 }
             }
             // check if objective is reached
-            if (100 * nbKilled / enemies.size() > pourcentageDestroyed) {
+            if (100 * nbKilled / enemies.size() >= percentageToKill) {
                 return true;
             }
             break;

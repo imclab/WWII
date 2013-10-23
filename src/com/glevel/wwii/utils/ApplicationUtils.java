@@ -10,6 +10,8 @@ import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -97,6 +99,20 @@ public class ApplicationUtils {
         positiveButton.setTypeface(WWApplication.FONTS.main);
         Button neutralButton = dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
         neutralButton.setTypeface(WWApplication.FONTS.main);
+    }
+
+    public static void showToast(Context context, int textResourceId, int duration) {
+        // setup custom toast view
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View layout = inflater.inflate(R.layout.custom_toast, null);
+        TextView text = (TextView) layout.findViewById(R.id.text);
+        text.setText(textResourceId);
+
+        Toast toast = new Toast(context);
+        // toast.setGravity(Gravity.CE, 0, 0);
+        toast.setDuration(duration);
+        toast.setView(layout);
+        toast.show();
     }
 
 }

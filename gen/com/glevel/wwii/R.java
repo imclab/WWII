@@ -79,12 +79,12 @@ public final class R {
         public static final int map_0=0x7f020021;
     }
     public static final class id {
-        public static final int aboutBlog=0x7f090031;
+        public static final int aboutBlog=0x7f090032;
         public static final int aboutButton=0x7f090018;
-        public static final int aboutContact=0x7f090032;
-        public static final int aboutCredits=0x7f090030;
+        public static final int aboutContact=0x7f090033;
+        public static final int aboutCredits=0x7f090031;
         public static final int appIcon=0x7f090011;
-        public static final int availableTroopsList=0x7f090004;
+        public static final int availableTroopsList=0x7f090005;
         public static final int backButton=0x7f090020;
         public static final int backgroundVideo=0x7f090010;
         public static final int battleButton=0x7f090016;
@@ -93,52 +93,53 @@ public final class R {
         public static final int cancelButton=0x7f09002e;
         public static final int easyRadioBtn=0x7f09001d;
         public static final int enemyArmyList=0x7f09000b;
-        public static final int exitButton=0x7f090037;
+        public static final int exitButton=0x7f090038;
         public static final int finishDeployment=0x7f09000e;
         public static final int hardRadioBtn=0x7f09001f;
         public static final int header=0x7f090009;
         public static final int leaveReport=0x7f09000a;
-        public static final int loadingDots=0x7f090033;
+        public static final int loadingDots=0x7f090034;
         public static final int lstMaps=0x7f090007;
-        public static final int mapImage=0x7f09003d;
-        public static final int mapName=0x7f09003c;
+        public static final int mapImage=0x7f09003e;
+        public static final int mapName=0x7f09003d;
         public static final int mediumRadioBtn=0x7f09001e;
         public static final int message=0x7f09002d;
         public static final int multiplayerButton=0x7f090013;
         public static final int musicOff=0x7f09001a;
         public static final int musicOn=0x7f09001b;
         public static final int musicVolume=0x7f090019;
-        public static final int myArmyList=0x7f090003;
+        public static final int myArmyList=0x7f090004;
         public static final int okButton=0x7f09002f;
-        public static final int quote=0x7f090034;
+        public static final int quote=0x7f090035;
         public static final int radioDifficulty=0x7f09001c;
         public static final int radioGroupArmy=0x7f090006;
-        public static final int requisitionPoints=0x7f090002;
-        public static final int resumeGameButton=0x7f090035;
+        public static final int requisitionPoints=0x7f090003;
+        public static final int resumeGameButton=0x7f090036;
         public static final int rootLayout=0x7f090000;
         public static final int selectedUnit=0x7f09000f;
         public static final int settingsButton=0x7f090014;
         public static final int settingsLayout=0x7f090017;
         public static final int soloButton=0x7f090012;
-        public static final int startBattle=0x7f090005;
+        public static final int startBattle=0x7f090002;
         public static final int surfaceView=0x7f09000c;
-        public static final int surrenderButton=0x7f090036;
+        public static final int surrenderButton=0x7f090037;
+        public static final int text=0x7f090030;
         public static final int title=0x7f090001;
-        public static final int unitAction=0x7f09003b;
+        public static final int unitAction=0x7f09003c;
         public static final int unitExperience=0x7f090023;
-        public static final int unitFrags=0x7f09003a;
+        public static final int unitFrags=0x7f09003b;
         public static final int unitImage=0x7f090022;
         public static final int unitMainWeapon=0x7f090025;
         public static final int unitMainWeaponAP=0x7f090027;
         public static final int unitMainWeaponAT=0x7f090028;
-        public static final int unitMainWeaponAmmo=0x7f090038;
+        public static final int unitMainWeaponAmmo=0x7f090039;
         public static final int unitMainWeaponName=0x7f090026;
         public static final int unitName=0x7f090021;
         public static final int unitPrice=0x7f090024;
         public static final int unitSecondaryWeapon=0x7f090029;
         public static final int unitSecondaryWeaponAP=0x7f09002b;
         public static final int unitSecondaryWeaponAT=0x7f09002c;
-        public static final int unitSecondaryWeaponAmmo=0x7f090039;
+        public static final int unitSecondaryWeaponAmmo=0x7f09003a;
         public static final int unitSecondaryWeaponName=0x7f09002a;
         public static final int victoryLabel=0x7f090008;
     }
@@ -151,143 +152,145 @@ public final class R {
         public static final int activity_splashscreen=0x7f030005;
         public static final int army_list_item=0x7f030006;
         public static final int custom_alert_dialog=0x7f030007;
-        public static final int dialog_about=0x7f030008;
-        public static final int dialog_game_loading=0x7f030009;
-        public static final int dialog_game_menu=0x7f03000a;
-        public static final int in_game_unit_layout=0x7f03000b;
-        public static final int map_chooser_item=0x7f03000c;
-        public static final int radio_army=0x7f03000d;
+        public static final int custom_toast=0x7f030008;
+        public static final int dialog_about=0x7f030009;
+        public static final int dialog_game_loading=0x7f03000a;
+        public static final int dialog_game_menu=0x7f03000b;
+        public static final int in_game_unit_layout=0x7f03000c;
+        public static final int map_chooser_item=0x7f03000d;
+        public static final int radio_army=0x7f03000e;
     }
     public static final class raw {
         public static final int video_bg_home=0x7f050000;
     }
     public static final class string {
-        public static final int about=0x7f070020;
-        public static final int about_blog=0x7f070011;
-        public static final int about_contact=0x7f070012;
-        public static final int about_credits=0x7f070010;
-        public static final int about_other_sources=0x7f070013;
+        public static final int about=0x7f070021;
+        public static final int about_blog=0x7f070012;
+        public static final int about_contact=0x7f070013;
+        public static final int about_credits=0x7f070011;
+        public static final int about_other_sources=0x7f070014;
         /**  About Dialog 
          */
-        public static final int about_title=0x7f07000f;
-        public static final int about_version=0x7f070014;
-        public static final int ap=0x7f070035;
+        public static final int about_title=0x7f070010;
+        public static final int about_version=0x7f070015;
+        public static final int ap=0x7f070036;
         public static final int app_name=0x7f070000;
         public static final int app_publisher=0x7f070001;
-        public static final int at=0x7f070036;
-        public static final int at_cannon=0x7f07005a;
-        public static final int available_troops=0x7f070029;
-        public static final int back=0x7f07001a;
-        public static final int battle_mode=0x7f070019;
+        public static final int at=0x7f070037;
+        public static final int at_cannon=0x7f07005b;
+        public static final int available_troops=0x7f07002a;
+        public static final int back=0x7f07001b;
+        public static final int battle_mode=0x7f07001a;
         /**  Battle Report 
          */
-        public static final int battle_report=0x7f070043;
+        public static final int battle_report=0x7f070044;
         /**  USA 
          */
-        public static final int bazooka=0x7f07005b;
-        public static final int bazookaM1A=0x7f07004e;
-        public static final int browningM2=0x7f07004c;
-        public static final int buy=0x7f07002f;
-        public static final int campaign=0x7f070018;
+        public static final int bazooka=0x7f07005c;
+        public static final int bazookaM1A=0x7f07004f;
+        public static final int browningM2=0x7f07004d;
+        public static final int buy=0x7f070030;
+        public static final int campaign=0x7f070019;
         public static final int cancel=0x7f070005;
-        public static final int cannon75=0x7f070049;
+        public static final int cannon75=0x7f07004a;
         /**  Battle Chooser 
          */
-        public static final int choose_army=0x7f070024;
-        public static final int choose_map=0x7f070025;
-        public static final int confirm_battle_message=0x7f07002c;
-        public static final int confirm_surrender_message=0x7f07003b;
-        public static final int confirm_transaction=0x7f070031;
-        public static final int contact_support_via=0x7f070008;
-        public static final int contact_title=0x7f070007;
-        public static final int defeat=0x7f070042;
-        public static final int deployment_phase=0x7f07003e;
-        public static final int difficult=0x7f070023;
-        public static final int difficulty=0x7f07001f;
-        public static final int easy=0x7f070021;
-        public static final int enemy_army=0x7f070045;
-        public static final int frags_number=0x7f070033;
-        public static final int game_paused=0x7f070039;
+        public static final int choose_army=0x7f070025;
+        public static final int choose_map=0x7f070026;
+        public static final int coming_soon=0x7f070006;
+        public static final int confirm_battle_message=0x7f07002d;
+        public static final int confirm_surrender_message=0x7f07003c;
+        public static final int confirm_transaction=0x7f070032;
+        public static final int contact_support_via=0x7f070009;
+        public static final int contact_title=0x7f070008;
+        public static final int defeat=0x7f070043;
+        public static final int deployment_phase=0x7f07003f;
+        public static final int difficult=0x7f070024;
+        public static final int difficulty=0x7f070020;
+        public static final int easy=0x7f070022;
+        public static final int enemy_army=0x7f070046;
+        public static final int frags_number=0x7f070034;
+        public static final int game_paused=0x7f07003a;
         /**  USA 
          */
-        public static final int garandM1=0x7f07004a;
+        public static final int garandM1=0x7f07004b;
         /**  Armies 
          */
-        public static final int german_army=0x7f070046;
-        public static final int go=0x7f070040;
+        public static final int german_army=0x7f070047;
+        public static final int go=0x7f070041;
         /**  Weapons 
          */
-        public static final int grenade=0x7f070048;
+        public static final int grenade=0x7f070049;
         /**  Army Builder 
          */
-        public static final int hire_troops=0x7f070026;
-        public static final int hmg=0x7f070058;
+        public static final int hire_troops=0x7f070027;
+        public static final int hmg=0x7f070059;
         public static final int id=0x7f070002;
-        public static final int leave_report=0x7f070044;
-        public static final int loading_dots=0x7f070038;
+        public static final int leave_report=0x7f070045;
+        public static final int loading_dots=0x7f070039;
         /**  Game 
          */
-        public static final int loading_game=0x7f070037;
+        public static final int loading_game=0x7f070038;
         /**  Contact 
          */
-        public static final int mail_address=0x7f070006;
+        public static final int mail_address=0x7f070007;
         /**  Germany 
          */
-        public static final int mauser=0x7f07004f;
-        public static final int medium=0x7f070022;
-        public static final int mg42=0x7f070051;
-        public static final int mortar=0x7f070059;
-        public static final int mortar50=0x7f07004d;
-        public static final int mortar81=0x7f070052;
-        public static final int mp40=0x7f070050;
-        public static final int multiplayer=0x7f070016;
-        public static final int music_off=0x7f07001d;
-        public static final int music_on=0x7f07001e;
+        public static final int mauser=0x7f070050;
+        public static final int medium=0x7f070023;
+        public static final int mg42=0x7f070052;
+        public static final int mortar=0x7f07005a;
+        public static final int mortar50=0x7f07004e;
+        public static final int mortar81=0x7f070053;
+        public static final int mp40=0x7f070051;
+        public static final int multiplayer=0x7f070017;
+        public static final int music_off=0x7f07001e;
+        public static final int music_on=0x7f07001f;
         /**  Settings 
          */
-        public static final int music_volume=0x7f07001c;
-        public static final int no_mail_client=0x7f070009;
-        public static final int no_slots_left=0x7f07002d;
-        public static final int no_troops=0x7f07002b;
-        public static final int not_enough_requisition=0x7f07002e;
-        public static final int pak43=0x7f070055;
+        public static final int music_volume=0x7f07001d;
+        public static final int no_mail_client=0x7f07000a;
+        public static final int no_slots_left=0x7f07002e;
+        public static final int no_troops=0x7f07002c;
+        public static final int not_enough_requisition=0x7f07002f;
+        public static final int pak43=0x7f070056;
         /**  Germany 
          */
-        public static final int pantherG=0x7f07005d;
-        public static final int panzerfaust=0x7f070054;
-        public static final int panzerschreck=0x7f070053;
+        public static final int pantherG=0x7f07005e;
+        public static final int panzerfaust=0x7f070055;
+        public static final int panzerschreck=0x7f070054;
         public static final int placeholder=0x7f070003;
-        public static final int points=0x7f070034;
+        public static final int points=0x7f070035;
         /**  Rate Dialog 
          */
-        public static final int rate_dont_want=0x7f07000a;
-        public static final int rate_later=0x7f07000b;
-        public static final int rate_message=0x7f07000e;
-        public static final int rate_now=0x7f07000c;
-        public static final int rate_title=0x7f07000d;
-        public static final int requisition_points=0x7f070027;
-        public static final int resume_game=0x7f07003c;
-        public static final int resume_saved_battle=0x7f07001b;
+        public static final int rate_dont_want=0x7f07000b;
+        public static final int rate_later=0x7f07000c;
+        public static final int rate_message=0x7f07000f;
+        public static final int rate_now=0x7f07000d;
+        public static final int rate_title=0x7f07000e;
+        public static final int requisition_points=0x7f070028;
+        public static final int resume_game=0x7f07003d;
+        public static final int resume_saved_battle=0x7f07001c;
         /**  Units 
          */
-        public static final int rifleman=0x7f070056;
-        public static final int save_exit=0x7f07003d;
-        public static final int scout=0x7f070057;
-        public static final int sell=0x7f070030;
-        public static final int settings=0x7f070017;
-        public static final int shermanM4A1=0x7f07005c;
+        public static final int rifleman=0x7f070057;
+        public static final int save_exit=0x7f07003e;
+        public static final int scout=0x7f070058;
+        public static final int sell=0x7f070031;
+        public static final int settings=0x7f070018;
+        public static final int shermanM4A1=0x7f07005d;
         /**  Home Screen 
          */
-        public static final int solo=0x7f070015;
-        public static final int start=0x7f07003f;
-        public static final int start_battle=0x7f07002a;
-        public static final int surrender=0x7f07003a;
-        public static final int thompson=0x7f07004b;
-        public static final int unit_image=0x7f070032;
-        public static final int usa_army=0x7f070047;
-        public static final int victory=0x7f070041;
+        public static final int solo=0x7f070016;
+        public static final int start=0x7f070040;
+        public static final int start_battle=0x7f07002b;
+        public static final int surrender=0x7f07003b;
+        public static final int thompson=0x7f07004c;
+        public static final int unit_image=0x7f070033;
+        public static final int usa_army=0x7f070048;
+        public static final int victory=0x7f070042;
         public static final int viewholder=0x7f070004;
-        public static final int your_army=0x7f070028;
+        public static final int your_army=0x7f070029;
     }
     public static final class style {
         /**  ABOUT 

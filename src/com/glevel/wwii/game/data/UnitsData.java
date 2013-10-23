@@ -8,7 +8,7 @@ import com.glevel.wwii.game.model.units.Soldier;
 import com.glevel.wwii.game.model.units.Tank;
 import com.glevel.wwii.game.model.units.Unit;
 import com.glevel.wwii.game.model.units.Unit.Experience;
-import com.glevel.wwii.game.model.units.Weapon;
+import com.glevel.wwii.game.model.weapons.Weapon;
 
 public class UnitsData {
 
@@ -108,7 +108,7 @@ public class UnitsData {
             return new Soldier(army, R.string.mortar, R.drawable.ic_launcher, experience, weapons, 1);
         case USA:
             weapons.add(WeaponsData.buildMortar50());
-            return new Soldier(army, R.string.mortar, R.drawable.ic_launcher, experience, weapons, 2);
+            return new Soldier(army, R.string.mortar, R.drawable.ic_launcher, experience, weapons, 1);
         }
         return null;
     }
@@ -120,22 +120,22 @@ public class UnitsData {
             weapons.add(WeaponsData.buildPak43());
             return new Soldier(army, R.string.at_cannon, R.drawable.ic_launcher, experience, weapons, 0);
         case USA:
-            weapons.add(WeaponsData.buildCannon75());
-            return new Soldier(army, R.string.at_cannon, R.drawable.ic_launcher, experience, weapons, 1);
+            weapons.add(WeaponsData.buildCannon75(15));
+            return new Soldier(army, R.string.at_cannon, R.drawable.ic_launcher, experience, weapons, 0);
         }
         return null;
     }
 
     public static Unit buildShermanM4A1(ArmiesData army, Experience experience) {
         List<Weapon> weapons = new ArrayList<Weapon>();
-        weapons.add(WeaponsData.buildCannon75());
+        weapons.add(WeaponsData.buildCannon75(20));
         weapons.add(WeaponsData.buildBrowningM2());
         return new Tank(army, R.string.shermanM4A1, R.drawable.ic_launcher, experience, weapons, 4, 2);
     }
 
     public static Unit buildPantherG(ArmiesData army, Experience experience) {
         List<Weapon> weapons = new ArrayList<Weapon>();
-        weapons.add(WeaponsData.buildCannon75());
+        weapons.add(WeaponsData.buildCannon75(25));
         weapons.add(WeaponsData.buildMG42());
         return new Tank(army, R.string.pantherG, R.drawable.ic_launcher, experience, weapons, 3, 3);
     }

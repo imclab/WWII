@@ -2,19 +2,18 @@ package com.glevel.wwii.game.model.units;
 
 import java.util.List;
 
-import org.andengine.extension.tmx.TMXLayer;
-
 import com.glevel.wwii.R;
 import com.glevel.wwii.activities.GameActivity;
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.data.ArmiesData;
-import com.glevel.wwii.game.logic.FightLogic;
 import com.glevel.wwii.game.model.Battle;
 import com.glevel.wwii.game.model.GameElement;
 import com.glevel.wwii.game.model.orders.DefendOrder;
 import com.glevel.wwii.game.model.orders.FireOrder;
 import com.glevel.wwii.game.model.orders.MoveOrder;
 import com.glevel.wwii.game.model.orders.Order;
+import com.glevel.wwii.game.model.weapons.TurretWeapon;
+import com.glevel.wwii.game.model.weapons.Weapon;
 
 public abstract class Unit extends GameElement {
 
@@ -49,7 +48,7 @@ public abstract class Unit extends GameElement {
 
     protected abstract float getUnitSpeed();
 
-    protected abstract float getUnitTerrainProtection();
+    public abstract float getUnitTerrainProtection();
 
     protected abstract int getUnitPrice();
 
@@ -194,22 +193,18 @@ public abstract class Unit extends GameElement {
             hasArrived = true;
             dd = (float) Math.sqrt(dx * dx + dy * dy);
         }
-        if (dx > 0) {
-            sprite.setPosition((float) (sprite.getX() + dd * Math.cos(angle)),
-                    (float) (sprite.getY() + dd * Math.sin(angle)));
-        } else {
-            sprite.setPosition((float) (sprite.getX() - dd * Math.cos(angle)),
-                    (float) (sprite.getY() + dd * Math.sin(angle + Math.PI)));
-        }
+
+        float[] newPosition = GameUtils.getCoordinatesAfterTranslation(sprite.getX(), sprite.getY(), dd, angle, dx > 0);
+        sprite.setPosition(newPosition[0], newPosition[1]);
 
         if (hasArrived) {
             setOrder(null);
         }
     }
 
-    private void updateUnitRotation(float xDestination, float yDestintation) {
+    private void updateUnitRotation(float xDestination, float yDestination) {
         float dx = xDestination - sprite.getX();
-        float dy = yDestintation - sprite.getY();
+        float dy = yDestination - sprite.getY();
         double angle = Math.atan(dy / dx);
         if (dx > 0) {
             sprite.setRotation((float) (angle * 180 / Math.PI + 90));
@@ -218,20 +213,30 @@ public abstract class Unit extends GameElement {
         }
     }
 
-    public void fire() {
+    public void fire(Battle battle) {
         FireOrder f = (FireOrder) order;
 
-        // get weapon // TODO
-        Weapon weapon = getWeapons().get(0);
+        Unit target = f.getTarget();
+        if (target.isDead()) {
+            // if target is dead, stop to shoot
+            order = new DefendOrder(this);
+            return;
+        }
 
-        if (weapon.getAmmoAmount() > 0) {
-            Unit target = f.getTarget();
-            if (target.getHealth() == InjuryState.dead) {
-                // if target is dead, stop to shoot
-                order = new DefendOrder(this);
+        // get most suitable weapon
+        Weapon weapon = getBestWeapon(battle, target);
+        if (weapon != null) {
+            if (weapon instanceof TurretWeapon) {
+                // turrets take time to rotate
+                TurretWeapon turret = (TurretWeapon) weapon;
+                boolean isRotatingOver = turret.rotateTurret(sprite, target.getSprite().getX(), target.getSprite()
+                        .getY());
+                if (!isRotatingOver) {
+                    return;
+                }
+            } else {
+                updateUnitRotation(target.getSprite().getX(), target.getSprite().getY());
             }
-
-            updateUnitRotation(target.getSprite().getX(), target.getSprite().getY());
 
             if (weapon.getReloadCounter() > 0) {
                 if (aimCounter == 0) {
@@ -249,12 +254,12 @@ public abstract class Unit extends GameElement {
                     // firing !!!
 
                     // add muzzle flash sprite
-                    getSprite().isFiring = true;
+                    sprite.isFiring = true;
 
                     weapon.setAmmoAmount(weapon.getAmmoAmount() - 1);
                     weapon.setReloadCounter(weapon.getReloadCounter() - 1);
                     aimCounter--;
-                    this.currentAction = Action.firing;
+                    currentAction = Action.firing;
 
                     // if not a lot of ammo, more aiming !
                     if (weapon.getAmmoAmount() == weapon.getMagazineSize() * 2) {
@@ -262,57 +267,15 @@ public abstract class Unit extends GameElement {
                     }
 
                     // increase target panic
-                    if (target.getPanic() < 10) {
-                        target.setPanic(target.getPanic() + 1);
-                    }
+                    target.getShots();
 
-                    // does it touch the target ?
-                    if (target.getHealth() != InjuryState.dead) {
+                    if (!target.isDead()) {// prevent the multiple frags bug
 
-                        float distance = GameUtils.getDistanceBetween(target, this);
-                        int tohit = FightLogic.HIT_CHANCES[getExperience().ordinal()][FightLogic
-                                .distanceToRangeCategory(distance)];
+                        weapon.resolveFireShot(battle, this, target);
 
-                        // add terrain protection
-                        tohit *= target.getUnitTerrainProtection();
-
-                        if (target.getCurrentAction() == Action.hiding || target.getCurrentAction() == Action.reloading) {
-                            // target is hiding : tohit depends on target's
-                            // experience
-                            tohit -= 5 * (target.getExperience().ordinal() + 1);
-                        }
-
-                        // tohit depends on weapon range
-                        if (distance > weapon.getRange() / 2) {
-                            tohit -= 10;
-                        }
-
-                        int diceRoll = (int) (Math.random() * 100);
-                        if (diceRoll < tohit) {
-                            // hit !
-                            if (diceRoll < tohit / 4) {
-                                // critical !
-                                target.setHealth(InjuryState.dead);
-                            } else if (diceRoll < tohit / 2) {
-                                // heavy !
-                                target.applyDamage(2);
-                            } else {
-                                if (Math.random() < 0.5) {
-                                    // light injured
-                                    target.applyDamage(1);
-                                } else {
-                                    // nothing
-                                }
-                            }
-
-                            if (target.getHealth() == InjuryState.dead) {
-                                // target is dead
-                                target.getSprite().setCanBeDragged(false);
-                                target.setOrder(null);
-
-                                // add frag
-                                setFrags(getFrags() + 1);
-                            }
+                        if (target.isDead()) {
+                            target.died();
+                            killedSomeone();
                         }
                     }
                 }
@@ -333,12 +296,27 @@ public abstract class Unit extends GameElement {
 
             }
         } else {
-            // no ammo left
+            // no weapon available for this fire order
             this.order = new DefendOrder(this);
         }
     }
 
-    private void applyDamage(int damage) {
+    private Weapon getBestWeapon(Battle battle, Unit target) {
+        float distance = GameUtils.getDistanceBetween(this, target);
+        boolean canSeeTarget = GameUtils.canSee(battle.getMap(), this, target);
+        Weapon bestWeapon = null;
+        for (Weapon weapon : weapons) {
+            if (weapon.canUseWeapon(target, distance, canSeeTarget)) {
+                if (bestWeapon == null || weapon.getEfficiencyAgainst(target) > bestWeapon.getEfficiencyAgainst(target)) {
+                    bestWeapon = weapon;
+                }
+            }
+        }
+
+        return bestWeapon;
+    }
+
+    public void applyDamage(int damage) {
         health = InjuryState.values()[Math.min(InjuryState.dead.ordinal(), health.ordinal() + damage)];
     }
 
@@ -360,7 +338,7 @@ public abstract class Unit extends GameElement {
         this.panic = panic;
     }
 
-    public void resolveOrder(Battle battle, TMXLayer tmxLayer) {
+    public void resolveOrder(Battle battle) {
         if (this.panic > 0) {
             // test if the unit can react
             if (Math.random() * 10 + getExperience().ordinal() < this.panic) {
@@ -375,23 +353,22 @@ public abstract class Unit extends GameElement {
         } else if (this.order instanceof DefendOrder) {
             // search for enemies
             for (Unit u : battle.getEnemies(this)) {
-                if (u.getHealth() != InjuryState.dead
-                        && GameUtils.getDistanceBetween(this, u) < DEFEND_ORDER_AMBUSH_DISTANCE
-                        && GameUtils.canSee(battle.getMap(), this, u, tmxLayer)) {
+                if (!u.isDead() && GameUtils.getDistanceBetween(this, u) < DEFEND_ORDER_AMBUSH_DISTANCE
+                        && GameUtils.canSee(battle.getMap(), this, u)) {
                     // fire on enemy if close
-                    setOrder(new FireOrder(this, u));
+                    order = new FireOrder(this, u);
                     return;
                 }
             }
             // stay ambush
             hide();
         } else if (this.order instanceof FireOrder) {
-            fire();
+            fire(battle);
         }
     }
 
     public void takeInitiative() {
-        setOrder(new DefendOrder(this));
+        order = new DefendOrder(this);
     }
 
     public int getAimCounter() {
@@ -404,6 +381,26 @@ public abstract class Unit extends GameElement {
 
     public boolean isDead() {
         return health == InjuryState.dead;
+    }
+
+    public void getShots() {
+        if (panic < 10) {
+            panic++;
+        }
+    }
+
+    public void killedSomeone() {
+        // add frags
+        frags++;
+    }
+
+    public void died() {
+        sprite.setCanBeDragged(false);
+        order = null;
+    }
+
+    public boolean canMove() {
+        return moveSpeed > 0;
     }
 
 }

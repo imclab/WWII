@@ -104,7 +104,7 @@
     </style>
 
     <style name="ArmyBuilderSmallButton">
-        <item name="android:textSize">22sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:background">@drawable/bg_btn_home</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:padding">10dp</item>

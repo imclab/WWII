@@ -1,5 +1,7 @@
 package com.glevel.wwii.game.model;
 
+import interfaces.OnNewSpriteToDraw;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +17,8 @@ public class Battle {
     private int requisition;
     private Map map;
     private List<Player> players = new ArrayList<Player>();
+
+    private OnNewSpriteToDraw onNewSprite;
 
     public int getName() {
         return name;
@@ -93,5 +97,13 @@ public class Battle {
 
     public Player getMe() {
         return getPlayers().get(0);
+    }
+
+    public OnNewSpriteToDraw getOnNewSprite() {
+        return onNewSprite;
+    }
+
+    public void setOnNewSprite(OnNewSpriteToDraw onNewSprite) {
+        this.onNewSprite = onNewSprite;
     }
 }

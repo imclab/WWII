@@ -1,5 +1,7 @@
 package com.glevel.wwii.activities;
 
+import interfaces.OnNewSpriteToDraw;
+
 import java.util.HashMap;
 
 import org.andengine.engine.camera.ZoomCamera;
@@ -15,9 +17,6 @@ import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
 import org.andengine.entity.util.FPSCounter;
-import org.andengine.extension.physics.box2d.PhysicsConnector;
-import org.andengine.extension.physics.box2d.PhysicsFactory;
-import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.extension.tmx.TMXLayer;
 import org.andengine.extension.tmx.TMXLoader;
 import org.andengine.extension.tmx.TMXLoader.ITMXTilePropertiesListener;
@@ -50,10 +49,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.glevel.wwii.R;
 import com.glevel.wwii.game.CustomZoomCamera;
 import com.glevel.wwii.game.GameUtils;
@@ -75,11 +70,10 @@ import com.glevel.wwii.game.model.orders.MoveOrder;
 import com.glevel.wwii.game.model.orders.Order;
 import com.glevel.wwii.game.model.units.Soldier;
 import com.glevel.wwii.game.model.units.Unit;
-import com.glevel.wwii.game.model.units.Unit.InjuryState;
-import com.glevel.wwii.game.model.units.Weapon;
+import com.glevel.wwii.game.model.weapons.Weapon;
 import com.glevel.wwii.views.CustomAlertDialog;
 
-public class GameActivity extends LayoutGameActivity {
+public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDraw {
 
     private static final int CAMERA_WIDTH = 800;
     private static final int CAMERA_HEIGHT = 480;
@@ -124,22 +118,13 @@ public class GameActivity extends LayoutGameActivity {
         return engineOptions;
     }
 
-    private void placeElements() {
-        for (Player player : battle.getPlayers()) {
-            for (Unit unit : player.getUnits()) {
-                TMXTile t = tmxLayer.getTMXTile((int) (player.getxPositionDeployment() + Math.random() * 5),
-                        (int) (Math.random() * battle.getMap().getHeight()));
-                unit.setTilePosition(battle.getMap().getTiles()[t.getTileRow()][t.getTileColumn()]);
-            }
-        }
-    }
-
     @Override
     protected void onCreate(Bundle pSavedInstanceState) {
         super.onCreate(pSavedInstanceState);
 
         // TODO test
         battle = GameUtils.createTestData();
+        battle.setOnNewSprite(this);
 
         setupUI();
 
@@ -182,7 +167,7 @@ public class GameActivity extends LayoutGameActivity {
                 Unit unit = (Unit) selectedElement.getGameElement();
 
                 // hide enemies info
-                updateUnitInfoVisibility(unit.getArmy() == battle.getPlayers().get(0).getArmy());
+                updateUnitInfoVisibility(unit.getArmy() == battle.getMe().getArmy());
 
                 // name
                 if (unit instanceof Soldier) {
@@ -284,7 +269,6 @@ public class GameActivity extends LayoutGameActivity {
     public Crosshair crosshair, crossHairLine;
     public Protection protection;
     public TMXLayer tmxLayer;
-    private PhysicsWorld mPhysicsWorld;
 
     public static int gameCounter = 0;
 
@@ -302,10 +286,10 @@ public class GameActivity extends LayoutGameActivity {
         for (Player player : battle.getPlayers()) {
             for (Unit unit : player.getUnits()) {
 
-                if (unit.getHealth() != InjuryState.dead) {
+                if (!unit.isDead()) {
                     if (unit.getOrder() != null) {
                         // resolve unit action
-                        unit.resolveOrder(battle, tmxLayer);
+                        unit.resolveOrder(battle);
                     } else {
                         // no order : take initiative
                         unit.takeInitiative();
@@ -314,7 +298,7 @@ public class GameActivity extends LayoutGameActivity {
             }
             // check victory conditions
             if (gameCounter % CHECK_FREQUENCY_FREQUENCY == 0 && player.checkIfPlayerWon(battle)) {
-                endGame(player);
+                endGame(player, false);
             }
         }
         updateSelectedElementLayout(mInputManager.selectedElement);
@@ -325,13 +309,13 @@ public class GameActivity extends LayoutGameActivity {
      */
     private void updateVisibility() {
         for (Unit unit : battle.getPlayers().get(1).getUnits()) {
-            if (unit.getRank() == Rank.enemy && unit.getHealth() != InjuryState.dead) {
+            if (unit.getRank() == Rank.enemy && !unit.isDead()) {
                 unit.setVisible(false);
             }
         }
-        for (Unit u : battle.getPlayers().get(0).getUnits()) {
+        for (Unit u : battle.getMe().getUnits()) {
             for (Unit e : battle.getEnemies(u)) {
-                if (GameUtils.canSee(battle.getMap(), u, e, tmxLayer)) {
+                if (GameUtils.canSee(battle.getMap(), u, e)) {
                     e.setVisible(true);
                 }
             }
@@ -379,13 +363,9 @@ public class GameActivity extends LayoutGameActivity {
         pOnCreateResourcesCallback.onCreateResourcesFinished();
     }
 
-    private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
-
     @Override
     public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) throws Exception {
         mScene = new Scene();
-
-        this.mPhysicsWorld = new PhysicsWorld(new Vector2(0, 0), false);
 
         mScene.setOnAreaTouchTraversalFrontToBack();
 
@@ -424,6 +404,7 @@ public class GameActivity extends LayoutGameActivity {
             }
         }
         m.setTiles(lstTiles);
+        m.setTmxLayer(tmxLayer);
         battle.setMap(m);
 
         /* Make the camera not exceed the bounds of the TMXEntity. */
@@ -442,13 +423,18 @@ public class GameActivity extends LayoutGameActivity {
         mScene.attachChild(fpsText);
 
         prepareDeploymentPhase();
-        placeElements();
         for (Player player : battle.getPlayers()) {
             for (Unit unit : player.getUnits()) {
-                GameSprite g = mGameElementFactory.addGameElement(mScene, unit, mInputManager,
-                        (player.getArmyIndex() == 0));
-                Body body = PhysicsFactory.createCircleBody(this.mPhysicsWorld, g, BodyType.DynamicBody, FIXTURE_DEF);
-                this.mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(g, body, true, true));
+                TMXTile t = tmxLayer.getTMXTile((int) (player.getXPositionDeployment() + Math.random() * 5),
+                        (int) (Math.random() * battle.getMap().getHeight()));
+                mGameElementFactory.addGameElement(mScene, unit, mInputManager, (player.getArmyIndex() == 0), t);
+                unit.setTilePosition(battle.getMap().getTiles()[t.getTileRow()][t.getTileColumn()]);
+                // units init rotation
+                if (player.getXPositionDeployment() == 0) {
+//                    unit.getSprite().setRotation(90);
+                } else {
+//                    unit.getSprite().setRotation(-90);
+                }
             }
         }
 
@@ -511,7 +497,7 @@ public class GameActivity extends LayoutGameActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (which == R.id.okButton) {
-                                    endGame(battle.getEnemyPlayer(battle.getMe()));
+                                    endGame(battle.getEnemyPlayer(battle.getMe()), true);
                                 }
                                 dialog.dismiss();
                             }
@@ -605,8 +591,7 @@ public class GameActivity extends LayoutGameActivity {
 
         // update game logic loop
         TimerHandler spriteTimerHandler;
-        float mEffectSpawnDelay = 0.1f;
-        spriteTimerHandler = new TimerHandler(mEffectSpawnDelay, true, new ITimerCallback() {
+        spriteTimerHandler = new TimerHandler(1.0f / GameUtils.GAME_LOOP_FREQUENCY, true, new ITimerCallback() {
             @Override
             public void onTimePassed(TimerHandler pTimerHandler) {
                 updateGame();
@@ -615,35 +600,71 @@ public class GameActivity extends LayoutGameActivity {
         mEngine.registerUpdateHandler(spriteTimerHandler);
     }
 
-    private void endGame(Player winningPlayer) {
+    private void endGame(Player winningPlayer, boolean instantly) {
         // stop engine
         mEngine.stop();
 
-        // show battle report when big label animation is over
-        bigLabelAnimation.setAnimationListener(new AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
+        if (instantly) {
+            // show battle report without big label animation
+            goToReport();
+
+        } else {
+            // show battle report when big label animation is over
+            bigLabelAnimation.setAnimationListener(new AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    goToReport();
+                }
+            });
+
+            // show victory / defeat big label
+            if (winningPlayer == battle.getMe()) {
+                // victory
+                displayBigLabel(R.string.victory, R.color.green);
+            } else {
+                // defeat
+                displayBigLabel(R.string.defeat, R.color.red);
+            }
+        }
+    }
+
+    private void goToReport() {
+        startActivity(new Intent(GameActivity.this, BattleReportActivity.class));
+        finish();
+    }
+
+    @Override
+    public void drawSprite(float x, float y, String spriteName, final int duration) {
+        final Sprite sprite = GraphicElementFactory.createSprite(0, 0, spriteName, getVertexBufferObjectManager());
+        sprite.setPosition(x - sprite.getWidth() / 2, y - sprite.getHeight() / 2);
+        mScene.attachChild(sprite);
+        sprite.registerUpdateHandler(new IUpdateHandler() {
+
+            private int timeLeft = duration;
+
+            public void onUpdate(float pSecondsElapsed) {
+                if (--timeLeft <= 0) {
+                    runOnUpdateThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mScene.detachChild(sprite);
+                        }
+                    });
+                }
             }
 
             @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                startActivity(new Intent(GameActivity.this, BattleReportActivity.class));
-                finish();
+            public void reset() {
             }
         });
-
-        // show victory / defeat big label
-        if (winningPlayer == battle.getPlayers().get(0)) {
-            // victory
-            displayBigLabel(R.string.victory, R.color.green);
-        } else {
-            // defeat
-            displayBigLabel(R.string.defeat, R.color.red);
-        }
     }
 
 }

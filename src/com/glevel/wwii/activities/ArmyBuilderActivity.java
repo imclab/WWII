@@ -23,6 +23,7 @@ import com.glevel.wwii.game.data.BattlesData;
 import com.glevel.wwii.game.data.UnitsData;
 import com.glevel.wwii.game.model.Player;
 import com.glevel.wwii.game.model.units.Unit;
+import com.glevel.wwii.utils.ApplicationUtils;
 import com.glevel.wwii.utils.WWActivity;
 import com.glevel.wwii.views.CustomAlertDialog;
 
@@ -155,7 +156,7 @@ public class ArmyBuilderActivity extends WWActivity {
         public void onClick(View v) {
             if (mPlayer.getUnits().size() == 0) {
                 // the player has no units
-                Toast.makeText(ArmyBuilderActivity.this, getString(R.string.no_troops), Toast.LENGTH_LONG).show();
+                ApplicationUtils.showToast(ArmyBuilderActivity.this, R.string.no_troops, Toast.LENGTH_SHORT);
             } else if (mPlayer.getRequisition() > 0) {
                 // the player has some requisition points left, show confirm
                 // dialog
@@ -192,16 +193,22 @@ public class ArmyBuilderActivity extends WWActivity {
             Unit unit = mAvailableUnits.get(position);
             if (mPlayer.getUnits().size() == GameUtils.MAX_UNIT_PER_ARMY) {
                 // no more unit slot available
-                Toast.makeText(ArmyBuilderActivity.this, getString(R.string.no_slots_left), Toast.LENGTH_SHORT).show();
+                ApplicationUtils.showToast(ArmyBuilderActivity.this, R.string.no_slots_left, Toast.LENGTH_SHORT);
             } else if (mPlayer.getRequisition() < unit.getRealSellPrice(false)) {
                 // unit is too expensive
-                Toast.makeText(ArmyBuilderActivity.this, getString(R.string.not_enough_requisition), Toast.LENGTH_SHORT)
-                        .show();
+                ApplicationUtils.showToast(ArmyBuilderActivity.this, R.string.not_enough_requisition,
+                        Toast.LENGTH_SHORT);
             } else {
                 // buy unit !
                 openConfirmTransactionDialog(unit, false);
             }
         }
     };
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, BattleChooserActivity.class));
+        finish();
+    }
 
 }

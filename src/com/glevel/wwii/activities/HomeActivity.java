@@ -47,8 +47,6 @@ public class HomeActivity extends WWActivity implements OnClickListener {
 
     private ScreenState mScreenState = ScreenState.HOME;
 
-    private int mVideoStopPosition = 0;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +56,19 @@ public class HomeActivity extends WWActivity implements OnClickListener {
 
         ApplicationUtils.showRateDialogIfNeeded(this);
         showMainHomeButtons();
+
+        if (savedInstanceState != null) {
+            // restart video where it had been stopped
+            mBackgroundVideoView.seekTo(savedInstanceState.getInt("video_stop_position"));
+        }
+        mBackgroundVideoView.start();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        // store the stop position to restart the video at the correct position
+        outState.putInt("video_stop_position", mBackgroundVideoView.getCurrentPosition());
+        super.onSaveInstanceState(outState);
     }
 
     private void setupUI() {
@@ -147,17 +158,8 @@ public class HomeActivity extends WWActivity implements OnClickListener {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        mBackgroundVideoView.seekTo(mVideoStopPosition);
-        mBackgroundVideoView.start();
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
-        // store the stop position to restart the video at the correct position
-        mVideoStopPosition = mBackgroundVideoView.getCurrentPosition();
         mBackgroundVideoView.pause();
         if (mAboutDialog != null) {
             mAboutDialog.dismiss();
@@ -172,7 +174,7 @@ public class HomeActivity extends WWActivity implements OnClickListener {
                 showSoloButtons();
                 break;
             case R.id.multiplayerButton:
-                Toast.makeText(HomeActivity.this, "Coming soon...", Toast.LENGTH_LONG).show();
+                ApplicationUtils.showToast(this, R.string.coming_soon, Toast.LENGTH_SHORT);
                 break;
             case R.id.settingsButton:
                 showSettings();
@@ -184,7 +186,7 @@ public class HomeActivity extends WWActivity implements OnClickListener {
                 openAboutDialog();
                 break;
             case R.id.campaignButton:
-                Toast.makeText(HomeActivity.this, "Coming soon...", Toast.LENGTH_LONG).show();
+                ApplicationUtils.showToast(this, R.string.coming_soon, Toast.LENGTH_SHORT);
                 break;
             case R.id.battleButton:
                 startActivity(new Intent(this, BattleChooserActivity.class));

@@ -6,6 +6,7 @@
     <string name="placeholder">placeholder</string>
     <string name="viewholder">placeholder</string>
     <string name="cancel">Cancel</string>
+    <string name="coming_soon">Coming soon&#8230;</string>
 
     <!-- Contact -->
     <string name="mail_address">guillaume.gouchon@gmail.com</string>
@@ -60,9 +61,9 @@
     <string name="no_troops">Hire some troops before !</string>
     <string name="confirm_battle_message">You have some unused requisition points, continue to battlefield ?</string>
     <string name="no_slots_left">No more unit slot left&#8230;\nSell one of your unit !</string>
-    <string name="not_enough_requisition">You do not have enough requisition point\nto hire this unit !</string>
+    <string name="not_enough_requisition">You do not have enough requisition points to hire this unit !</string>
     <string name="buy">Hire</string>
-    <string name="sell">Remove</string>
+    <string name="sell">Sell</string>
     <string name="confirm_transaction">%1$s %2$s for %3$s requisition points ?</string>
     <string name="unit_image">Unit image</string>
     <string name="frags_number">Frags : %1$s</string>
