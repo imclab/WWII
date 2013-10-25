@@ -1,7 +1,5 @@
 package com.glevel.wwii.activities;
 
-import interfaces.OnNewSpriteToDraw;
-
 import java.util.HashMap;
 
 import org.andengine.engine.camera.ZoomCamera;
@@ -50,16 +48,22 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.glevel.wwii.R;
-import com.glevel.wwii.game.CustomZoomCamera;
+import com.glevel.wwii.analytics.GoogleAnalyticsHandler;
+import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventAction;
+import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventCategory;
+import com.glevel.wwii.analytics.GoogleAnalyticsHandler.TimingCategory;
+import com.glevel.wwii.analytics.GoogleAnalyticsHandler.TimingName;
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.GraphicElementFactory;
 import com.glevel.wwii.game.InputManager;
+import com.glevel.wwii.game.andengine.custom.CustomZoomCamera;
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.graphics.Crosshair;
 import com.glevel.wwii.game.graphics.DeploymentZone;
 import com.glevel.wwii.game.graphics.Protection;
 import com.glevel.wwii.game.graphics.SelectionCircle;
 import com.glevel.wwii.game.model.Battle;
+import com.glevel.wwii.game.model.Battle.Phase;
 import com.glevel.wwii.game.model.GameElement.Rank;
 import com.glevel.wwii.game.model.GameSprite;
 import com.glevel.wwii.game.model.Player;
@@ -71,6 +75,7 @@ import com.glevel.wwii.game.model.orders.Order;
 import com.glevel.wwii.game.model.units.Soldier;
 import com.glevel.wwii.game.model.units.Unit;
 import com.glevel.wwii.game.model.weapons.Weapon;
+import com.glevel.wwii.interfaces.OnNewSpriteToDraw;
 import com.glevel.wwii.views.CustomAlertDialog;
 
 public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDraw {
@@ -94,7 +99,6 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
     public Battle battle;
     public ViewGroup mSelectedUnitLayout;
 
-    public Phase currentPhase = Phase.deployment;
     private TextView bigLabel;
     private Animation bigLabelAnimation;
     private Button finishDeploymentButton;
@@ -106,9 +110,8 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
         }
     };
 
-    public static enum Phase {
-        deployment, combat
-    }
+    private long mDeploymentStartTime;
+    private long mGameStartTime;
 
     @Override
     public EngineOptions onCreateEngineOptions() {
@@ -224,6 +227,8 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
 
                 // current action
                 ((TextView) mSelectedUnitLayout.findViewById(R.id.unitAction)).setText(unit.getCurrentAction().name());
+                ((TextView) mSelectedUnitLayout.findViewById(R.id.unitAction)).setVisibility(unit.isDead() ? View.GONE
+                        : View.VISIBLE);
 
                 mSelectedUnitLayout.setVisibility(View.VISIBLE);
 
@@ -287,6 +292,10 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
             for (Unit unit : player.getUnits()) {
 
                 if (!unit.isDead()) {
+                    if (player.isAI()) {
+                        // update AI orders
+
+                    }
                     if (unit.getOrder() != null) {
                         // resolve unit action
                         unit.resolveOrder(battle);
@@ -351,16 +360,19 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
 
     @Override
     public void onCreateResources(OnCreateResourcesCallback pOnCreateResourcesCallback) throws Exception {
+        long startLoadingTime = System.currentTimeMillis();
         // init game element factory
         mGameElementFactory = new GraphicElementFactory(this, getVertexBufferObjectManager(), getTextureManager());
 
         mGameElementFactory.initGraphics(battle);
 
         this.mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256,
-                Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
+                Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32, Color.WHITE.hashCode());
         this.mFont.load();
         mLoadingScreen.dismiss();
         pOnCreateResourcesCallback.onCreateResourcesFinished();
+        GoogleAnalyticsHandler.sendTiming(getApplicationContext(), TimingCategory.resources, TimingName.load_game,
+                (System.currentTimeMillis() - startLoadingTime) / 1000);
     }
 
     @Override
@@ -431,9 +443,9 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
                 unit.setTilePosition(battle.getMap().getTiles()[t.getTileRow()][t.getTileColumn()]);
                 // units init rotation
                 if (player.getXPositionDeployment() == 0) {
-//                    unit.getSprite().setRotation(90);
+                    unit.getSprite().setRotation(90);
                 } else {
-//                    unit.getSprite().setRotation(-90);
+                    unit.getSprite().setRotation(-90);
                 }
             }
         }
@@ -444,8 +456,10 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
         crosshair = new Crosshair(GraphicElementFactory.mGfxMap.get("crosshair.png"), getVertexBufferObjectManager());
         crosshair.setVisible(false);
         mScene.attachChild(crosshair);
+        Text distanceText = new Text(0, 0, mFont, "", 5, getVertexBufferObjectManager());
+        mScene.attachChild(distanceText);
         crossHairLine = new Crosshair(GraphicElementFactory.mGfxMap.get("crosshair.png"),
-                getVertexBufferObjectManager());
+                getVertexBufferObjectManager(), distanceText);
         crossHairLine.setVisible(false);
         mScene.attachChild(crossHairLine);
         protection = new Protection(GraphicElementFactory.mGfxMap.get("protection.png"), getVertexBufferObjectManager());
@@ -498,6 +512,8 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
                             public void onClick(DialogInterface dialog, int which) {
                                 if (which == R.id.okButton) {
                                     endGame(battle.getEnemyPlayer(battle.getMe()), true);
+                                    GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                                            EventAction.button_press, "surrender_game");
                                 }
                                 dialog.dismiss();
                             }
@@ -518,9 +534,11 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
         mGameMenuDialog.findViewById(R.id.exitButton).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO save
+                // TODO save game
                 startActivity(new Intent(GameActivity.this, HomeActivity.class));
                 finish();
+                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                        EventAction.button_press, "exit_game");
             }
         });
         mGameMenuDialog.setOnDismissListener(new OnDismissListener() {
@@ -555,6 +573,7 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
     }
 
     private void prepareDeploymentPhase() {
+        mDeploymentStartTime = System.currentTimeMillis();
         displayBigLabel(R.string.deployment_phase, R.color.bg_btn_green);
 
         for (Player p : battle.getPlayers()) {
@@ -583,11 +602,15 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
     }
 
     private void startGame() {
+        GoogleAnalyticsHandler.sendTiming(getApplicationContext(), TimingCategory.in_game, TimingName.deployment_time,
+                (System.currentTimeMillis() - mDeploymentStartTime) / 1000);
+        mGameStartTime = System.currentTimeMillis();
+
         displayBigLabel(R.string.go, R.color.bg_btn_green);
 
         deploymentZone.setVisible(false);
 
-        currentPhase = Phase.combat;
+        battle.setPhase(Phase.combat);
 
         // update game logic loop
         TimerHandler spriteTimerHandler;
@@ -601,6 +624,9 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
     }
 
     private void endGame(Player winningPlayer, boolean instantly) {
+        GoogleAnalyticsHandler.sendTiming(getApplicationContext(), TimingCategory.in_game, TimingName.game_time,
+                (System.currentTimeMillis() - mGameStartTime) / 1000);
+
         // stop engine
         mEngine.stop();
 
@@ -633,6 +659,9 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
                 // defeat
                 displayBigLabel(R.string.defeat, R.color.red);
             }
+
+            GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.in_game, EventAction.end_game,
+                    winningPlayer == battle.getMe() ? "victory" : "defeat");
         }
     }
 
@@ -642,8 +671,9 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
     }
 
     @Override
-    public void drawSprite(float x, float y, String spriteName, final int duration) {
+    public void drawSprite(float x, float y, String spriteName, final int duration, int size) {
         final Sprite sprite = GraphicElementFactory.createSprite(0, 0, spriteName, getVertexBufferObjectManager());
+        sprite.setScale(size);
         sprite.setPosition(x - sprite.getWidth() / 2, y - sprite.getHeight() / 2);
         mScene.attachChild(sprite);
         sprite.registerUpdateHandler(new IUpdateHandler() {

@@ -1,4 +1,4 @@
-package com.glevel.wwii.adapters;
+package com.glevel.wwii.activities.adapters;
 
 import java.util.List;
 
@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import com.glevel.wwii.R;
 import com.glevel.wwii.game.model.units.Unit;
 
-public class ReportUnitsArrayAdapter extends UnitsArrayAdapter {
+public class GameReportUnitsArrayAdapter extends UnitsArrayAdapter {
 
-    public ReportUnitsArrayAdapter(Context context, int textViewResourceId, List<Unit> units, boolean isMyArmy) {
+    public GameReportUnitsArrayAdapter(Context context, int textViewResourceId, List<Unit> units, boolean isMyArmy) {
         super(context, textViewResourceId, units, isMyArmy);
     }
 

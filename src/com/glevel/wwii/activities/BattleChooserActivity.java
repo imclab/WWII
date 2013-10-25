@@ -10,7 +10,7 @@ import android.widget.CompoundButton;
 import android.widget.RadioGroup;
 
 import com.glevel.wwii.R;
-import com.glevel.wwii.adapters.MapPagerAdapter;
+import com.glevel.wwii.activities.adapters.MapPagerAdapter;
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.utils.WWActivity;
 import com.glevel.wwii.views.CustomRadioButton;

@@ -1,4 +1,4 @@
-package com.glevel.wwii.adapters;
+package com.glevel.wwii.activities.adapters;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;

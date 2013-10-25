@@ -1,15 +1,21 @@
 package com.glevel.wwii.game.model;
 
+import java.io.Serializable;
+
 import org.andengine.util.color.Color;
 
 import com.glevel.wwii.game.model.map.Tile;
 
-public abstract class GameElement {
+public abstract class GameElement implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5880458091427517171L;
     protected final int name;
     private final String spriteName;
-    private Tile tilePosition;
-    protected GameSprite sprite;
+    private transient Tile tilePosition;
+    protected transient GameSprite sprite;
     private Rank rank;
     private boolean isVisible = false;
 

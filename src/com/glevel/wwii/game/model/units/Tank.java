@@ -7,6 +7,10 @@ import com.glevel.wwii.game.model.weapons.Weapon;
 
 public class Tank extends Vehicle {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4095890968516700014L;
     private static final int TANK_VIRTUAL_WIDTH = 2, TANK_VIRTUAL_HEIGHT = 4;
 
     public Tank(ArmiesData army, int name, int image, Experience experience, List<Weapon> weapons, int moveSpeed,

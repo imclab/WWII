@@ -5,6 +5,9 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="18" />
@@ -29,14 +32,17 @@
         </activity>
         <activity
             android:name=".activities.HomeActivity"
+            android:noHistory="true"
             android:screenOrientation="landscape" >
         </activity>
         <activity
             android:name=".activities.BattleChooserActivity"
+            android:noHistory="true"
             android:screenOrientation="landscape" >
         </activity>
         <activity
             android:name=".activities.ArmyBuilderActivity"
+            android:noHistory="true"
             android:screenOrientation="landscape" >
         </activity>
         <activity
@@ -51,6 +57,7 @@
         </activity>
         <activity
             android:name=".activities.BattleReportActivity"
+            android:noHistory="true"
             android:screenOrientation="landscape" >
         </activity>
     </application>

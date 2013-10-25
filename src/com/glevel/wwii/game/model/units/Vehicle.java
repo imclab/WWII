@@ -7,6 +7,11 @@ import com.glevel.wwii.game.model.weapons.Weapon;
 
 public abstract class Vehicle extends Unit {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -110116920924422447L;
+
     static enum VehicleType {
         light, tank
     }

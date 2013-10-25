@@ -16,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.glevel.wwii.R;
-import com.glevel.wwii.adapters.UnitsArrayAdapter;
+import com.glevel.wwii.activities.adapters.UnitsArrayAdapter;
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.data.BattlesData;

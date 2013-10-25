@@ -23,7 +23,7 @@ public class GameUtils {
     public static final String GAME_PREFS_KEY_DIFFICULTY = "game_difficulty";
     public static final String GAME_PREFS_KEY_MUSIC_VOLUME = "game_music_volume";
 
-    public static final int PIXEL_BY_METER = 50;
+    public static final int PIXEL_BY_METER = 15;
 
     public static final int GAME_LOOP_FREQUENCY = 10;// per second
 
@@ -41,13 +41,16 @@ public class GameUtils {
     public static final int DEPLOYMENT_ZONE_SIZE = 8;
 
     public static float getDistanceBetween(GameElement g1, GameElement g2) {
-        return (float) Math.sqrt((Math.pow(Math.abs(g1.getSprite().getX() - g2.getSprite().getX()), 2) + Math.pow(
-                Math.abs(g1.getSprite().getY() - g2.getSprite().getY()), 2)));
+        return getDistanceBetween(g1.getSprite().getX(), g1.getSprite().getY(), g2.getSprite().getX(), g2.getSprite()
+                .getY());
     }
 
-    public static float getDistanceBetween(GameElement g1, float[] location) {
-        return (float) Math.sqrt((Math.pow(Math.abs(g1.getSprite().getX() - location[0]), 2) + Math.pow(
-                Math.abs(g1.getSprite().getY() - location[1]), 2)));
+    public static float getDistanceBetween(GameElement g1, float x, float y) {
+        return getDistanceBetween(g1.getSprite().getX(), g1.getSprite().getY(), x, y);
+    }
+
+    public static float getDistanceBetween(float x1, float y1, float x2, float y2) {
+        return (float) Math.sqrt((Math.pow(Math.abs(x1 - x2), 2) + Math.pow(Math.abs(y1 - y2), 2)));
     }
 
     private static final int STEP = 30;
@@ -116,7 +119,7 @@ public class GameUtils {
         ArrayList<Unit> lstUnits = new ArrayList<Unit>();
         Unit e = UnitsData.buildATCannon(ArmiesData.USA, Experience.elite).copy();
         lstUnits.add(e);
-        Unit e2 = UnitsData.buildBazooka(ArmiesData.USA, Experience.veteran).copy();
+        Unit e2 = UnitsData.buildRifleMan(ArmiesData.USA, Experience.veteran).copy();
         lstUnits.add(e2);
 
         p.setUnits(lstUnits);
@@ -150,4 +153,5 @@ public class GameUtils {
                     (float) (yPosition + distance * Math.sin(angle + Math.PI)) };
         }
     }
+
 }

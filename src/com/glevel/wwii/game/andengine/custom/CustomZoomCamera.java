@@ -1,4 +1,4 @@
-package com.glevel.wwii.game;
+package com.glevel.wwii.game.andengine.custom;
 
 import org.andengine.engine.camera.ZoomCamera;
 

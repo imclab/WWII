@@ -8,6 +8,10 @@ import com.glevel.wwii.game.model.weapons.Weapon;
 
 public class Soldier extends Unit {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7678595033112981614L;
     // move
     private static final float MOVE_INJURY_FACTOR = 0.25f;
     private static final float MOVE_SPEED_ON_CONCRETE_FACTOR = 1.0f;

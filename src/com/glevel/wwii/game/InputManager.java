@@ -15,7 +15,7 @@ import org.andengine.util.color.Color;
 import android.view.MotionEvent;
 
 import com.glevel.wwii.activities.GameActivity;
-import com.glevel.wwii.activities.GameActivity.Phase;
+import com.glevel.wwii.game.model.Battle.Phase;
 import com.glevel.wwii.game.model.GameSprite;
 import com.glevel.wwii.game.model.Player;
 import com.glevel.wwii.game.model.orders.DefendOrder;
@@ -155,7 +155,7 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
     }
 
     public void giveOrderToUnit(float x, float y) {
-        if (mGameActivity.currentPhase == Phase.combat && selectedElement != null) {
+        if (mGameActivity.battle.getPhase() == Phase.combat && selectedElement != null) {
             if (selectedElement.getGameElement() instanceof Unit) {
                 Unit unit = (Unit) selectedElement.getGameElement();
                 GameSprite g = getElementAtCoordinates(x, y);
@@ -171,7 +171,7 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
     }
 
     public void updateOrderLine(GameSprite gameSprite, float x, float y) {
-        if (mGameActivity.currentPhase == Phase.deployment) {
+        if (mGameActivity.battle.getPhase() == Phase.deployment) {
             // during deployment phase
             TMXTile tmxtile = mGameActivity.tmxLayer.getTMXTileAt(x, y);
             if (tmxtile != null
@@ -183,10 +183,13 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
                         mGameActivity.battle.getMap().getTiles()[tmxtile.getTileRow()][tmxtile.getTileColumn()]);
             }
         } else {
+            // get distance
+            int distance = (int) GameUtils.getDistanceBetween(gameSprite.getX(), gameSprite.getY(), x, y);
+
             // during combat phase
             mGameActivity.orderLine.setPosition(gameSprite.getX(), gameSprite.getY(), x, y);
             GameSprite g = getElementAtCoordinates(x, y);
-            if (g != null && g != gameSprite && g.getGameElement() instanceof Unit
+            if (g != null && g.isVisible() && g != gameSprite && g.getGameElement() instanceof Unit
                     && !((Unit) g.getGameElement()).isDead()
                     && ((Unit) g.getGameElement()).getArmy() != ((Unit) selectedElement.getGameElement()).getArmy()) {
                 // attack
@@ -195,6 +198,8 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
                 mGameActivity.crossHairLine.setPosition(x - mGameActivity.crossHairLine.getWidth() / 2, y
                         - mGameActivity.crossHairLine.getHeight() / 2);
                 mGameActivity.crossHairLine.setVisible(true);
+                mGameActivity.crossHairLine.updateDistanceLabel(distance, mGameActivity.battle,
+                        (Unit) gameSprite.getGameElement(), (Unit) g.getGameElement());
                 mGameActivity.protection.setVisible(false);
             } else if (!((Unit) gameSprite.getGameElement()).canMove()) {
                 // immobile units
@@ -216,8 +221,9 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
                 mGameActivity.crossHairLine.setColor(Color.GREEN);
                 mGameActivity.crossHairLine.setPosition(x - mGameActivity.crossHairLine.getWidth() / 2, y
                         - mGameActivity.crossHairLine.getHeight() / 2);
+                mGameActivity.crossHairLine.updateDistanceLabel(distance, mGameActivity.battle,
+                        (Unit) gameSprite.getGameElement(), null);
                 mGameActivity.crossHairLine.setVisible(true);
-
                 mGameActivity.orderLine.setColor(Color.GREEN);
             }
             mGameActivity.orderLine.setVisible(true);
@@ -245,7 +251,7 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
     }
 
     public boolean isDeploymentPhase() {
-        return mGameActivity.currentPhase == Phase.deployment;
+        return mGameActivity.battle.getPhase() == Phase.deployment;
     }
 
 }

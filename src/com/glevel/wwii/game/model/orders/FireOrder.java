@@ -4,6 +4,10 @@ import com.glevel.wwii.game.model.units.Unit;
 
 public class FireOrder extends Order {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5452279368421461793L;
     private int xDestination;
     private int yDestination;
     private Unit target;

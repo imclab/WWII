@@ -18,6 +18,9 @@ import android.widget.Toast;
 
 import com.glevel.wwii.R;
 import com.glevel.wwii.WWApplication;
+import com.glevel.wwii.analytics.GoogleAnalyticsHandler;
+import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventAction;
+import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventCategory;
 import com.glevel.wwii.game.GameUtils;
 
 public class ApplicationUtils {
@@ -43,6 +46,8 @@ public class ApplicationUtils {
                             editor.commit();
                             rateTheApp(activity);
                             dialog.dismiss();
+                            GoogleAnalyticsHandler.sendEvent(activity, EventCategory.ui_action,
+                                    EventAction.button_press, "rate_app_yes");
                         }
                     }).setNegativeButton(R.string.rate_dont_want, new DialogInterface.OnClickListener() {
                         @Override
@@ -50,12 +55,16 @@ public class ApplicationUtils {
                             editor.putInt(PREFS_NB_LAUNCHES, NB_LAUNCHES_RATE_DIALOG_APPEARS + 1);
                             editor.commit();
                             dialog.dismiss();
+                            GoogleAnalyticsHandler.sendEvent(activity, EventCategory.ui_action,
+                                    EventAction.button_press, "rate_app_no");
                         }
                     }).setNeutralButton(R.string.rate_later, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             editor.putInt(PREFS_NB_LAUNCHES, 1);
                             dialog.dismiss();
+                            GoogleAnalyticsHandler.sendEvent(activity, EventCategory.ui_action,
+                                    EventAction.button_press, "rate_app_later");
                         }
                     }).create();
             dialog.setCancelable(false);
@@ -65,9 +74,9 @@ public class ApplicationUtils {
         }
     }
 
-    public static void rateTheApp(Context context) {
+    public static void rateTheApp(FragmentActivity activity) {
         Intent goToMarket = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.glevel.wwii"));
-        context.startActivity(goToMarket);
+        activity.startActivity(goToMarket);
     }
 
     public static void contactSupport(Context context) {
@@ -81,6 +90,7 @@ public class ApplicationUtils {
         } catch (ActivityNotFoundException ex) {
             Toast.makeText(context, context.getString(R.string.no_mail_client), Toast.LENGTH_LONG).show();
         }
+        GoogleAnalyticsHandler.sendEvent(context, EventCategory.ui_action, EventAction.button_press, "contact_support");
     }
 
     public static void stylifyDefaultAlertDialog(AlertDialog dialog) {

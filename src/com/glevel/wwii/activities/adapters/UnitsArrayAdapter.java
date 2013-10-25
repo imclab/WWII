@@ -1,4 +1,4 @@
-package com.glevel.wwii.adapters;
+package com.glevel.wwii.activities.adapters;
 
 import java.util.List;
 

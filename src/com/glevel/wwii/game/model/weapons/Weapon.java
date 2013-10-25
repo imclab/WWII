@@ -1,16 +1,25 @@
 package com.glevel.wwii.game.model.weapons;
 
+import java.io.Serializable;
+
+import org.andengine.util.color.Color;
+
 import com.glevel.wwii.R;
 import com.glevel.wwii.game.GameUtils;
+import com.glevel.wwii.game.andengine.custom.CustomColors;
 import com.glevel.wwii.game.model.Battle;
 import com.glevel.wwii.game.model.units.Soldier;
 import com.glevel.wwii.game.model.units.Unit;
-import com.glevel.wwii.game.model.units.Vehicle;
 import com.glevel.wwii.game.model.units.Unit.Action;
 import com.glevel.wwii.game.model.units.Unit.InjuryState;
+import com.glevel.wwii.game.model.units.Vehicle;
 
-public class Weapon {
+public class Weapon implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3726243358409900250L;
     private final int name;
     private final int image;
     private final int apPower;
@@ -141,7 +150,12 @@ public class Weapon {
 
     public void resolveFireShot(Battle battle, Unit shooter, Unit target) {
         // does it touch the target ? Calculate the chance to hit
+        resolveDamageDiceRoll(getToHit(shooter, target), target);
+    }
+
+    private int getToHit(Unit shooter, Unit target) {
         float distance = GameUtils.getDistanceBetween(shooter, target);
+
         int tohit = HIT_CHANCES[shooter.getExperience().ordinal()][distanceToRangeCategory(distance)];
 
         // add terrain protection
@@ -158,7 +172,20 @@ public class Weapon {
             tohit -= 10;
         }
 
-        resolveDamageDiceRoll(tohit, target);
+        return tohit;
+    }
+
+    public Color getDistanceColor(Unit shooter, Unit target) {
+        int tohit = getToHit(shooter, target);
+        if (tohit < 25) {
+            return Color.RED;
+        } else if (tohit < 50) {
+            return CustomColors.ORANGE;
+        } else if (tohit < 75) {
+            return Color.YELLOW;
+        } else {
+            return Color.GREEN;
+        }
     }
 
     protected void resolveDamageDiceRoll(int tohit, Unit target) {

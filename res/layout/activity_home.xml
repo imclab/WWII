@@ -112,13 +112,22 @@
                 style="@style/HomeScreenButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
+                android:layout_margin="3dp"
                 android:text="@string/about" />
+
+            <com.glevel.wwii.views.CustomButton
+                android:id="@+id/rateButton"
+                style="@style/HomeScreenButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:text="@string/rate_app" />
 
             <com.glevel.wwii.views.CustomTextView
                 style="@style/SettingsLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
                 android:text="@string/music_volume" />
 
             <RadioGroup

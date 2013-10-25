@@ -1,13 +1,18 @@
 package com.glevel.wwii.game.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.model.units.Unit;
 
-public class Player {
+public class Player implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6829836915818818596L;
     private String name;
     private int requisition;
 

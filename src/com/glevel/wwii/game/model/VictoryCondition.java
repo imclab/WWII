@@ -1,10 +1,16 @@
 package com.glevel.wwii.game.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.glevel.wwii.game.model.units.Unit;
 
-public class VictoryCondition {
+public class VictoryCondition implements Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8609453163507177850L;
 
     public static enum VictoryType {
         annihilation, takenadhold, rush

@@ -4,6 +4,10 @@ import com.glevel.wwii.game.model.GameSprite;
 
 public class TurretWeapon extends IndirectWeapon {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2063295813207549974L;
     private int turretRotationSpeed;
 
     public TurretWeapon(int name, int image, int apPower, int atPower, int range, int nbMagazines, int cadence,

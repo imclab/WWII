@@ -17,6 +17,11 @@ import com.glevel.wwii.game.model.weapons.Weapon;
 
 public abstract class Unit extends GameElement {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1514358997270651189L;
+
     private static final float DEFEND_ORDER_AMBUSH_DISTANCE = 300;
 
     protected final ArmiesData army;
@@ -301,7 +306,7 @@ public abstract class Unit extends GameElement {
         }
     }
 
-    private Weapon getBestWeapon(Battle battle, Unit target) {
+    public Weapon getBestWeapon(Battle battle, Unit target) {
         float distance = GameUtils.getDistanceBetween(this, target);
         boolean canSeeTarget = GameUtils.canSee(battle.getMap(), this, target);
         Weapon bestWeapon = null;

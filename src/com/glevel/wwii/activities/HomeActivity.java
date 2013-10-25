@@ -22,7 +22,12 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.glevel.wwii.R;
+import com.glevel.wwii.analytics.GoogleAnalyticsHandler;
+import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventAction;
+import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventCategory;
 import com.glevel.wwii.game.GameUtils;
+import com.glevel.wwii.game.GameUtils.DifficultyLevel;
+import com.glevel.wwii.game.GameUtils.MusicState;
 import com.glevel.wwii.utils.ApplicationUtils;
 import com.glevel.wwii.utils.WWActivity;
 
@@ -38,7 +43,8 @@ public class HomeActivity extends WWActivity implements OnClickListener {
             mMainButtonAnimationLeftOut;
     private Animation mFadeOutAnimation, mFadeInAnimation;
 
-    private Button mSoloButton, mMultiplayerButton, mSettingsButton, mCampaignButton, mBattleModeButton, mAboutButton;
+    private Button mSoloButton, mMultiplayerButton, mSettingsButton, mCampaignButton, mBattleModeButton, mAboutButton,
+            mRateAppButton;
     private ViewGroup mSettingsLayout;
     private View mBackButton;
     private RadioGroup mRadioMusicvolume, mRadioDifficulty;
@@ -110,19 +116,23 @@ public class HomeActivity extends WWActivity implements OnClickListener {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 // update game difficulty in preferences
+                DifficultyLevel newDifficultyLevel = null;
                 Editor editor = mSharedPrefs.edit();
                 switch (checkedId) {
                 case R.id.easyRadioBtn:
-                    editor.putInt(GameUtils.GAME_PREFS_KEY_DIFFICULTY, GameUtils.DifficultyLevel.easy.ordinal());
+                    newDifficultyLevel = DifficultyLevel.easy;
                     break;
                 case R.id.mediumRadioBtn:
-                    editor.putInt(GameUtils.GAME_PREFS_KEY_DIFFICULTY, GameUtils.DifficultyLevel.medium.ordinal());
+                    newDifficultyLevel = DifficultyLevel.medium;
                     break;
                 case R.id.hardRadioBtn:
-                    editor.putInt(GameUtils.GAME_PREFS_KEY_DIFFICULTY, GameUtils.DifficultyLevel.hard.ordinal());
+                    newDifficultyLevel = DifficultyLevel.hard;
                     break;
                 }
+                editor.putInt(GameUtils.GAME_PREFS_KEY_DIFFICULTY, newDifficultyLevel.ordinal());
                 editor.commit();
+                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                        EventAction.button_press, "difficulty_" + newDifficultyLevel.name());
             }
         });
 
@@ -134,16 +144,20 @@ public class HomeActivity extends WWActivity implements OnClickListener {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 // update game difficulty in preferences
+                MusicState newMusicState = null;
                 Editor editor = mSharedPrefs.edit();
                 switch (checkedId) {
                 case R.id.musicOff:
-                    editor.putInt(GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME, GameUtils.MusicState.off.ordinal());
+                    newMusicState = MusicState.off;
                     break;
                 case R.id.musicOn:
-                    editor.putInt(GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME, GameUtils.MusicState.on.ordinal());
+                    newMusicState = MusicState.on;
                     break;
                 }
+                editor.putInt(GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME, newMusicState.ordinal());
                 editor.commit();
+                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                        EventAction.button_press, "music_" + newMusicState.name());
             }
         });
 
@@ -155,6 +169,9 @@ public class HomeActivity extends WWActivity implements OnClickListener {
 
         mAboutButton = (Button) findViewById(R.id.aboutButton);
         mAboutButton.setOnClickListener(this);
+
+        mRateAppButton = (Button) findViewById(R.id.rateButton);
+        mRateAppButton.setOnClickListener(this);
     }
 
     @Override
@@ -172,24 +189,42 @@ public class HomeActivity extends WWActivity implements OnClickListener {
             switch (v.getId()) {
             case R.id.soloButton:
                 showSoloButtons();
+                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                        EventAction.button_press, "show_solo");
                 break;
             case R.id.multiplayerButton:
-                ApplicationUtils.showToast(this, R.string.coming_soon, Toast.LENGTH_SHORT);
+                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                        EventAction.button_press, "show_multi");
                 break;
             case R.id.settingsButton:
                 showSettings();
+                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                        EventAction.button_press, "show_settings");
                 break;
             case R.id.backButton:
                 onBackPressed();
+                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                        EventAction.button_press, "back_button_soft");
                 break;
             case R.id.aboutButton:
                 openAboutDialog();
+                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                        EventAction.button_press, "show_about_dialog");
+                break;
+            case R.id.rateButton:
+                ApplicationUtils.rateTheApp(this);
+                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                        EventAction.button_press, "rate_app_button");
                 break;
             case R.id.campaignButton:
                 ApplicationUtils.showToast(this, R.string.coming_soon, Toast.LENGTH_SHORT);
+                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                        EventAction.button_press, "go_campaign");
                 break;
             case R.id.battleButton:
                 startActivity(new Intent(this, BattleChooserActivity.class));
+                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                        EventAction.button_press, "go_battle");
                 break;
             default:
                 break;
@@ -281,10 +316,14 @@ public class HomeActivity extends WWActivity implements OnClickListener {
         case SOLO:
             showMainHomeButtons();
             hideSoloButtons();
+            GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                    EventAction.button_press, "back_pressed");
             break;
         case SETTINGS:
             showMainHomeButtons();
             hideSettings();
+            GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                    EventAction.button_press, "back_pressed");
             break;
         default:
             break;

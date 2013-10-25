@@ -47,6 +47,7 @@
     <string name="easy">Easy</string>
     <string name="medium">Medium</string>
     <string name="difficult">Hard</string>
+    <string name="rate_app">Rate the app</string>
 
     <!-- Battle Chooser -->
     <string name="choose_army">Choose your side</string>

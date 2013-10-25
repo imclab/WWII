@@ -9,7 +9,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.glevel.wwii.R;
-import com.glevel.wwii.adapters.ReportUnitsArrayAdapter;
+import com.glevel.wwii.activities.adapters.GameReportUnitsArrayAdapter;
+import com.glevel.wwii.analytics.GoogleAnalyticsHandler;
+import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventAction;
+import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventCategory;
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.model.Battle;
 import com.glevel.wwii.utils.WWActivity;
@@ -23,6 +26,8 @@ public class BattleReportActivity extends WWActivity {
     private OnClickListener onLeaveReportClicked = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press,
+                    "leave_battle_report");
             leaveReport();
         }
     };
@@ -65,19 +70,21 @@ public class BattleReportActivity extends WWActivity {
 
         // init my army list
         mMyArmyList = (ListView) findViewById(R.id.myArmyList);
-        ReportUnitsArrayAdapter mMyArmyAdapter = new ReportUnitsArrayAdapter(this, R.layout.army_list_item, battle
+        GameReportUnitsArrayAdapter mMyArmyAdapter = new GameReportUnitsArrayAdapter(this, R.layout.army_list_item, battle
                 .getMe().getUnits(), true);
         mMyArmyList.setAdapter(mMyArmyAdapter);
 
         // init enemy's army list
         mEnemyArmyList = (ListView) findViewById(R.id.enemyArmyList);
-        ReportUnitsArrayAdapter mEnemyArmyAdapter = new ReportUnitsArrayAdapter(this, R.layout.army_list_item,
+        GameReportUnitsArrayAdapter mEnemyArmyAdapter = new GameReportUnitsArrayAdapter(this, R.layout.army_list_item,
                 battle.getEnemies(battle.getMe().getArmy()), true);
         mEnemyArmyList.setAdapter(mEnemyArmyAdapter);
     }
 
     @Override
     public void onBackPressed() {
+        GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press,
+                "battle_report_back_pressed");
         leaveReport();
     }
 

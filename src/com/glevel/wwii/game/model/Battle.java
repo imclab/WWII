@@ -1,22 +1,29 @@
 package com.glevel.wwii.game.model;
 
-import interfaces.OnNewSpriteToDraw;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.model.map.Map;
 import com.glevel.wwii.game.model.units.Unit;
+import com.glevel.wwii.interfaces.OnNewSpriteToDraw;
 
 public class Battle {
 
+    private long id;
+    private int battleId;
+    private int campaignId;
     private int name;
     private int image;
     private int importance;
     private int requisition;
     private Map map;
     private List<Player> players = new ArrayList<Player>();
+    private Phase phase = Phase.deployment;
+
+    public static enum Phase {
+        deployment, combat
+    }
 
     private OnNewSpriteToDraw onNewSprite;
 
@@ -105,5 +112,37 @@ public class Battle {
 
     public void setOnNewSprite(OnNewSpriteToDraw onNewSprite) {
         this.onNewSprite = onNewSprite;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public int getBattleId() {
+        return battleId;
+    }
+
+    public void setBattleId(int battleId) {
+        this.battleId = battleId;
+    }
+
+    public int getCampaignId() {
+        return campaignId;
+    }
+
+    public void setCampaignId(int campaignId) {
+        this.campaignId = campaignId;
+    }
+
+    public Phase getPhase() {
+        return phase;
+    }
+
+    public void setPhase(Phase phase) {
+        this.phase = phase;
     }
 }
