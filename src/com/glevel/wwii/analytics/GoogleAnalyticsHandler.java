@@ -34,4 +34,5 @@ public class GoogleAnalyticsHandler {
         // easyTracker.send(MapBuilder.createTiming(category.name(), loadTime,
         // name.name(), null).build());
     }
+
 }

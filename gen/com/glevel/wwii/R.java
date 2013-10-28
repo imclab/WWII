@@ -308,8 +308,8 @@ public final class R {
     public static final class style {
         /**  ABOUT 
          */
-        public static final int AboutDialogText=0x7f090006;
-        public static final int AlertDialogButton=0x7f090015;
+        public static final int AboutDialogText=0x7f090007;
+        public static final int AlertDialogButton=0x7f090016;
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -336,40 +336,41 @@ public final class R {
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f090001;
-        public static final int ArmyBuilderColumn=0x7f09000c;
-        public static final int ArmyBuilderSmallButton=0x7f09000e;
-        public static final int ArmyBuilderSubTitle=0x7f09000a;
-        public static final int ArmyBuilderText=0x7f09000b;
+        public static final int ArmyBuilderColumn=0x7f09000d;
+        public static final int ArmyBuilderSmallButton=0x7f09000f;
+        public static final int ArmyBuilderSubTitle=0x7f09000b;
+        public static final int ArmyBuilderText=0x7f09000c;
         /**  ARMY BUILDER 
          */
-        public static final int ArmyBuilderTitle=0x7f090009;
-        public static final int ArmyBuilderTroopsList=0x7f09000d;
+        public static final int ArmyBuilderTitle=0x7f09000a;
+        public static final int ArmyBuilderTroopsList=0x7f09000e;
         /**  BATTLE CHOOSER 
          */
-        public static final int BattleChooserTitle=0x7f090007;
-        public static final int Dialog=0x7f090013;
-        public static final int DialogAnimation=0x7f090014;
+        public static final int BattleChooserTitle=0x7f090008;
+        public static final int Dialog=0x7f090014;
+        public static final int DialogAnimation=0x7f090015;
         /**  SETTINGS 
          */
         public static final int DifficultyRadioButton=0x7f090004;
         /**  DIALOGS 
          */
-        public static final int FullScreenDialog=0x7f090012;
+        public static final int FullScreenDialog=0x7f090013;
         /**  HOMESCREEN 
          */
         public static final int HomeScreenButton=0x7f090003;
-        public static final int MapTitle=0x7f090008;
+        public static final int MapTitle=0x7f090009;
         /**  ARMY BUILDER 
          */
-        public static final int Quote=0x7f090011;
+        public static final int Quote=0x7f090012;
         public static final int SettingsLabel=0x7f090005;
+        public static final int SettingsSmallButton=0x7f090006;
         /**  SPLASHSCREEN 
          */
         public static final int SplashScreenTitle=0x7f090002;
-        public static final int UnitEfficiency=0x7f090010;
-        public static final int UnitText=0x7f09000f;
+        public static final int UnitEfficiency=0x7f090011;
+        public static final int UnitText=0x7f090010;
         /**  IN GAME 
          */
-        public static final int WeaponAmmo=0x7f090016;
+        public static final int WeaponAmmo=0x7f090017;
     }
 }

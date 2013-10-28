@@ -27,4 +27,5 @@ public enum BattlesData {
     public int getRequisition() {
         return requisition;
     }
+    
 }

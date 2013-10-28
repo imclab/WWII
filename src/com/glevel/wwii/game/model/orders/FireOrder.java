@@ -12,13 +12,11 @@ public class FireOrder extends Order {
     private int yDestination;
     private Unit target;
 
-    public FireOrder(Unit unit, Unit target) {
-        this.unit = unit;
+    public FireOrder(Unit target) {
         this.target = target;
     }
 
-    public FireOrder(Unit unit, int xDestination, int yDestination) {
-        this.unit = unit;
+    public FireOrder(int xDestination, int yDestination) {
         this.xDestination = xDestination;
         this.yDestination = yDestination;
     }

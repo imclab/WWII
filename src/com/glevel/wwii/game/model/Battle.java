@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.glevel.wwii.game.data.ArmiesData;
+import com.glevel.wwii.game.interfaces.OnNewSpriteToDraw;
 import com.glevel.wwii.game.model.map.Map;
 import com.glevel.wwii.game.model.units.Unit;
-import com.glevel.wwii.interfaces.OnNewSpriteToDraw;
 
 public class Battle {
 
-    private long id;
-    private int battleId;
-    private int campaignId;
+    private long id = 0L;
+    private int battleId = 0;
+    private int campaignId = 0;
     private int name;
     private int image;
     private int importance;
@@ -145,4 +145,9 @@ public class Battle {
     public void setPhase(Phase phase) {
         this.phase = phase;
     }
+
+    public boolean isSingleBattle() {
+        return campaignId == 0;
+    }
+
 }

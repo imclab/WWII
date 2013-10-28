@@ -12,7 +12,6 @@ import com.glevel.wwii.game.model.weapons.Weapon;
 
 public class UnitsData {
 
-    // TODO
     public static List<Unit> getAllUnits(ArmiesData army) {
         List<Unit> lstUnits = new ArrayList<Unit>();
         switch (army) {
@@ -139,4 +138,5 @@ public class UnitsData {
         weapons.add(WeaponsData.buildMG42());
         return new Tank(army, R.string.pantherG, R.drawable.ic_launcher, experience, weapons, 3, 3);
     }
+
 }

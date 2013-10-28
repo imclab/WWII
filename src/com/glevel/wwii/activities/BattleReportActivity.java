@@ -13,40 +13,56 @@ import com.glevel.wwii.activities.adapters.GameReportUnitsArrayAdapter;
 import com.glevel.wwii.analytics.GoogleAnalyticsHandler;
 import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventAction;
 import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventCategory;
-import com.glevel.wwii.game.GameUtils;
+import com.glevel.wwii.database.DatabaseHelper;
+import com.glevel.wwii.game.SaveGameHelper;
 import com.glevel.wwii.game.model.Battle;
 import com.glevel.wwii.utils.WWActivity;
 
 public class BattleReportActivity extends WWActivity {
 
+    private DatabaseHelper mDbHelper;
     private boolean mIsVictory = false;
     private Battle battle;
-    private Button mLeaveReportBtn;
 
+    private Button mLeaveReportBtn;
+    private ListView mMyArmyList;
+    private ListView mEnemyArmyList;
+
+    /**
+     * Callbacks
+     */
     private OnClickListener onLeaveReportClicked = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press,
-                    "leave_battle_report");
+            GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                    EventAction.button_press, "leave_battle_report");
             leaveReport();
         }
     };
-    private ListView mMyArmyList;
-    private ListView mEnemyArmyList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Bundle extras = getIntent().getExtras();
-        // mIsVictory = extras.getBoolean("victory");
+        mDbHelper = new DatabaseHelper(getApplicationContext());
 
-        // TODO test
-        battle = GameUtils.createTestData();
+        // get battle info
+        Bundle extras = getIntent().getExtras();
+        battle = mDbHelper.getBattleDao().getById(extras.getLong("game_id"));
+        mIsVictory = extras.getBoolean("victory");
+
+        // erase saved game from database
+        SaveGameHelper.deleteSavedBattles(mDbHelper, battle.getCampaignId());
 
         setContentView(R.layout.activity_battle_report);
         setupUI();
+    }
 
+    @Override
+    public void onBackPressed() {
+        GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press,
+                "battle_report_back_pressed");
+        leaveReport();
     }
 
     private void setupUI() {
@@ -70,8 +86,8 @@ public class BattleReportActivity extends WWActivity {
 
         // init my army list
         mMyArmyList = (ListView) findViewById(R.id.myArmyList);
-        GameReportUnitsArrayAdapter mMyArmyAdapter = new GameReportUnitsArrayAdapter(this, R.layout.army_list_item, battle
-                .getMe().getUnits(), true);
+        GameReportUnitsArrayAdapter mMyArmyAdapter = new GameReportUnitsArrayAdapter(this, R.layout.army_list_item,
+                battle.getMe().getUnits(), true);
         mMyArmyList.setAdapter(mMyArmyAdapter);
 
         // init enemy's army list
@@ -81,22 +97,15 @@ public class BattleReportActivity extends WWActivity {
         mEnemyArmyList.setAdapter(mEnemyArmyAdapter);
     }
 
-    @Override
-    public void onBackPressed() {
-        GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press,
-                "battle_report_back_pressed");
-        leaveReport();
-    }
-
     private void leaveReport() {
-        // the user is playing a campaign
-        // TODO
-        // if (false) {
-        // // go to campaign screen
-        // } else {
-        // go to home screen
-        startActivity(new Intent(BattleReportActivity.this, HomeActivity.class));
-        // }
+        if (battle.isSingleBattle()) {
+            // go to home screen
+            startActivity(new Intent(BattleReportActivity.this, HomeActivity.class));
+        } else {
+            // go to campaign screen
+            // TODO
+        }
         finish();
     }
+
 }

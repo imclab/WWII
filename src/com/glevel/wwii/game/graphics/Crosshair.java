@@ -76,4 +76,5 @@ public class Crosshair extends Sprite {
             }
         }
     }
+
 }

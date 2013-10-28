@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="100" height="100" tilewidth="32" tileheight="32">
+ <tileset firstgid="268" name="desert_tiled" tilewidth="34" tileheight="34" spacing="1" margin="1">
+  <image source="../gfx/desert_tiled.png" width="281" height="211"/>
+  <tile id="14">
+   <properties>
+    <property name="mud" value="1"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Calque de Tile 1" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt07ERgDAMALGwBhuw/4JskJK8DxXqbf/5udZ6AAAAAGCge+P0bH+za6HTnB7adHvo0uyhSa+HJr0e2nR76KLHZF/10EaPiU700KTXQxM9JtCjRY8WPVr0aNGj42QLPVo9Tu9epEeLBi3+okWPHj269GjwHy16tOjRokWLFi1a9GnQ5P5degAAAAAAAAAAAAAAAAAAAAAAAAAA/McLJO80MA==
+  </data>
+ </layer>
+</map>

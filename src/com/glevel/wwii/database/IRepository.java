@@ -7,15 +7,13 @@ import android.database.Cursor;
 
 public interface IRepository<T> {
 
-    public List<T> getAll(String orderBy, String limit);
+    public List<T> get(String selection, String[] selectionArgs, String orderBy, String limit);
 
     public T getById(long id);
 
-    public long add(T entity);
+    public long save(T entity);
 
-    public void update(T entity);
-
-    public void delete(long id);
+    public void delete(String selection, String[] selectionArgs);
 
     public List<T> convertCursorToObjectList(Cursor c);
 

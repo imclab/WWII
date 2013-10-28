@@ -36,7 +36,7 @@
     <string name="campaign">Campaign</string>
     <string name="battle_mode">Battle Mode</string>
     <string name="back">Back</string>
-    <string name="resume_saved_battle">There is a saved ongoing battle available. Do you want to finish it ? It will be erased if you start another game.</string>
+    <string name="resume_saved_battle">You have a saved game located in %s, do you want to finish it ?\nIt will be lost if you start another battle.</string>
 
     <!-- Settings -->
     <string name="music_volume">Music / Sound</string>

@@ -19,4 +19,5 @@ public class NamesData {
                     "Cpl Descant", "Sgt Martin", "Cpl Hanson", "Cpl Menze", "Cpl Modracek", "Cpl Swanson" },
             { "Lt Clancy", "Lt Bolte, ", "Capt Kiley", "Lt Moore", "Lt Gibbs", "Lt Brewer", "Lt Forney", "Capt Brown",
                     "Capt Kessler", "Lt Panovich", "Lt Winands", "Lt Diel" } };
+
 }

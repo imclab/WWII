@@ -23,4 +23,5 @@ public class CustomButton extends Button {
         // disable button default sound when clicked
         setSoundEffectsEnabled(false);
     }
+
 }

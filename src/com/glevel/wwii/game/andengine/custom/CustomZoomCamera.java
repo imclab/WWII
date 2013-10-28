@@ -4,19 +4,16 @@ import org.andengine.engine.camera.ZoomCamera;
 
 public class CustomZoomCamera extends ZoomCamera {
 
-    // add zoom limitations
-    private float mZoomMin = 0.0f, mZoomMax = 100.0f;
+    // add zooming limits
+    private static final float ZOOM_MIN_LIMIT = 0.5f, ZOOM_MAX_LIMIT = 2.0f;
 
-    public CustomZoomCamera(final float pX, final float pY, final float pWidth, final float pHeight, float zoomMin,
-            float zoomMax) {
+    public CustomZoomCamera(final float pX, final float pY, final float pWidth, final float pHeight) {
         super(pX, pY, pWidth, pHeight);
-        this.mZoomMin = zoomMin;
-        this.mZoomMax = zoomMax;
     }
 
     @Override
     public void setZoomFactor(final float pZoomFactor) {
-        if (pZoomFactor > mZoomMin && pZoomFactor < mZoomMax) {
+        if (pZoomFactor > ZOOM_MIN_LIMIT && pZoomFactor < ZOOM_MAX_LIMIT) {
             this.mZoomFactor = pZoomFactor;
 
             if (this.mBoundsEnabled) {

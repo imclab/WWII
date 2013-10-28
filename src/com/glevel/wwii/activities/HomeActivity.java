@@ -1,6 +1,9 @@
 package com.glevel.wwii.activities;
 
+import java.util.List;
+
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -25,11 +28,15 @@ import com.glevel.wwii.R;
 import com.glevel.wwii.analytics.GoogleAnalyticsHandler;
 import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventAction;
 import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventCategory;
+import com.glevel.wwii.database.DatabaseHelper;
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.GameUtils.DifficultyLevel;
 import com.glevel.wwii.game.GameUtils.MusicState;
+import com.glevel.wwii.game.SaveGameHelper;
+import com.glevel.wwii.game.model.Battle;
 import com.glevel.wwii.utils.ApplicationUtils;
 import com.glevel.wwii.utils.WWActivity;
+import com.glevel.wwii.views.CustomAlertDialog;
 
 public class HomeActivity extends WWActivity implements OnClickListener {
 
@@ -38,11 +45,12 @@ public class HomeActivity extends WWActivity implements OnClickListener {
     }
 
     private SharedPreferences mSharedPrefs;
+    private ScreenState mScreenState = ScreenState.HOME;
+    private DatabaseHelper mDbHelper;
 
     private Animation mMainButtonAnimationRightIn, mMainButtonAnimationRightOut, mMainButtonAnimationLeftIn,
             mMainButtonAnimationLeftOut;
     private Animation mFadeOutAnimation, mFadeInAnimation;
-
     private Button mSoloButton, mMultiplayerButton, mSettingsButton, mCampaignButton, mBattleModeButton, mAboutButton,
             mRateAppButton;
     private ViewGroup mSettingsLayout;
@@ -51,7 +59,29 @@ public class HomeActivity extends WWActivity implements OnClickListener {
     private VideoView mBackgroundVideoView;
     private Dialog mAboutDialog = null;
 
-    private ScreenState mScreenState = ScreenState.HOME;
+    /**
+     * Callbacks
+     */
+    // remove background video sound - enable video looping
+    private MediaPlayer.OnPreparedListener mPreparedListener = new MediaPlayer.OnPreparedListener() {
+        @Override
+        public void onPrepared(MediaPlayer m) {
+            try {
+                if (m.isPlaying()) {
+                    m.stop();
+                    m.release();
+                    m = new MediaPlayer();
+                }
+                // disable sound
+                m.setVolume(0f, 0f);
+                // repeat video
+                m.setLooping(true);
+                m.start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +98,8 @@ public class HomeActivity extends WWActivity implements OnClickListener {
             mBackgroundVideoView.seekTo(savedInstanceState.getInt("video_stop_position"));
         }
         mBackgroundVideoView.start();
+
+        mDbHelper = new DatabaseHelper(getApplicationContext());
     }
 
     @Override
@@ -75,6 +107,109 @@ public class HomeActivity extends WWActivity implements OnClickListener {
         // store the stop position to restart the video at the correct position
         outState.putInt("video_stop_position", mBackgroundVideoView.getCurrentPosition());
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mBackgroundVideoView.pause();
+        if (mAboutDialog != null) {
+            mAboutDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.isShown()) {
+            switch (v.getId()) {
+            case R.id.soloButton:
+                showSoloButtons();
+                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                        EventAction.button_press, "show_solo");
+                break;
+            case R.id.multiplayerButton:
+                ApplicationUtils.showToast(this, R.string.coming_soon, Toast.LENGTH_SHORT);
+                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                        EventAction.button_press, "show_multi");
+                break;
+            case R.id.settingsButton:
+                showSettings();
+                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                        EventAction.button_press, "show_settings");
+                break;
+            case R.id.backButton:
+                onBackPressed();
+                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                        EventAction.button_press, "back_button_soft");
+                break;
+            case R.id.aboutButton:
+                openAboutDialog();
+                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                        EventAction.button_press, "show_about_dialog");
+                break;
+            case R.id.rateButton:
+                ApplicationUtils.rateTheApp(this);
+                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                        EventAction.button_press, "rate_app_button");
+                break;
+            case R.id.campaignButton:
+                ApplicationUtils.showToast(this, R.string.coming_soon, Toast.LENGTH_SHORT);
+                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                        EventAction.button_press, "go_campaign");
+                break;
+            case R.id.battleButton:
+                List<Battle> lstBattles = SaveGameHelper.getUnfinishedBattles(mDbHelper);
+                if (lstBattles.size() > 0) {
+                    // ask user if he wants to resume a saved game
+                    final Battle savedGame = lstBattles.get(0);
+                    Dialog dialog = new CustomAlertDialog(this, R.style.Dialog, getString(R.string.resume_saved_battle,
+                            savedGame.getName()), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (which == R.id.okButton) {
+                                // load game
+                                Intent i = new Intent(HomeActivity.this, GameActivity.class);
+                                Bundle extras = new Bundle();
+                                extras.putLong("load_game_id", savedGame.getId());
+                                i.putExtras(extras);
+                                dialog.dismiss();
+                                startActivity(i);
+                                finish();
+                            } else {
+                                // create new battle
+                                dialog.dismiss();
+                                goToBattleChooserActivity();
+                            }
+                        }
+                    });
+                    dialog.show();
+                } else {
+                    goToBattleChooserActivity();
+                }
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        switch (mScreenState) {
+        case HOME:
+            super.onBackPressed();
+            break;
+        case SOLO:
+            showMainHomeButtons();
+            hideSoloButtons();
+            GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                    EventAction.button_press, "back_pressed");
+            break;
+        case SETTINGS:
+            showMainHomeButtons();
+            hideSettings();
+            GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+                    EventAction.button_press, "back_pressed");
+            break;
+        }
     }
 
     private void setupUI() {
@@ -174,62 +309,11 @@ public class HomeActivity extends WWActivity implements OnClickListener {
         mRateAppButton.setOnClickListener(this);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mBackgroundVideoView.pause();
-        if (mAboutDialog != null) {
-            mAboutDialog.dismiss();
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        if (v.isShown()) {
-            switch (v.getId()) {
-            case R.id.soloButton:
-                showSoloButtons();
-                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-                        EventAction.button_press, "show_solo");
-                break;
-            case R.id.multiplayerButton:
-                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-                        EventAction.button_press, "show_multi");
-                break;
-            case R.id.settingsButton:
-                showSettings();
-                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-                        EventAction.button_press, "show_settings");
-                break;
-            case R.id.backButton:
-                onBackPressed();
-                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-                        EventAction.button_press, "back_button_soft");
-                break;
-            case R.id.aboutButton:
-                openAboutDialog();
-                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-                        EventAction.button_press, "show_about_dialog");
-                break;
-            case R.id.rateButton:
-                ApplicationUtils.rateTheApp(this);
-                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-                        EventAction.button_press, "rate_app_button");
-                break;
-            case R.id.campaignButton:
-                ApplicationUtils.showToast(this, R.string.coming_soon, Toast.LENGTH_SHORT);
-                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-                        EventAction.button_press, "go_campaign");
-                break;
-            case R.id.battleButton:
-                startActivity(new Intent(this, BattleChooserActivity.class));
-                GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-                        EventAction.button_press, "go_battle");
-                break;
-            default:
-                break;
-            }
-        }
+    private void goToBattleChooserActivity() {
+        startActivity(new Intent(this, BattleChooserActivity.class));
+        finish();
+        GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press,
+                "go_battle");
     }
 
     private void openAboutDialog() {
@@ -306,50 +390,5 @@ public class HomeActivity extends WWActivity implements OnClickListener {
         mSettingsLayout.setVisibility(View.GONE);
         mSettingsLayout.startAnimation(mFadeOutAnimation);
     }
-
-    @Override
-    public void onBackPressed() {
-        switch (mScreenState) {
-        case HOME:
-            super.onBackPressed();
-            break;
-        case SOLO:
-            showMainHomeButtons();
-            hideSoloButtons();
-            GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-                    EventAction.button_press, "back_pressed");
-            break;
-        case SETTINGS:
-            showMainHomeButtons();
-            hideSettings();
-            GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-                    EventAction.button_press, "back_pressed");
-            break;
-        default:
-            break;
-        }
-
-    }
-
-    // remove background video sound - enable video looping
-    MediaPlayer.OnPreparedListener mPreparedListener = new MediaPlayer.OnPreparedListener() {
-        @Override
-        public void onPrepared(MediaPlayer m) {
-            try {
-                if (m.isPlaying()) {
-                    m.stop();
-                    m.release();
-                    m = new MediaPlayer();
-                }
-                // disable sound
-                m.setVolume(0f, 0f);
-                // repeat video
-                m.setLooping(true);
-                m.start();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
 
 }

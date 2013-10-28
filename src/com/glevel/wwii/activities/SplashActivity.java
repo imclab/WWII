@@ -20,6 +20,7 @@ import com.glevel.wwii.utils.WWActivity;
 public class SplashActivity extends WWActivity {
 
     private static final int DELAY_AFTER_ANIMATION = 300, DELAY_BEFORE_ANIMATION = 200;
+
     private ViewGroup mTitleLayout;
     private Animation mLetterAnimation, mBounceAnimation;
     private int mCurrentAnimationPlaying = 0;

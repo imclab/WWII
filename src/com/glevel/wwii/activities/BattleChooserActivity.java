@@ -17,9 +17,27 @@ import com.glevel.wwii.views.CustomRadioButton;
 
 public class BattleChooserActivity extends WWActivity {
 
+    private boolean isMapClicked;// avoid view pager's multiple
+                                 // selection
+
     private RadioGroup mRadioGroupArmy;
     private ViewPager mMapsCarousel;
-    private boolean isMapClicked;// avoid multiple selection
+
+    /**
+     * Callbacks
+     */
+    private OnClickListener onMapSelectedListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!isMapClicked) {
+                isMapClicked = true;
+                Intent intent = new Intent(BattleChooserActivity.this, ArmyBuilderActivity.class);
+                intent.putExtra(ArmyBuilderActivity.EXTRA_ARMY, mRadioGroupArmy.getCheckedRadioButtonId());
+                intent.putExtra(ArmyBuilderActivity.EXTRA_MAP, (Integer) v.getTag(R.string.id));
+                startActivity(intent);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +51,17 @@ public class BattleChooserActivity extends WWActivity {
     protected void onResume() {
         super.onResume();
         isMapClicked = false;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, HomeActivity.class));
+        finish();
     }
 
     private void setupUI() {
@@ -50,36 +79,17 @@ public class BattleChooserActivity extends WWActivity {
         mMapsCarousel.setAdapter(pagerAdapter);
     }
 
+    /**
+     * Add a radio button for each available army.
+     * 
+     * @param army
+     */
     private void addArmyRadioButton(ArmiesData army) {
         CustomRadioButton radioBtn = (CustomRadioButton) getLayoutInflater().inflate(R.layout.radio_army, null);
         radioBtn.setId(army.ordinal());
         radioBtn.setText(army.getName());
         radioBtn.setCompoundDrawablesWithIntrinsicBounds(army.getFlagImage(), 0, 0, 0);
         mRadioGroupArmy.addView(radioBtn);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    private OnClickListener onMapSelectedListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (!isMapClicked) {
-                isMapClicked = true;
-                Intent intent = new Intent(BattleChooserActivity.this, ArmyBuilderActivity.class);
-                intent.putExtra(ArmyBuilderActivity.EXTRA_ARMY, mRadioGroupArmy.getCheckedRadioButtonId());
-                intent.putExtra(ArmyBuilderActivity.EXTRA_MAP, (Integer) v.getTag(R.string.id));
-                startActivity(intent);
-            }
-        }
-    };
-
-    @Override
-    public void onBackPressed() {
-        startActivity(new Intent(this, HomeActivity.class));
-        finish();
     }
 
 }

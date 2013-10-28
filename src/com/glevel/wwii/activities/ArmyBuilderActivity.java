@@ -33,16 +33,70 @@ public class ArmyBuilderActivity extends WWActivity {
 
     private ArmiesData mPlayerArmy;
     private BattlesData mMap;
+    private Player mPlayer;
+    private List<Unit> mAvailableUnits;
 
     private ListView mMyArmyList, mAvailableTroopsList;
     private TextView mRequisitionPointsTV;
     private Button mStartBattleBtn;
-
-    private Player mPlayer;
-
-    private List<Unit> mAvailableUnits;
-
     private UnitsArrayAdapter mMyArmyAdapter;
+
+    /**
+     * Callbacks
+     */
+    private OnClickListener onStartBattleClicked = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (mPlayer.getUnits().size() == 0) {
+                // the player has no units
+                ApplicationUtils.showToast(ArmyBuilderActivity.this, R.string.no_troops, Toast.LENGTH_SHORT);
+            } else if (mPlayer.getRequisition() > 0) {
+                // the player has some requisition points left, show confirm
+                // dialog
+                Dialog dialog = new CustomAlertDialog(ArmyBuilderActivity.this, R.style.Dialog,
+                        getString(R.string.confirm_battle_message), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (which == R.id.okButton) {
+                                    startGame();
+                                }
+                                dialog.dismiss();
+                            }
+                        });
+                dialog.show();
+            } else {
+                startGame();
+            }
+        }
+    };
+
+    private OnItemClickListener onMyUnitClicked = new OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+            if (position < mPlayer.getUnits().size()) {
+                // if slot is not empty, ask to sell this unit
+                openConfirmTransactionDialog(mPlayer.getUnits().get(position), true);
+            }
+        }
+    };
+
+    private OnItemClickListener onAvailableUnitClicked = new OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+            Unit unit = mAvailableUnits.get(position);
+            if (mPlayer.getUnits().size() == GameUtils.MAX_UNIT_PER_ARMY) {
+                // no more unit slot available
+                ApplicationUtils.showToast(ArmyBuilderActivity.this, R.string.no_slots_left, Toast.LENGTH_SHORT);
+            } else if (mPlayer.getRequisition() < unit.getRealSellPrice(false)) {
+                // unit is too expensive
+                ApplicationUtils.showToast(ArmyBuilderActivity.this, R.string.not_enough_requisition,
+                        Toast.LENGTH_SHORT);
+            } else {
+                // buy unit !
+                openConfirmTransactionDialog(unit, false);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +118,12 @@ public class ArmyBuilderActivity extends WWActivity {
 
         setContentView(R.layout.activity_army_builder);
         setupUI();
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, BattleChooserActivity.class));
+        finish();
     }
 
     private void setupUI() {
@@ -148,66 +208,6 @@ public class ArmyBuilderActivity extends WWActivity {
         // clear activity stack
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-        finish();
-    }
-
-    private OnClickListener onStartBattleClicked = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (mPlayer.getUnits().size() == 0) {
-                // the player has no units
-                ApplicationUtils.showToast(ArmyBuilderActivity.this, R.string.no_troops, Toast.LENGTH_SHORT);
-            } else if (mPlayer.getRequisition() > 0) {
-                // the player has some requisition points left, show confirm
-                // dialog
-                Dialog dialog = new CustomAlertDialog(ArmyBuilderActivity.this, R.style.Dialog,
-                        getString(R.string.confirm_battle_message), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (which == R.id.okButton) {
-                                    startGame();
-                                }
-                                dialog.dismiss();
-                            }
-                        });
-                dialog.show();
-            } else {
-                startGame();
-            }
-        }
-    };
-
-    private OnItemClickListener onMyUnitClicked = new OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-            if (position < mPlayer.getUnits().size()) {
-                // if slot is not empty, ask to sell this unit
-                openConfirmTransactionDialog(mPlayer.getUnits().get(position), true);
-            }
-        }
-    };
-
-    private OnItemClickListener onAvailableUnitClicked = new OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-            Unit unit = mAvailableUnits.get(position);
-            if (mPlayer.getUnits().size() == GameUtils.MAX_UNIT_PER_ARMY) {
-                // no more unit slot available
-                ApplicationUtils.showToast(ArmyBuilderActivity.this, R.string.no_slots_left, Toast.LENGTH_SHORT);
-            } else if (mPlayer.getRequisition() < unit.getRealSellPrice(false)) {
-                // unit is too expensive
-                ApplicationUtils.showToast(ArmyBuilderActivity.this, R.string.not_enough_requisition,
-                        Toast.LENGTH_SHORT);
-            } else {
-                // buy unit !
-                openConfirmTransactionDialog(unit, false);
-            }
-        }
-    };
-
-    @Override
-    public void onBackPressed() {
-        startActivity(new Intent(this, BattleChooserActivity.class));
         finish();
     }
 

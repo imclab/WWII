@@ -17,8 +17,8 @@ public class WWApplication extends Application {
      * Loads the required fonts.
      */
     private void loadFonts() {
-        FONTS.splash = Typeface.createFromAsset(getAssets(), "font_splash.ttf");
-        FONTS.main = Typeface.createFromAsset(getAssets(), "font_main.ttf");
+        FONTS.splash = Typeface.createFromAsset(getAssets(), "fonts/font_splash.ttf");
+        FONTS.main = Typeface.createFromAsset(getAssets(), "fonts/font_main.ttf");
     }
 
     public static class FONTS {

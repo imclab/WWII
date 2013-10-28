@@ -224,7 +224,7 @@ public abstract class Unit extends GameElement {
         Unit target = f.getTarget();
         if (target.isDead()) {
             // if target is dead, stop to shoot
-            order = new DefendOrder(this);
+            order = new DefendOrder();
             return;
         }
 
@@ -302,7 +302,7 @@ public abstract class Unit extends GameElement {
             }
         } else {
             // no weapon available for this fire order
-            this.order = new DefendOrder(this);
+            this.order = new DefendOrder();
         }
     }
 
@@ -361,7 +361,7 @@ public abstract class Unit extends GameElement {
                 if (!u.isDead() && GameUtils.getDistanceBetween(this, u) < DEFEND_ORDER_AMBUSH_DISTANCE
                         && GameUtils.canSee(battle.getMap(), this, u)) {
                     // fire on enemy if close
-                    order = new FireOrder(this, u);
+                    order = new FireOrder(u);
                     return;
                 }
             }
@@ -373,7 +373,7 @@ public abstract class Unit extends GameElement {
     }
 
     public void takeInitiative() {
-        order = new DefendOrder(this);
+        order = new DefendOrder();
     }
 
     public int getAimCounter() {

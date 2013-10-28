@@ -19,10 +19,12 @@ public class DeploymentZone extends Rectangle {
 
     @Override
     protected void onManagedUpdate(final float pSecondsElapsed) {
+        // alpha animation
         this.setAlpha(getAlpha() + ALPHA_ANIMATION_SPEED * (mIsGrowing ? 1 : -1));
         if (Math.abs(getAlpha() - INITIAL_ALPHA) > ALPHA_ANIMATION_LIMIT) {
             mIsGrowing = !mIsGrowing;
         }
         super.onManagedUpdate(pSecondsElapsed);
     }
+
 }

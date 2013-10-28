@@ -109,7 +109,7 @@
 
             <com.glevel.wwii.views.CustomButton
                 android:id="@+id/aboutButton"
-                style="@style/HomeScreenButton"
+                style="@style/SettingsSmallButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="3dp"
@@ -117,7 +117,7 @@
 
             <com.glevel.wwii.views.CustomButton
                 android:id="@+id/rateButton"
-                style="@style/HomeScreenButton"
+                style="@style/SettingsSmallButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="3dp"
@@ -200,14 +200,14 @@
         <com.glevel.wwii.views.CustomButton
             android:id="@+id/backButton"
             style="@style/HomeScreenButton"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_margin="5dp"
             android:text="@string/back"
-            android:visibility="gone"
-            android:width="150dp" />
+            android:textSize="28sp"
+            android:visibility="gone" />
     </RelativeLayout>
 
 </RelativeLayout>

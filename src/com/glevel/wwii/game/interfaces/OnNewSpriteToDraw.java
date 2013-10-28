@@ -1,4 +1,4 @@
-package com.glevel.wwii.interfaces;
+package com.glevel.wwii.game.interfaces;
 
 public interface OnNewSpriteToDraw {
 

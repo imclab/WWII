@@ -1,6 +1,5 @@
 package com.glevel.wwii.game.model.orders;
 
-import com.glevel.wwii.game.model.units.Unit;
 
 public class MoveOrder extends Order {
 
@@ -11,8 +10,7 @@ public class MoveOrder extends Order {
     private float xDestination;
     private float yDestination;
 
-    public MoveOrder(Unit unit, float xDestination, float yDestination) {
-        this.unit = unit;
+    public MoveOrder(float xDestination, float yDestination) {
         this.xDestination = xDestination;
         this.yDestination = yDestination;
     }

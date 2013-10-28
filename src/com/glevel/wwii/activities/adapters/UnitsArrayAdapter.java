@@ -18,15 +18,15 @@ import com.glevel.wwii.game.model.weapons.Weapon;
 
 public class UnitsArrayAdapter extends ArrayAdapter<Unit> {
 
-    private boolean mIsMyArmy;
     protected Context mContext;
+    private boolean mIsMyArmy;
     protected List<Unit> mUnits;
 
     public UnitsArrayAdapter(Context context, int layout, List<Unit> units, boolean isMyArmy) {
         super(context, layout, units);
+        this.mContext = context;
         this.mUnits = units;
         this.mIsMyArmy = isMyArmy;
-        this.mContext = context;
     }
 
     @Override

@@ -5,8 +5,8 @@ import org.andengine.extension.tmx.TMXLayer;
 public class Map {
 
     private Tile[][] tiles;
-    private final boolean isAllyLeftSide = true;
     private TMXLayer tmxLayer;
+    private final boolean isAllyLeftSide = true;
 
     public Tile[][] getTiles() {
         return tiles;

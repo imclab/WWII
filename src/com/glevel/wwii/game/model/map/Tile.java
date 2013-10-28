@@ -31,7 +31,7 @@ public class Tile extends TMXTile {
         super(tmxTile.getGlobalTileID(), tmxTile.getTileColumn(), tmxTile.getTileRow(), tmxTile.getTileWidth(), tmxTile
                 .getTileHeight(), tmxTile.getTextureRegion());
 
-        // add tile properties retrieved from the .tmxs
+        // add tile properties retrieved from the .tmx
         TMXProperties<TMXTileProperty> lstProperties = tmxTile.getTMXTileProperties(tiledMap);
         if (lstProperties != null) {
             for (TMXTileProperty prop : lstProperties) {

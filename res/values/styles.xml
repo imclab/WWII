@@ -53,6 +53,10 @@
         <item name="android:shadowRadius">1</item>
     </style>
 
+    <style name="SettingsSmallButton" parent="@style/ArmyBuilderSmallButton">
+        <item name="android:textSize">24sp</item>
+    </style>
+
     <!-- ABOUT -->
     <style name="AboutDialogText" parent="@style/SettingsLabel">
         <item name="android:gravity">center</item>

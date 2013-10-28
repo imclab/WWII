@@ -53,15 +53,19 @@ import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventAction;
 import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventCategory;
 import com.glevel.wwii.analytics.GoogleAnalyticsHandler.TimingCategory;
 import com.glevel.wwii.analytics.GoogleAnalyticsHandler.TimingName;
+import com.glevel.wwii.database.DatabaseHelper;
+import com.glevel.wwii.game.AI;
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.GraphicElementFactory;
 import com.glevel.wwii.game.InputManager;
+import com.glevel.wwii.game.SaveGameHelper;
 import com.glevel.wwii.game.andengine.custom.CustomZoomCamera;
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.graphics.Crosshair;
 import com.glevel.wwii.game.graphics.DeploymentZone;
 import com.glevel.wwii.game.graphics.Protection;
 import com.glevel.wwii.game.graphics.SelectionCircle;
+import com.glevel.wwii.game.interfaces.OnNewSpriteToDraw;
 import com.glevel.wwii.game.model.Battle;
 import com.glevel.wwii.game.model.Battle.Phase;
 import com.glevel.wwii.game.model.GameElement.Rank;
@@ -75,15 +79,12 @@ import com.glevel.wwii.game.model.orders.Order;
 import com.glevel.wwii.game.model.units.Soldier;
 import com.glevel.wwii.game.model.units.Unit;
 import com.glevel.wwii.game.model.weapons.Weapon;
-import com.glevel.wwii.interfaces.OnNewSpriteToDraw;
 import com.glevel.wwii.views.CustomAlertDialog;
 
 public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDraw {
 
     private static final int CAMERA_WIDTH = 800;
     private static final int CAMERA_HEIGHT = 480;
-    private static final float CAMERA_ZOOM_MAX = 2.0f;
-    private static final float CAMERA_ZOOM_MIN = 0.5f;
 
     public Scene mScene;
     private ZoomCamera mCamera;
@@ -112,10 +113,12 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
 
     private long mDeploymentStartTime;
     private long mGameStartTime;
+    private DatabaseHelper mDbHelper;
+    private boolean isLoadedGame = false;
 
     @Override
     public EngineOptions onCreateEngineOptions() {
-        this.mCamera = new CustomZoomCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, CAMERA_ZOOM_MIN, CAMERA_ZOOM_MAX);
+        this.mCamera = new CustomZoomCamera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
         EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED,
                 new FillResolutionPolicy(), mCamera);
         return engineOptions;
@@ -125,14 +128,26 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
     protected void onCreate(Bundle pSavedInstanceState) {
         super.onCreate(pSavedInstanceState);
 
-        // TODO test
-        battle = GameUtils.createTestData();
+        mDbHelper = new DatabaseHelper(getApplicationContext());
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            long gameId = extras.getLong("load_game_id", 0);
+            if (gameId > 0) {
+                battle = mDbHelper.getBattleDao().getById(gameId);
+                isLoadedGame = true;
+            }
+        } else {
+            battle = GameUtils.createTestData();
+        }
         battle.setOnNewSprite(this);
 
         setupUI();
 
         // allow user to change the music volume with his phone's buttons
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+        SaveGameHelper.deleteSavedBattles(mDbHelper, battle.getCampaignId());
     }
 
     private void setupUI() {
@@ -279,6 +294,7 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
 
     private static final int UPDATE_VISION_FREQUENCY = 10;
     private static final int CHECK_FREQUENCY_FREQUENCY = 10;
+    private static final int AI_FREQUENCY = 10;
 
     private void updateGame() {
         gameCounter++;
@@ -292,9 +308,9 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
             for (Unit unit : player.getUnits()) {
 
                 if (!unit.isDead()) {
-                    if (player.isAI()) {
+                    if (player.isAI() && gameCounter % AI_FREQUENCY == 0) {
                         // update AI orders
-
+                        AI.updateUnitOrder(battle, unit);
                     }
                     if (unit.getOrder() != null) {
                         // resolve unit action
@@ -434,22 +450,6 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
         }));
         mScene.attachChild(fpsText);
 
-        prepareDeploymentPhase();
-        for (Player player : battle.getPlayers()) {
-            for (Unit unit : player.getUnits()) {
-                TMXTile t = tmxLayer.getTMXTile((int) (player.getXPositionDeployment() + Math.random() * 5),
-                        (int) (Math.random() * battle.getMap().getHeight()));
-                mGameElementFactory.addGameElement(mScene, unit, mInputManager, (player.getArmyIndex() == 0), t);
-                unit.setTilePosition(battle.getMap().getTiles()[t.getTileRow()][t.getTileColumn()]);
-                // units init rotation
-                if (player.getXPositionDeployment() == 0) {
-                    unit.getSprite().setRotation(90);
-                } else {
-                    unit.getSprite().setRotation(-90);
-                }
-            }
-        }
-
         selectionCircle = new SelectionCircle(GraphicElementFactory.mGfxMap.get("selection.png"),
                 getVertexBufferObjectManager());
 
@@ -484,6 +484,12 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
         });
 
         pOnCreateSceneCallback.onCreateSceneFinished(mScene);
+
+        // if (isLoadedGame) {
+        // startGame();
+        // } else {
+        prepareDeploymentPhase();
+        // }
     }
 
     @Override
@@ -534,7 +540,6 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
         mGameMenuDialog.findViewById(R.id.exitButton).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO save game
                 startActivity(new Intent(GameActivity.this, HomeActivity.class));
                 finish();
                 GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
@@ -551,6 +556,8 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
         menuButtonAnimation.start();
     }
 
+    private boolean hasToSaveGame = true;
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -561,6 +568,9 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
             mLoadingScreen.dismiss();
         }
         GraphicElementFactory.mGfxMap = new HashMap<String, TextureRegion>();
+        if (hasToSaveGame) {
+            SaveGameHelper.saveGame(mDbHelper, battle);
+        }
     }
 
     private void pauseGame() {
@@ -576,11 +586,23 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
         mDeploymentStartTime = System.currentTimeMillis();
         displayBigLabel(R.string.deployment_phase, R.color.bg_btn_green);
 
-        for (Player p : battle.getPlayers()) {
-            if (!p.getArmy().equals(ArmiesData.GERMANY) && battle.getMap().isAllyLeftSide()) {
-                p.setXPositionDeployment(0);
+        for (Player player : battle.getPlayers()) {
+            if (!player.getArmy().equals(ArmiesData.GERMANY) && battle.getMap().isAllyLeftSide()) {
+                player.setXPositionDeployment(0);
             } else {
-                p.setXPositionDeployment(battle.getMap().getWidth() - GameUtils.DEPLOYMENT_ZONE_SIZE);
+                player.setXPositionDeployment(battle.getMap().getWidth() - GameUtils.DEPLOYMENT_ZONE_SIZE);
+            }
+            for (Unit unit : player.getUnits()) {
+                TMXTile t = tmxLayer.getTMXTile((int) (player.getXPositionDeployment() + Math.random() * 5),
+                        (int) (Math.random() * battle.getMap().getHeight()));
+                mGameElementFactory.addGameElement(mScene, unit, mInputManager, (player.getArmyIndex() == 0), t);
+                unit.setTilePosition(battle.getMap().getTiles()[t.getTileRow()][t.getTileColumn()]);
+                // units init rotation
+                if (player.getXPositionDeployment() == 0) {
+                    unit.getSprite().setRotation(90);
+                } else {
+                    unit.getSprite().setRotation(-90);
+                }
             }
         }
 
@@ -602,9 +624,11 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
     }
 
     private void startGame() {
-        GoogleAnalyticsHandler.sendTiming(getApplicationContext(), TimingCategory.in_game, TimingName.deployment_time,
-                (System.currentTimeMillis() - mDeploymentStartTime) / 1000);
-        mGameStartTime = System.currentTimeMillis();
+        if (!isLoadedGame) {
+            GoogleAnalyticsHandler.sendTiming(getApplicationContext(), TimingCategory.in_game,
+                    TimingName.deployment_time, (System.currentTimeMillis() - mDeploymentStartTime) / 1000);
+            mGameStartTime = System.currentTimeMillis();
+        }
 
         displayBigLabel(R.string.go, R.color.bg_btn_green);
 
@@ -623,7 +647,7 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
         mEngine.registerUpdateHandler(spriteTimerHandler);
     }
 
-    private void endGame(Player winningPlayer, boolean instantly) {
+    private void endGame(final Player winningPlayer, boolean instantly) {
         GoogleAnalyticsHandler.sendTiming(getApplicationContext(), TimingCategory.in_game, TimingName.game_time,
                 (System.currentTimeMillis() - mGameStartTime) / 1000);
 
@@ -632,7 +656,7 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
 
         if (instantly) {
             // show battle report without big label animation
-            goToReport();
+            goToReport(winningPlayer == battle.getMe());
 
         } else {
             // show battle report when big label animation is over
@@ -647,7 +671,7 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    goToReport();
+                    goToReport(winningPlayer == battle.getMe());
                 }
             });
 
@@ -665,8 +689,15 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
         }
     }
 
-    private void goToReport() {
-        startActivity(new Intent(GameActivity.this, BattleReportActivity.class));
+    private void goToReport(boolean victory) {
+        hasToSaveGame = false;
+        long battleId = SaveGameHelper.saveGame(mDbHelper, battle);
+        Intent i = new Intent(GameActivity.this, BattleReportActivity.class);
+        Bundle extras = new Bundle();
+        extras.putLong("game_id", battleId);
+        extras.putBoolean("victory", victory);
+        i.putExtras(extras);
+        startActivity(i);
         finish();
     }
 

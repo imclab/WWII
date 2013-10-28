@@ -47,29 +47,29 @@ public class DeflectionWeapon extends Weapon {
         // get all the units in the explosion
         float distanceToImpact;// in meters
         for (Player p : battle.getPlayers()) {
-            for (Unit u : p.getUnits()) {
-                distanceToImpact = GameUtils.getDistanceBetween(u, impactPosition[0], impactPosition[1])
+            for (Unit unit : p.getUnits()) {
+                distanceToImpact = GameUtils.getDistanceBetween(unit, impactPosition[0], impactPosition[1])
                         / GameUtils.PIXEL_BY_METER;
                 if (distanceToImpact < explosionSize) {
                     // increase panic
-                    u.getShots();
+                    unit.getShots();
                     if (distanceToImpact < explosionSize * EXPLOSION_EPICENTER_FACTOR) {
                         // great damage in the explosion's epicenter
-                        resolveDamageDiceRoll(CHANCE_TO_HIT_IN_EPICENTER, target);
+                        resolveDamageDiceRoll(CHANCE_TO_HIT_IN_EPICENTER, unit);
                     } else {
                         // minor damage further
                         int tohit = CHANCE_TO_HIT_AROUND;
 
                         // add terrain protection
-                        tohit *= target.getUnitTerrainProtection();
+                        tohit *= unit.getUnitTerrainProtection();
 
-                        if (target.getCurrentAction() == Action.hiding || target.getCurrentAction() == Action.reloading) {
+                        if (unit.getCurrentAction() == Action.hiding || unit.getCurrentAction() == Action.reloading) {
                             // target is hiding : tohit depends on target's
                             // experience
-                            tohit -= 5 * (target.getExperience().ordinal() + 1);
+                            tohit -= 5 * (unit.getExperience().ordinal() + 1);
                         }
 
-                        resolveDamageDiceRoll(tohit, target);
+                        resolveDamageDiceRoll(tohit, unit);
                     }
                 }
             }

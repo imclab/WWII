@@ -16,7 +16,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "wwii";
 
-    private final Context mContext;
+    private Context mContext;
     private BattleDao mBattleDao;
 
     public DatabaseHelper(Context context) {

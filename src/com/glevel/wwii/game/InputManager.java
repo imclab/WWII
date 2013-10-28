@@ -150,7 +150,7 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
         if (gameSprite == selectedElement) {
             // give defend order
             Unit unit = (Unit) selectedElement.getGameElement();
-            unit.setOrder(new DefendOrder(unit));
+            unit.setOrder(new DefendOrder());
         }
     }
 
@@ -162,9 +162,9 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
                 if (g != null && g.getGameElement() instanceof Unit && g != selectedElement
                         && !((Unit) g.getGameElement()).isDead()
                         && ((Unit) g.getGameElement()).getArmy() != ((Unit) selectedElement.getGameElement()).getArmy()) {
-                    unit.setOrder(new FireOrder(unit, (Unit) g.getGameElement()));
+                    unit.setOrder(new FireOrder((Unit) g.getGameElement()));
                 } else if (unit.canMove()) {
-                    unit.setOrder(new MoveOrder(unit, x, y));
+                    unit.setOrder(new MoveOrder(x, y));
                 }
             }
         }
@@ -216,6 +216,8 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
                     mGameActivity.protection.setPosition(x - mGameActivity.protection.getWidth() / 2, y
                             - mGameActivity.protection.getHeight() / 2);
                     mGameActivity.protection.setVisible(true);
+                } else {
+                    mGameActivity.protection.setVisible(false);
                 }
 
                 mGameActivity.crossHairLine.setColor(Color.GREEN);

@@ -124,12 +124,14 @@ public class GameUtils {
 
         p.setUnits(lstUnits);
         p.setArmyIndex(0);
+        p.setAI(false);
         battle.getPlayers().add(p);
 
         // enemy
         p = new Player();
         p.setVictoryCondition(new VictoryCondition(100));
         p.setArmy(ArmiesData.GERMANY);
+        p.setAI(true);
         lstUnits = new ArrayList<Unit>();
         e = UnitsData.buildScout(ArmiesData.GERMANY, Experience.recruit).copy();
         lstUnits.add(e);
