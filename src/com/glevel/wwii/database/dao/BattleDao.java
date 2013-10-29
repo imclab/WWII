@@ -4,11 +4,11 @@ import java.util.List;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 
 import com.glevel.wwii.database.DatabaseHelper;
 import com.glevel.wwii.database.Repository;
 import com.glevel.wwii.game.SaveGameHelper;
+import com.glevel.wwii.game.data.BattlesData;
 import com.glevel.wwii.game.model.Battle;
 import com.glevel.wwii.game.model.Battle.Phase;
 
@@ -62,10 +62,8 @@ public class BattleDao extends Repository<Battle> {
 
     @Override
     public Battle convertCursorRowToObject(Cursor c) {
-        DatabaseUtils.dumpCursor(c);
-        Battle entity = new Battle();
+        Battle entity = new Battle(BattlesData.values()[c.getInt(1)]);
         entity.setId(c.getLong(0));
-        entity.setBattleId(c.getInt(1));
         entity.setPlayers(SaveGameHelper.getPlayersFromLoadGame(c.getBlob(2)));
         entity.setCampaignId(c.getInt(3));
         entity.setPhase(Phase.values()[c.getInt(4)]);

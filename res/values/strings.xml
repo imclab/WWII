@@ -33,6 +33,7 @@
     <string name="solo">Play Solo</string>
     <string name="multiplayer">Multiplayer</string>
     <string name="settings">Settings</string>
+    <string name="tutorial">Tutorial</string>
     <string name="campaign">Campaign</string>
     <string name="battle_mode">Battle Mode</string>
     <string name="back">Back</string>
@@ -48,6 +49,11 @@
     <string name="medium">Medium</string>
     <string name="difficult">Hard</string>
     <string name="rate_app">Rate the app</string>
+
+    <!-- Campaign Chooser -->
+    <string name="new_campaign">New Campaign</string>
+    <string name="load_campaign">Load Campaign</string>
+    <string name="no_saved_campaigns">No saved games yet&#8230;</string>
 
     <!-- Battle Chooser -->
     <string name="choose_army">Choose your side</string>
@@ -91,6 +97,11 @@
     <string name="leave_report">Leave Report</string>
     <string name="enemy_army">Enemy\'s Army</string>
 
+    <!-- Campaign Screen -->
+    <string name="objective_points">Objective Points : %1$s / %2$s</string>
+    <string name="game_menu">Game Menu</string>
+    <string name="help">Help</string>
+
     <!-- Armies -->
     <string name="german_army">Germany</string>
     <string name="usa_army">USA</string>
@@ -98,13 +109,11 @@
     <!-- Weapons -->
     <string name="grenade">Hand Grenade</string>
     <string name="cannon75">Cannon 75mm</string>
-    <!-- USA -->
     <string name="garandM1">Garand M1</string>
     <string name="thompson">Thompson</string>
     <string name="browningM2">Browning M2</string>
     <string name="mortar50">Mortar 50mm</string>
     <string name="bazookaM1A">Bazooka</string>
-    <!-- Germany -->
     <string name="mauser">Mauser G98</string>
     <string name="mp40">MP 40</string>
     <string name="mg42">MG 42</string>
@@ -119,10 +128,11 @@
     <string name="hmg">Heavy MG</string>
     <string name="mortar">Mortar</string>
     <string name="at_cannon">Anti-tank Cannon</string>
-    <!-- USA -->
     <string name="bazooka">Bazooka</string>
     <string name="shermanM4A1">Sherman M4A1</string>
-    <!-- Germany -->
     <string name="pantherG">Panther G</string>
+
+    <!-- Campaigns -->
+    <string name="market_garden">Market Garden</string>
 
 </resources>

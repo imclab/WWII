@@ -1,46 +1,83 @@
 package com.glevel.wwii.game.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.glevel.wwii.game.data.ArmiesData;
+import com.glevel.wwii.game.data.BattlesData;
 import com.glevel.wwii.game.interfaces.OnNewSpriteToDraw;
 import com.glevel.wwii.game.model.map.Map;
 import com.glevel.wwii.game.model.units.Unit;
 
-public class Battle {
+public class Battle implements Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5687413891626670339L;
+    private final int battleId;
+    private final int name;
+    private final int image;
+    private final int requisition;
+    private final String tileMapName;
+    private transient final Map map;
+    private final VictoryCondition alliesVictoryCondition, axisVictoryCondition;
 
     private long id = 0L;
-    private int battleId = 0;
     private int campaignId = 0;
-    private int name;
-    private int image;
     private int importance;
-    private int requisition;
-    private Map map;
-    private List<Player> players = new ArrayList<Player>();
-    private Phase phase = Phase.deployment;
+    private transient List<Player> players = new ArrayList<Player>();
+    private transient Phase phase = Phase.deployment;
+    private transient OnNewSpriteToDraw onNewSprite;
+
+    // for campaign mode
+    private boolean isDone = false;
 
     public static enum Phase {
         deployment, combat
     }
 
-    private OnNewSpriteToDraw onNewSprite;
+    /**
+     * Single Battle Mode Constructor
+     * 
+     * @param data
+     */
+    public Battle(BattlesData data) {
+        this.battleId = data.getId();
+        this.name = data.getName();
+        this.image = data.getImage();
+        this.requisition = data.getRequisition();
+        this.map = new Map();
+        this.tileMapName = data.getTileMapName();
+        this.alliesVictoryCondition = new VictoryCondition(90);
+        this.axisVictoryCondition = new VictoryCondition(90);
+    }
+
+    /**
+     * Campaign Mode Constructor
+     * 
+     * @param data
+     */
+    public Battle(BattlesData data, int importance, int requisition, VictoryCondition alliesVictoryCondition,
+            VictoryCondition axisVictoryCondition) {
+        this.battleId = data.getId();
+        this.name = data.getName();
+        this.image = data.getImage();
+        this.importance = importance;
+        this.requisition = requisition;
+        this.map = new Map();
+        this.tileMapName = data.getTileMapName();
+        this.alliesVictoryCondition = alliesVictoryCondition;
+        this.axisVictoryCondition = axisVictoryCondition;
+    }
 
     public int getName() {
         return name;
     }
 
-    public void setName(int name) {
-        this.name = name;
-    }
-
     public int getImage() {
         return image;
-    }
-
-    public void setImage(int image) {
-        this.image = image;
     }
 
     public int getImportance() {
@@ -55,16 +92,8 @@ public class Battle {
         return requisition;
     }
 
-    public void setRequisition(int requisition) {
-        this.requisition = requisition;
-    }
-
     public Map getMap() {
         return map;
-    }
-
-    public void setMap(Map map) {
-        this.map = map;
     }
 
     public List<Player> getPlayers() {
@@ -126,10 +155,6 @@ public class Battle {
         return battleId;
     }
 
-    public void setBattleId(int battleId) {
-        this.battleId = battleId;
-    }
-
     public int getCampaignId() {
         return campaignId;
     }
@@ -148,6 +173,26 @@ public class Battle {
 
     public boolean isSingleBattle() {
         return campaignId == 0;
+    }
+
+    public String getTileMapName() {
+        return tileMapName;
+    }
+
+    public VictoryCondition getPlayerVictoryCondition(ArmiesData army) {
+        if (army == ArmiesData.USA) {
+            return alliesVictoryCondition;
+        } else {
+            return axisVictoryCondition;
+        }
+    }
+
+    public boolean isDone() {
+        return isDone;
+    }
+
+    public void setDone(boolean isDone) {
+        this.isDone = isDone;
     }
 
 }

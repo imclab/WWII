@@ -11,6 +11,7 @@ import java.util.List;
 import com.glevel.wwii.database.DatabaseHelper;
 import com.glevel.wwii.database.dao.BattleDao;
 import com.glevel.wwii.game.model.Battle;
+import com.glevel.wwii.game.model.Operation;
 import com.glevel.wwii.game.model.Player;
 
 public class SaveGameHelper {
@@ -47,7 +48,7 @@ public class SaveGameHelper {
     }
 
     /**
-     * Gets a players' list object from a byte array.
+     * Gets a list of players object from a byte array.
      * 
      * @param blob
      * @return
@@ -60,6 +61,53 @@ public class SaveGameHelper {
             List<Player> players = (List<Player>) in.readObject();
             in.close();
             return players;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Gets a player object from a byte array.
+     * 
+     * @param blob
+     * @return
+     */
+    public static Player getPlayerFromLoadGame(byte[] blob) {
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(blob);
+            ObjectInputStream in = new ObjectInputStream(bais);
+            Player player = (Player) in.readObject();
+            in.close();
+            return player;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Gets a list of operations object from a byte array.
+     * 
+     * @param blob
+     * @return
+     */
+    public static List<Operation> getOperationsListFromLoadGame(byte[] blob) {
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(blob);
+            ObjectInputStream in = new ObjectInputStream(bais);
+            @SuppressWarnings("unchecked")
+            List<Operation> operations = (List<Operation>) in.readObject();
+            in.close();
+            return operations;
         } catch (IOException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {

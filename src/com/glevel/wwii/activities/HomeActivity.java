@@ -25,6 +25,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.glevel.wwii.R;
+import com.glevel.wwii.activities.fragments.CampaignChooserFragment;
 import com.glevel.wwii.analytics.GoogleAnalyticsHandler;
 import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventAction;
 import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventCategory;
@@ -51,8 +52,8 @@ public class HomeActivity extends WWActivity implements OnClickListener {
     private Animation mMainButtonAnimationRightIn, mMainButtonAnimationRightOut, mMainButtonAnimationLeftIn,
             mMainButtonAnimationLeftOut;
     private Animation mFadeOutAnimation, mFadeInAnimation;
-    private Button mSoloButton, mMultiplayerButton, mSettingsButton, mCampaignButton, mBattleModeButton, mAboutButton,
-            mRateAppButton;
+    private Button mSoloButton, mMultiplayerButton, mSettingsButton, mTutorialButton, mCampaignButton,
+            mBattleModeButton, mAboutButton, mRateAppButton;
     private ViewGroup mSettingsLayout;
     private View mBackButton;
     private RadioGroup mRadioMusicvolume, mRadioDifficulty;
@@ -153,36 +154,14 @@ public class HomeActivity extends WWActivity implements OnClickListener {
                         EventAction.button_press, "rate_app_button");
                 break;
             case R.id.campaignButton:
-                ApplicationUtils.showToast(this, R.string.coming_soon, Toast.LENGTH_SHORT);
+                showCampaignSelector();
                 GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
                         EventAction.button_press, "go_campaign");
                 break;
             case R.id.battleButton:
                 List<Battle> lstBattles = SaveGameHelper.getUnfinishedBattles(mDbHelper);
                 if (lstBattles.size() > 0) {
-                    // ask user if he wants to resume a saved game
-                    final Battle savedGame = lstBattles.get(0);
-                    Dialog dialog = new CustomAlertDialog(this, R.style.Dialog, getString(R.string.resume_saved_battle,
-                            savedGame.getName()), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (which == R.id.okButton) {
-                                // load game
-                                Intent i = new Intent(HomeActivity.this, GameActivity.class);
-                                Bundle extras = new Bundle();
-                                extras.putLong("load_game_id", savedGame.getId());
-                                i.putExtras(extras);
-                                dialog.dismiss();
-                                startActivity(i);
-                                finish();
-                            } else {
-                                // create new battle
-                                dialog.dismiss();
-                                goToBattleChooserActivity();
-                            }
-                        }
-                    });
-                    dialog.show();
+                    showResumeGameDialog(lstBattles.get(0));
                 } else {
                     goToBattleChooserActivity();
                 }
@@ -232,6 +211,9 @@ public class HomeActivity extends WWActivity implements OnClickListener {
 
         mSettingsButton = (Button) findViewById(R.id.settingsButton);
         mSettingsButton.setOnClickListener(this);
+
+        mTutorialButton = (Button) findViewById(R.id.tutorialButton);
+        mTutorialButton.setOnClickListener(this);
 
         mCampaignButton = (Button) findViewById(R.id.campaignButton);
         mCampaignButton.setOnClickListener(this);
@@ -333,6 +315,9 @@ public class HomeActivity extends WWActivity implements OnClickListener {
     private void showSoloButtons() {
         mScreenState = ScreenState.SOLO;
         hideMainHomeButtons();
+        mTutorialButton.startAnimation(mMainButtonAnimationRightIn);
+        mTutorialButton.setVisibility(View.VISIBLE);
+        mTutorialButton.setEnabled(true);
         mCampaignButton.setVisibility(View.VISIBLE);
         mCampaignButton.startAnimation(mMainButtonAnimationLeftIn);
         mCampaignButton.setEnabled(true);
@@ -342,6 +327,9 @@ public class HomeActivity extends WWActivity implements OnClickListener {
     }
 
     private void hideSoloButtons() {
+        mTutorialButton.startAnimation(mMainButtonAnimationRightOut);
+        mTutorialButton.setVisibility(View.GONE);
+        mTutorialButton.setEnabled(false);
         mCampaignButton.startAnimation(mMainButtonAnimationLeftOut);
         mCampaignButton.setVisibility(View.GONE);
         mCampaignButton.setEnabled(false);
@@ -389,6 +377,35 @@ public class HomeActivity extends WWActivity implements OnClickListener {
     private void hideSettings() {
         mSettingsLayout.setVisibility(View.GONE);
         mSettingsLayout.startAnimation(mFadeOutAnimation);
+    }
+
+    private void showResumeGameDialog(final Battle savedGame) {
+        // ask user if he wants to resume a saved game
+        Dialog dialog = new CustomAlertDialog(this, R.style.Dialog, getString(R.string.resume_saved_battle,
+                savedGame.getName()), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == R.id.okButton) {
+                    // load game
+                    Intent i = new Intent(HomeActivity.this, GameActivity.class);
+                    Bundle extras = new Bundle();
+                    extras.putLong("load_game_id", savedGame.getId());
+                    i.putExtras(extras);
+                    dialog.dismiss();
+                    startActivity(i);
+                    finish();
+                } else {
+                    // create new battle
+                    dialog.dismiss();
+                    goToBattleChooserActivity();
+                }
+            }
+        });
+        dialog.show();
+    }
+
+    private void showCampaignSelector() {
+        ApplicationUtils.openDialogFragment(this, new CampaignChooserFragment(), null);
     }
 
 }

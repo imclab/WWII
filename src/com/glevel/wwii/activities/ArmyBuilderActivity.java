@@ -17,10 +17,14 @@ import android.widget.Toast;
 
 import com.glevel.wwii.R;
 import com.glevel.wwii.activities.adapters.UnitsArrayAdapter;
+import com.glevel.wwii.database.DatabaseHelper;
+import com.glevel.wwii.game.AI;
 import com.glevel.wwii.game.GameUtils;
+import com.glevel.wwii.game.SaveGameHelper;
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.data.BattlesData;
 import com.glevel.wwii.game.data.UnitsData;
+import com.glevel.wwii.game.model.Battle;
 import com.glevel.wwii.game.model.Player;
 import com.glevel.wwii.game.model.units.Unit;
 import com.glevel.wwii.utils.ApplicationUtils;
@@ -29,10 +33,10 @@ import com.glevel.wwii.views.CustomAlertDialog;
 
 public class ArmyBuilderActivity extends WWActivity {
 
-    public static final String EXTRA_ARMY = "armyId", EXTRA_MAP = "mapId";
+    public static final String EXTRA_ARMY = "army_id", EXTRA_MAP = "map_id";
 
     private ArmiesData mPlayerArmy;
-    private BattlesData mMap;
+    private Battle mBattle;
     private Player mPlayer;
     private List<Unit> mAvailableUnits;
 
@@ -40,6 +44,8 @@ public class ArmyBuilderActivity extends WWActivity {
     private TextView mRequisitionPointsTV;
     private Button mStartBattleBtn;
     private UnitsArrayAdapter mMyArmyAdapter;
+
+    private DatabaseHelper dbHelper;
 
     /**
      * Callbacks
@@ -69,7 +75,6 @@ public class ArmyBuilderActivity extends WWActivity {
             }
         }
     };
-
     private OnItemClickListener onMyUnitClicked = new OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
@@ -79,7 +84,6 @@ public class ArmyBuilderActivity extends WWActivity {
             }
         }
     };
-
     private OnItemClickListener onAvailableUnitClicked = new OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
@@ -102,22 +106,30 @@ public class ArmyBuilderActivity extends WWActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // get intent extras
+        // build battle with intent extras
         Intent intent = getIntent();
+        mBattle = new Battle(BattlesData.values()[intent.getIntExtra(EXTRA_MAP, 0)]);
         mPlayerArmy = ArmiesData.values()[intent.getIntExtra(EXTRA_ARMY, ArmiesData.USA.ordinal())];
-        mMap = BattlesData.values()[intent.getIntExtra(EXTRA_MAP, 0)];
 
-        // init player for solo battle
-        mPlayer = new Player();
-        mPlayer.setArmyIndex(0);
-        mPlayer.setArmy(mPlayerArmy);
-        mPlayer.setAI(false);
+        // init human player
+        mPlayer = new Player("Me", mPlayerArmy, 0, false, mBattle.getPlayerVictoryCondition(mPlayerArmy));
+        mBattle.getPlayers().add(mPlayer);
+
+        // create AI's player
+        Player enemyPlayer = new Player("Enemy", mPlayerArmy.getEnemy(), mBattle.getPlayers().size(), true,
+                mBattle.getPlayerVictoryCondition(mPlayerArmy.getEnemy()));
+        mBattle.getPlayers().add(enemyPlayer);
+
+        // create AI's player army
+        AI.createArmy(enemyPlayer, mBattle);
 
         // get available units to hire
         mAvailableUnits = UnitsData.getAllUnits(mPlayerArmy);
 
         setContentView(R.layout.activity_army_builder);
         setupUI();
+
+        dbHelper = new DatabaseHelper(getApplicationContext());
     }
 
     @Override
@@ -129,7 +141,7 @@ public class ArmyBuilderActivity extends WWActivity {
     private void setupUI() {
         // init requisition points value
         mRequisitionPointsTV = (TextView) findViewById(R.id.requisitionPoints);
-        updateRequisitionPointsLeft(mMap.getRequisition());
+        updateRequisitionPointsLeft(mBattle.getRequisition());
 
         // init army flag
         TextView viewTitle = (TextView) findViewById(R.id.title);
@@ -204,9 +216,11 @@ public class ArmyBuilderActivity extends WWActivity {
     }
 
     private void startGame() {
+        long gameId = SaveGameHelper.saveGame(dbHelper, mBattle);
         Intent intent = new Intent(this, GameActivity.class);
-        // clear activity stack
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Bundle args = new Bundle();
+        args.putLong("game_id", gameId);
+        intent.putExtras(args);
         startActivity(intent);
         finish();
     }

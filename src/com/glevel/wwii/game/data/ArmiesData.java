@@ -28,4 +28,12 @@ public enum ArmiesData {
         return color;
     }
 
+    public ArmiesData getEnemy() {
+        if (ordinal() == 0) {
+            return ArmiesData.values()[1];
+        } else {
+            return ArmiesData.values()[0];
+        }
+    }
+
 }

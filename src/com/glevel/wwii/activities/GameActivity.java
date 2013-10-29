@@ -71,7 +71,6 @@ import com.glevel.wwii.game.model.Battle.Phase;
 import com.glevel.wwii.game.model.GameElement.Rank;
 import com.glevel.wwii.game.model.GameSprite;
 import com.glevel.wwii.game.model.Player;
-import com.glevel.wwii.game.model.map.Map;
 import com.glevel.wwii.game.model.map.Tile;
 import com.glevel.wwii.game.model.orders.FireOrder;
 import com.glevel.wwii.game.model.orders.MoveOrder;
@@ -111,10 +110,9 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
         }
     };
 
-    private long mDeploymentStartTime;
-    private long mGameStartTime;
+    private long mDeploymentStartTime = 0L;
+    private long mGameStartTime = 0L;
     private DatabaseHelper mDbHelper;
-    private boolean isLoadedGame = false;
 
     @Override
     public EngineOptions onCreateEngineOptions() {
@@ -130,24 +128,17 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
 
         mDbHelper = new DatabaseHelper(getApplicationContext());
 
+        // battle = GameUtils.createTestData();
+
         Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            long gameId = extras.getLong("load_game_id", 0);
-            if (gameId > 0) {
-                battle = mDbHelper.getBattleDao().getById(gameId);
-                isLoadedGame = true;
-            }
-        } else {
-            battle = GameUtils.createTestData();
-        }
+        long gameId = extras.getLong("game_id", 0);
+        battle = mDbHelper.getBattleDao().getById(gameId);
         battle.setOnNewSprite(this);
 
         setupUI();
 
         // allow user to change the music volume with his phone's buttons
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-
-        SaveGameHelper.deleteSavedBattles(mDbHelper, battle.getCampaignId());
     }
 
     private void setupUI() {
@@ -423,17 +414,15 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
         tmxLayer = this.mTMXTiledMap.getTMXLayers().get(0);
         mScene.attachChild(tmxLayer);
 
-        // init map
-        Map m = new Map();
+        // init battle's map
         Tile[][] lstTiles = new Tile[tmxLayer.getTileRows()][tmxLayer.getTileColumns()];
         for (TMXTile[] tt : tmxLayer.getTMXTiles()) {
             for (TMXTile t : tt) {
                 lstTiles[t.getTileRow()][t.getTileColumn()] = new Tile(t, mTMXTiledMap);
             }
         }
-        m.setTiles(lstTiles);
-        m.setTmxLayer(tmxLayer);
-        battle.setMap(m);
+        battle.getMap().setTiles(lstTiles);
+        battle.getMap().setTmxLayer(tmxLayer);
 
         /* Make the camera not exceed the bounds of the TMXEntity. */
         this.mCamera.setBounds(0, 0, tmxLayer.getHeight(), tmxLayer.getWidth());
@@ -506,8 +495,8 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
         mGameMenuDialog = new Dialog(this, R.style.FullScreenDialog);
         mGameMenuDialog.setContentView(R.layout.dialog_game_menu);
         mGameMenuDialog.setCancelable(true);
-        // surrender button
         Animation menuButtonAnimation = AnimationUtils.loadAnimation(this, R.anim.bottom_in);
+        // surrender button
         mGameMenuDialog.findViewById(R.id.surrenderButton).setAnimation(menuButtonAnimation);
         mGameMenuDialog.findViewById(R.id.surrenderButton).setOnClickListener(new OnClickListener() {
             @Override
@@ -606,8 +595,9 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
             }
         }
 
-        deploymentZone = new DeploymentZone(0.0f, 0.0f, GameUtils.DEPLOYMENT_ZONE_SIZE * 32.0f, battle.getMap()
-                .getHeight() * 32.0f, getVertexBufferObjectManager());
+        deploymentZone = new DeploymentZone(battle.getMe().getXPositionDeployment() * 32.0f, 0.0f, (battle.getMe()
+                .getXPositionDeployment() + GameUtils.DEPLOYMENT_ZONE_SIZE) * 32.0f,
+                battle.getMap().getHeight() * 32.0f, getVertexBufferObjectManager());
         mScene.attachChild(deploymentZone);
     }
 
@@ -624,7 +614,7 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
     }
 
     private void startGame() {
-        if (!isLoadedGame) {
+        if (mDeploymentStartTime > 0) {
             GoogleAnalyticsHandler.sendTiming(getApplicationContext(), TimingCategory.in_game,
                     TimingName.deployment_time, (System.currentTimeMillis() - mDeploymentStartTime) / 1000);
             mGameStartTime = System.currentTimeMillis();
@@ -648,8 +638,10 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
     }
 
     private void endGame(final Player winningPlayer, boolean instantly) {
-        GoogleAnalyticsHandler.sendTiming(getApplicationContext(), TimingCategory.in_game, TimingName.game_time,
-                (System.currentTimeMillis() - mGameStartTime) / 1000);
+        if (mGameStartTime > 0L) {
+            GoogleAnalyticsHandler.sendTiming(getApplicationContext(), TimingCategory.in_game, TimingName.game_time,
+                    (System.currentTimeMillis() - mGameStartTime) / 1000);
+        }
 
         // stop engine
         mEngine.stop();

@@ -139,11 +139,13 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
         if (selectedElement != null) {
             selectedElement.detachChild(mGameActivity.selectionCircle);
         }
-        selectedElement = gameSprite;
-        mGameActivity.selectionCircle.setColor(selectedElement.getGameElement().getSelectionColor());
-        gameSprite.setZIndex(10);
-        mGameActivity.selectionCircle.setZIndex(-10);
-        gameSprite.attachChild(mGameActivity.selectionCircle);
+        if (gameSprite.isVisible()) {
+            selectedElement = gameSprite;
+            mGameActivity.selectionCircle.setColor(selectedElement.getGameElement().getSelectionColor());
+            gameSprite.setZIndex(10);
+            mGameActivity.selectionCircle.setZIndex(-10);
+            gameSprite.attachChild(mGameActivity.selectionCircle);
+        }
     }
 
     public void giveHideOrder(GameSprite gameSprite) {

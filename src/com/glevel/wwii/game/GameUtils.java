@@ -6,6 +6,7 @@ import java.util.List;
 import org.andengine.extension.tmx.TMXTile;
 
 import com.glevel.wwii.game.data.ArmiesData;
+import com.glevel.wwii.game.data.BattlesData;
 import com.glevel.wwii.game.data.UnitsData;
 import com.glevel.wwii.game.model.Battle;
 import com.glevel.wwii.game.model.GameElement;
@@ -40,6 +41,10 @@ public class GameUtils {
 
     public static final int DEPLOYMENT_ZONE_SIZE = 8;
 
+    public static float getDistanceBetween(float x1, float y1, float x2, float y2) {
+        return (float) Math.sqrt((Math.pow(Math.abs(x1 - x2), 2) + Math.pow(Math.abs(y1 - y2), 2)));
+    }
+
     public static float getDistanceBetween(GameElement g1, GameElement g2) {
         return getDistanceBetween(g1.getSprite().getX(), g1.getSprite().getY(), g2.getSprite().getX(), g2.getSprite()
                 .getY());
@@ -49,11 +54,7 @@ public class GameUtils {
         return getDistanceBetween(g1.getSprite().getX(), g1.getSprite().getY(), x, y);
     }
 
-    public static float getDistanceBetween(float x1, float y1, float x2, float y2) {
-        return (float) Math.sqrt((Math.pow(Math.abs(x1 - x2), 2) + Math.pow(Math.abs(y1 - y2), 2)));
-    }
-
-    private static final int STEP = 30;
+    private static final int STEP = 32;
 
     public static boolean canSee(Map map, GameElement g1, GameElement g2) {
         float dx = g2.getSprite().getX() - g1.getSprite().getX();
@@ -110,28 +111,20 @@ public class GameUtils {
     }
 
     public static Battle createTestData() {
-        Battle battle = new Battle();
+        Battle battle = new Battle(BattlesData.ARNHEM_BRIDGE);
 
         // me
-        Player p = new Player();
-        p.setVictoryCondition(new VictoryCondition(100));
-        p.setArmy(ArmiesData.USA);
+        Player p = new Player("Me", ArmiesData.USA, 0, false, new VictoryCondition(100));
         ArrayList<Unit> lstUnits = new ArrayList<Unit>();
         Unit e = UnitsData.buildATCannon(ArmiesData.USA, Experience.elite).copy();
         lstUnits.add(e);
         Unit e2 = UnitsData.buildRifleMan(ArmiesData.USA, Experience.veteran).copy();
         lstUnits.add(e2);
-
         p.setUnits(lstUnits);
-        p.setArmyIndex(0);
-        p.setAI(false);
         battle.getPlayers().add(p);
 
         // enemy
-        p = new Player();
-        p.setVictoryCondition(new VictoryCondition(100));
-        p.setArmy(ArmiesData.GERMANY);
-        p.setAI(true);
+        p = new Player("Enemy", ArmiesData.GERMANY, 0, true, new VictoryCondition(100));
         lstUnits = new ArrayList<Unit>();
         e = UnitsData.buildScout(ArmiesData.GERMANY, Experience.recruit).copy();
         lstUnits.add(e);
@@ -140,7 +133,6 @@ public class GameUtils {
         e2 = UnitsData.buildRifleMan(ArmiesData.GERMANY, Experience.elite).copy();
         lstUnits.add(e2);
         p.setUnits(lstUnits);
-        p.setArmyIndex(1);
         battle.getPlayers().add(p);
         return battle;
     }

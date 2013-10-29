@@ -13,27 +13,42 @@ public class Player implements Serializable {
      * 
      */
     private static final long serialVersionUID = 6829836915818818596L;
-    private String name;
-    private int requisition;
 
-    private ArmiesData army;
-    private List<Unit> units = new ArrayList<Unit>();
-    private boolean isAI;
+    private final String name;
+    private final ArmiesData army;
+    private final int armyIndex;
+    private final boolean isAI;
     private VictoryCondition victoryCondition;
-    private int armyIndex;
 
+    private List<Unit> units = new ArrayList<Unit>();
+    private int requisition;
     private int xPositionDeployment;
 
+    /**
+     * Campaign's player constructor
+     */
+    public Player(ArmiesData army) {
+        this.name = "Me";
+        this.army = army;
+        this.armyIndex = 0;
+        this.isAI = false;
+        this.setVictoryCondition(null);
+    }
+
+    public Player(String name, ArmiesData army, int armyIndex, boolean isAI, VictoryCondition victoryCondition) {
+        this.name = name;
+        this.army = army;
+        this.armyIndex = armyIndex;
+        this.isAI = isAI;
+        this.setVictoryCondition(victoryCondition);
+    }
+
     public boolean checkIfPlayerWon(Battle battle) {
-        return victoryCondition.checkVictory(this, battle);
+        return getVictoryCondition().checkVictory(this, battle);
     }
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public int getRequisition() {
@@ -48,10 +63,6 @@ public class Player implements Serializable {
         return army;
     }
 
-    public void setArmy(ArmiesData army) {
-        this.army = army;
-    }
-
     public List<Unit> gameElement() {
         return units;
     }
@@ -64,24 +75,12 @@ public class Player implements Serializable {
         return isAI;
     }
 
-    public void setAI(boolean isAI) {
-        this.isAI = isAI;
-    }
-
     public VictoryCondition getVictoryCondition() {
         return victoryCondition;
     }
 
-    public void setVictoryCondition(VictoryCondition victoryCondition) {
-        this.victoryCondition = victoryCondition;
-    }
-
     public int getArmyIndex() {
         return armyIndex;
-    }
-
-    public void setArmyIndex(int armyIndex) {
-        this.armyIndex = armyIndex;
     }
 
     public List<Unit> getUnits() {
@@ -94,6 +93,10 @@ public class Player implements Serializable {
 
     public void setXPositionDeployment(int xPositionDeployment) {
         this.xPositionDeployment = xPositionDeployment;
+    }
+
+    public void setVictoryCondition(VictoryCondition victoryCondition) {
+        this.victoryCondition = victoryCondition;
     }
 
 }
