@@ -4,15 +4,15 @@
     android:fillBefore="true" >
 
     <translate
-        android:duration="700"
-        android:fromXDelta="-100%p"
+        android:duration="800"
+        android:fromXDelta="-120%p"
         android:interpolator="@android:anim/decelerate_interpolator"
         android:toXDelta="3%p" />
     <translate
         android:duration="250"
         android:fromXDelta="0%p"
         android:interpolator="@android:anim/bounce_interpolator"
-        android:startOffset="700"
+        android:startOffset="800"
         android:toXDelta="-3%p" />
 
 </set>

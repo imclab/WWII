@@ -101,6 +101,7 @@
     <string name="objective_points">Objective Points : %1$s / %2$s</string>
     <string name="game_menu">Game Menu</string>
     <string name="help">Help</string>
+    <string name="skip">Skip</string>
 
     <!-- Armies -->
     <string name="german_army">Germany</string>
@@ -134,5 +135,10 @@
 
     <!-- Campaigns -->
     <string name="market_garden">Market Garden</string>
+    <string name="market_garden_intro_1">Operation Market-Garden
+        \nAfter the successes encountered in the Normandy Breakout from July through August 1944, it was believed that the German Army was a beaten foe and in retreat.
+        \nAs such, British General Montgomery lay forth a brazen plan to capture key bridges that would be required conquests for the final push into Germany, perhaps ending the war in Europe by Christmas of 1944.
+        \nMontgomery relayed his plan and, following acceptance by Supreme Allied Commander in Europe - US General Dwight Eisenhower - put the plan into action.
+        \nOn September 17th - just seven days after the official approval, Operation Market Garden was set in motion&#8230;</string>
 
 </resources>

@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.data.CampaignsData.Campaigns;
-import com.glevel.wwii.game.data.CampaignsData.OperationsData;
+import com.glevel.wwii.game.data.OperationsData;
 
 public class Campaign {
 

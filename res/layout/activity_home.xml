@@ -45,6 +45,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/mainButtonsLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -75,6 +76,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/soloLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -112,6 +114,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
+            android:focusable="false"
             android:gravity="center"
             android:orientation="vertical"
             android:visibility="gone" >
