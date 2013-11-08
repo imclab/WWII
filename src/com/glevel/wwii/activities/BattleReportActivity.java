@@ -10,9 +10,6 @@ import android.widget.TextView;
 
 import com.glevel.wwii.R;
 import com.glevel.wwii.activities.adapters.GameReportUnitsArrayAdapter;
-import com.glevel.wwii.analytics.GoogleAnalyticsHandler;
-import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventAction;
-import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventCategory;
 import com.glevel.wwii.database.DatabaseHelper;
 import com.glevel.wwii.game.SaveGameHelper;
 import com.glevel.wwii.game.model.Battle;
@@ -34,8 +31,6 @@ public class BattleReportActivity extends WWActivity {
     private OnClickListener onLeaveReportClicked = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-                    EventAction.button_press, "leave_battle_report");
             leaveReport();
         }
     };
@@ -60,8 +55,6 @@ public class BattleReportActivity extends WWActivity {
 
     @Override
     public void onBackPressed() {
-        GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press,
-                "battle_report_back_pressed");
         leaveReport();
     }
 
