@@ -23,6 +23,7 @@ public class GameUtils {
     public static final String GAME_PREFS_FILENAME = "com.glevel.wwii";
     public static final String GAME_PREFS_KEY_DIFFICULTY = "game_difficulty";
     public static final String GAME_PREFS_KEY_MUSIC_VOLUME = "game_music_volume";
+    public static final String TUTORIAL_DONE = "tutorial_done";
 
     public static final int PIXEL_BY_METER = 15;
 
@@ -37,7 +38,7 @@ public class GameUtils {
     }
 
     public static final int MAX_UNIT_PER_ARMY = 8;
-    public static final float SELL_PRICE_FACTOR = 0.5f;
+    public static final float SELL_PRICE_FACTOR = 1.0f;
 
     public static final int DEPLOYMENT_ZONE_SIZE = 8;
 

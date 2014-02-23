@@ -8,6 +8,7 @@
     <color name="link">#23541D</color>
     <color name="requisitionPoints">#EDEA39</color>
     <color name="grey">#D4CDCD</color>
+    <color name="white">#FFFFFF</color>
     <color name="red">#D10000</color>
     <color name="orange">#FF9F38</color>
     <color name="yellow">#EDEA39</color>
@@ -18,5 +19,6 @@
     <color name="yellow_bullet">#D9B904</color>
     <color name="bg_game_gui">#aa000000</color>
     <color name="bg_game_menu">#cc000000</color>
+    <color name="btn_stroke_color">#000000</color>
 
 </resources>

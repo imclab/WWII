@@ -19,7 +19,7 @@
     <supports-gl-texture android:name="GL_OES_compressed_ETC1_RGB8_texture" />
 
     <application
-        android:name="com.glevel.wwii.WWApplication"
+        android:name="com.glevel.wwii.MyApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
@@ -29,16 +29,16 @@
             android:name=".activities.SplashActivity"
             android:noHistory="true"
             android:screenOrientation="landscape" >
-        </activity>
-        <activity
-            android:name=".activities.HomeActivity"
-            android:noHistory="false"
-            android:screenOrientation="landscape" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.HomeActivity"
+            android:noHistory="false"
+            android:screenOrientation="landscape" >
         </activity>
         <activity
             android:name=".activities.BattleChooserActivity"

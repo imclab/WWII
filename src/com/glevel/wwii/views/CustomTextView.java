@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-import com.glevel.wwii.WWApplication.FONTS;
+import com.glevel.wwii.MyApplication.FONTS;
 
 public class CustomTextView extends TextView {
 

@@ -1,12 +1,17 @@
-package com.glevel.wwii.utils;
+package com.glevel.wwii;
 
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
+import com.glevel.wwii.utils.MusicManager;
 import com.google.analytics.tracking.android.EasyTracker;
 
-public abstract class WWActivity extends FragmentActivity {
+public abstract class MyActivity extends FragmentActivity {
+
+    protected boolean mIsMusic = true;
+    protected boolean mContinueMusic = false;
+    protected int mMusic = MusicManager.MUSIC_MENU;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +34,23 @@ public abstract class WWActivity extends FragmentActivity {
         super.onStop();
         // analytics
         EasyTracker.getInstance(this).activityStop(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (!mContinueMusic) {
+            MusicManager.pause();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mContinueMusic = false;
+        if (mIsMusic) {
+            MusicManager.start(this, mMusic);
+        }
     }
 
 }

@@ -12,14 +12,14 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.glevel.wwii.MyActivity;
 import com.glevel.wwii.R;
 import com.glevel.wwii.database.DatabaseHelper;
 import com.glevel.wwii.game.model.Campaign;
 import com.glevel.wwii.game.model.Operation;
-import com.glevel.wwii.utils.WWActivity;
 import com.glevel.wwii.views.CustomTextView;
 
-public class CampaignActivity extends WWActivity implements OnClickListener {
+public class CampaignActivity extends MyActivity implements OnClickListener {
 
 	private DatabaseHelper mDbHelper;
 	private Campaign mCampaign;
@@ -85,8 +85,7 @@ public class CampaignActivity extends WWActivity implements OnClickListener {
 
 		// current objectives points
 		TextView objectivePointsTv = (TextView) findViewById(R.id.objectivePoints);
-		objectivePointsTv.setText(getString(R.string.objective_points, mCurrentOperation.getCurrentPoints(),
-		        mCurrentOperation.getObjectivePoints()));
+		objectivePointsTv.setText(getString(R.string.objective_points, mCurrentOperation.getCurrentPoints(), mCurrentOperation.getObjectivePoints()));
 	}
 
 	private void openGameMenu() {

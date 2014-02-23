@@ -3,7 +3,7 @@ package com.glevel.wwii;
 import android.app.Application;
 import android.graphics.Typeface;
 
-public class WWApplication extends Application {
+public class MyApplication extends Application {
 
     @Override
     public void onCreate() {

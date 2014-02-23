@@ -45,11 +45,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.glevel.wwii.R;
-import com.glevel.wwii.analytics.GoogleAnalyticsHandler;
-import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventAction;
-import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventCategory;
-import com.glevel.wwii.analytics.GoogleAnalyticsHandler.TimingCategory;
-import com.glevel.wwii.analytics.GoogleAnalyticsHandler.TimingName;
+import com.glevel.wwii.analytics.GoogleAnalyticsHelper;
+import com.glevel.wwii.analytics.GoogleAnalyticsHelper.EventAction;
+import com.glevel.wwii.analytics.GoogleAnalyticsHelper.EventCategory;
+import com.glevel.wwii.analytics.GoogleAnalyticsHelper.TimingCategory;
+import com.glevel.wwii.analytics.GoogleAnalyticsHelper.TimingName;
 import com.glevel.wwii.database.DatabaseHelper;
 import com.glevel.wwii.game.AI;
 import com.glevel.wwii.game.GameUtils;
@@ -375,7 +375,7 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
 		this.mFont.load();
 		mLoadingScreen.dismiss();
 		pOnCreateResourcesCallback.onCreateResourcesFinished();
-		GoogleAnalyticsHandler.sendTiming(getApplicationContext(), TimingCategory.resources, TimingName.load_game,
+		GoogleAnalyticsHelper.sendTiming(getApplicationContext(), TimingCategory.resources, TimingName.load_game,
 		        (System.currentTimeMillis() - startLoadingTime) / 1000);
 	}
 
@@ -497,7 +497,7 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
 					        public void onClick(DialogInterface dialog, int which) {
 						        if (which == R.id.okButton) {
 							        endGame(battle.getEnemyPlayer(battle.getMe()), true);
-							        GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+							        GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.ui_action,
 							                EventAction.button_press, "surrender_game");
 						        }
 						        dialog.dismiss();
@@ -521,7 +521,7 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
 			public void onClick(View v) {
 				startActivity(new Intent(GameActivity.this, HomeActivity.class));
 				finish();
-				GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
+				GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.ui_action,
 				        EventAction.button_press, "exit_game");
 			}
 		});
@@ -605,7 +605,7 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
 
 	private void startGame() {
 		if (mDeploymentStartTime > 0) {
-			GoogleAnalyticsHandler.sendTiming(getApplicationContext(), TimingCategory.in_game,
+			GoogleAnalyticsHelper.sendTiming(getApplicationContext(), TimingCategory.in_game,
 			        TimingName.deployment_time, (System.currentTimeMillis() - mDeploymentStartTime) / 1000);
 			mGameStartTime = System.currentTimeMillis();
 		}
@@ -629,7 +629,7 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
 
 	private void endGame(final Player winningPlayer, boolean instantly) {
 		if (mGameStartTime > 0L) {
-			GoogleAnalyticsHandler.sendTiming(getApplicationContext(), TimingCategory.in_game, TimingName.game_time,
+			GoogleAnalyticsHelper.sendTiming(getApplicationContext(), TimingCategory.in_game, TimingName.game_time,
 			        (System.currentTimeMillis() - mGameStartTime) / 1000);
 		}
 
@@ -666,7 +666,7 @@ public class GameActivity extends LayoutGameActivity implements OnNewSpriteToDra
 				displayBigLabel(R.string.defeat, R.color.red);
 			}
 
-			GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.in_game, EventAction.end_game,
+			GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.in_game, EventAction.end_game,
 			        winningPlayer == battle.getMe() ? "victory" : "defeat");
 		}
 	}

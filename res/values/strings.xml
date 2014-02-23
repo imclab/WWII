@@ -26,11 +26,11 @@
     <string name="about_credits">Game, assets and music\nby <a href="http://www.linkedin.com/profile/view?id=144913212">Guillaume Gouchon</a>.</string>
     <string name="about_blog">Check out <a href="http://glevelapps.blogspot.co.uk">my Blog</a> !</string>
     <string name="about_contact"><a href="mailto:guillaume.gouchon@gmail.com">Contact me</a> if you have any issue or question.</string>
-    <string name="about_other_sources">The game is using And Engine by Nicolas Gramlich.\nHistorical sources from National Archives and Wikipedia.</string>
+    <string name="about_other_sources">The game is using AndEngine Game Engine by Nicolas Gramlich.\nLauncher icon by <a href="http://game-icons.net">Game-Icons</a>.</string>
     <string name="about_version">App version : 1.0</string>
 
     <!-- Home Screen -->
-    <string name="solo">Play Solo</string>
+    <string name="play">Play</string>
     <string name="multiplayer">Multiplayer</string>
     <string name="settings">Settings</string>
     <string name="tutorial">Tutorial</string>
@@ -38,7 +38,8 @@
     <string name="battle_mode">Battle Mode</string>
     <string name="back">Back</string>
     <string name="resume_saved_battle">You have a saved game located in %s, do you want to finish it ?\nIt will be lost if you start another battle.</string>
-
+    <string name="ask_tutorial">It is recommanded to do the tutorial in order to know how to play !\nWould you like to do it now ?</string>
+    
     <!-- Settings -->
     <string name="music_volume">Music / Sound</string>
     <string name="music_off">Off</string>

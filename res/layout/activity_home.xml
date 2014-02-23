@@ -20,10 +20,11 @@
         android:background="@color/bg_home" >
 
         <LinearLayout
+            android:id="@+id/appName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
             android:gravity="center"
             android:orientation="horizontal" >
 
@@ -52,35 +53,12 @@
             android:orientation="vertical" >
 
             <com.glevel.wwii.views.CustomButton
-                android:id="@+id/soloButton"
+                android:id="@+id/playButton"
                 style="@style/HomeScreenButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="15dp"
-                android:text="@string/solo" />
-
-            <com.glevel.wwii.views.CustomButton
-                android:id="@+id/multiplayerButton"
-                style="@style/HomeScreenButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:text="@string/multiplayer" />
-
-            <com.glevel.wwii.views.CustomButton
-                android:id="@+id/settingsButton"
-                style="@style/HomeScreenButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/settings" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/soloLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical" >
+                android:text="@string/play" />
 
             <com.glevel.wwii.views.CustomButton
                 android:id="@+id/tutorialButton"
@@ -92,21 +70,11 @@
                 android:visibility="gone" />
 
             <com.glevel.wwii.views.CustomButton
-                android:id="@+id/campaignButton"
+                android:id="@+id/settingsButton"
                 style="@style/HomeScreenButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:text="@string/campaign"
-                android:visibility="gone" />
-
-            <com.glevel.wwii.views.CustomButton
-                android:id="@+id/battleButton"
-                style="@style/HomeScreenButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/battle_mode"
-                android:visibility="gone" />
+                android:text="@string/settings" />
         </LinearLayout>
 
         <LinearLayout
@@ -218,7 +186,7 @@
             android:layout_alignParentTop="true"
             android:layout_margin="5dp"
             android:text="@string/back"
-            android:textSize="28sp"
+            android:textSize="22sp"
             android:visibility="gone" />
     </RelativeLayout>
 

@@ -10,26 +10,25 @@ import android.content.SharedPreferences.Editor;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.glevel.wwii.MyActivity;
 import com.glevel.wwii.R;
-import com.glevel.wwii.activities.fragments.CampaignChooserFragment;
-import com.glevel.wwii.analytics.GoogleAnalyticsHandler;
-import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventAction;
-import com.glevel.wwii.analytics.GoogleAnalyticsHandler.EventCategory;
+import com.glevel.wwii.analytics.GoogleAnalyticsHelper;
+import com.glevel.wwii.analytics.GoogleAnalyticsHelper.EventAction;
+import com.glevel.wwii.analytics.GoogleAnalyticsHelper.EventCategory;
 import com.glevel.wwii.database.DatabaseHelper;
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.GameUtils.DifficultyLevel;
@@ -37,10 +36,10 @@ import com.glevel.wwii.game.GameUtils.MusicState;
 import com.glevel.wwii.game.SaveGameHelper;
 import com.glevel.wwii.game.model.Battle;
 import com.glevel.wwii.utils.ApplicationUtils;
-import com.glevel.wwii.utils.WWActivity;
+import com.glevel.wwii.utils.MusicManager;
 import com.glevel.wwii.views.CustomAlertDialog;
 
-public class HomeActivity extends WWActivity implements OnClickListener {
+public class HomeActivity extends MyActivity implements OnClickListener {
 
 	private static enum ScreenState {
 		HOME, SOLO, SETTINGS
@@ -50,13 +49,11 @@ public class HomeActivity extends WWActivity implements OnClickListener {
 	private ScreenState mScreenState = ScreenState.HOME;
 	private DatabaseHelper mDbHelper;
 
-	private Animation mMainButtonAnimationRightIn, mMainButtonAnimationRightOut, mMainButtonAnimationLeftIn,
-	        mMainButtonAnimationLeftOut;
+	private Animation mMainButtonAnimationRightIn, mMainButtonAnimationRightOut, mMainButtonAnimationLeftIn, mMainButtonAnimationLeftOut;
 	private Animation mFadeOutAnimation, mFadeInAnimation;
-	private Button mSoloButton, mMultiplayerButton, mSettingsButton, mTutorialButton, mCampaignButton,
-	        mBattleModeButton, mAboutButton, mRateAppButton;
-	private ViewGroup mSoloButtonsLayout, mSettingsLayout;
-	private View mBackButton;
+	private Button mPlayButton, mSettingsButton, mTutorialButton, mAboutButton, mRateAppButton;
+	private ViewGroup mSettingsLayout;
+	private View mBackButton, mAppNameView;
 	private RadioGroup mRadioMusicvolume, mRadioDifficulty;
 	private VideoView mBackgroundVideoView;
 	private Dialog mAboutDialog = null;
@@ -64,10 +61,10 @@ public class HomeActivity extends WWActivity implements OnClickListener {
 	/**
 	 * Callbacks
 	 */
-	// remove background video sound - enable video looping
 	private MediaPlayer.OnPreparedListener mPreparedListener = new MediaPlayer.OnPreparedListener() {
 		@Override
 		public void onPrepared(MediaPlayer m) {
+			// remove background video sound - enable video looping
 			try {
 				if (m.isPlaying()) {
 					m.stop();
@@ -90,6 +87,8 @@ public class HomeActivity extends WWActivity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_home);
+
+		mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		setupUI();
 
 		ApplicationUtils.showRateDialogIfNeeded(this);
@@ -124,48 +123,39 @@ public class HomeActivity extends WWActivity implements OnClickListener {
 	public void onClick(View v) {
 		if (v.isShown()) {
 			switch (v.getId()) {
-			case R.id.soloButton:
-				showSoloButtons();
-				GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-				        EventAction.button_press, "show_solo");
-				break;
-			case R.id.multiplayerButton:
-				ApplicationUtils.showToast(this, R.string.coming_soon, Toast.LENGTH_SHORT);
-				GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-				        EventAction.button_press, "show_multi");
+			case R.id.playButton:
+				MusicManager.playSound(getApplicationContext(), R.raw.main_button);
+				if (mSharedPrefs.getInt(GameUtils.TUTORIAL_DONE, 0) == 0) {
+					showTutorialDialog();
+				} else {
+					List<Battle> lstBattles = SaveGameHelper.getUnfinishedBattles(mDbHelper);
+					if (lstBattles.size() > 0) {
+						showResumeGameDialog(lstBattles.get(0));
+					} else {
+						goToBattleChooserActivity();
+					}
+					GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press, "play_solo");
+				}
 				break;
 			case R.id.settingsButton:
+				MusicManager.playSound(getApplicationContext(), R.raw.main_button);
 				showSettings();
-				GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-				        EventAction.button_press, "show_settings");
+				GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press, "show_settings");
 				break;
 			case R.id.backButton:
+				MusicManager.playSound(getApplicationContext(), R.raw.main_button);
 				onBackPressed();
-				GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-				        EventAction.button_press, "back_button_soft");
+				GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press, "back_button_soft");
 				break;
 			case R.id.aboutButton:
+				MusicManager.playSound(getApplicationContext(), R.raw.main_button);
 				openAboutDialog();
-				GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-				        EventAction.button_press, "show_about_dialog");
+				GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press, "show_about_dialog");
 				break;
 			case R.id.rateButton:
+				MusicManager.playSound(getApplicationContext(), R.raw.main_button);
 				ApplicationUtils.rateTheApp(this);
-				GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-				        EventAction.button_press, "rate_app_button");
-				break;
-			case R.id.campaignButton:
-				showCampaignSelector();
-				GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-				        EventAction.button_press, "go_campaign");
-				break;
-			case R.id.battleButton:
-				List<Battle> lstBattles = SaveGameHelper.getUnfinishedBattles(mDbHelper);
-				if (lstBattles.size() > 0) {
-					showResumeGameDialog(lstBattles.get(0));
-				} else {
-					goToBattleChooserActivity();
-				}
+				GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press, "rate_app_button");
 				break;
 			}
 		}
@@ -177,56 +167,29 @@ public class HomeActivity extends WWActivity implements OnClickListener {
 		case HOME:
 			super.onBackPressed();
 			break;
-		case SOLO:
-			showMainHomeButtons();
-			hideSoloButtons();
-			GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-			        EventAction.button_press, "back_pressed");
-			break;
 		case SETTINGS:
 			showMainHomeButtons();
 			hideSettings();
-			GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-			        EventAction.button_press, "back_pressed");
+			GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press, "back_pressed");
+			break;
+		default:
 			break;
 		}
 	}
 
 	private void setupUI() {
-		mSharedPrefs = getSharedPreferences(GameUtils.GAME_PREFS_FILENAME, MODE_PRIVATE);
-
-		mSoloButtonsLayout = (ViewGroup) findViewById(R.id.soloLayout);
 		mSettingsLayout = (ViewGroup) findViewById(R.id.settingsLayout);
 
 		mMainButtonAnimationRightIn = AnimationUtils.loadAnimation(this, R.anim.main_btn_right_in);
 		mMainButtonAnimationLeftIn = AnimationUtils.loadAnimation(this, R.anim.main_btn_left_in);
-		mMainButtonAnimationLeftIn.setAnimationListener(new AnimationListener() {
-			@Override
-			public void onAnimationStart(Animation animation) {
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-			}
-
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				if (mSoloButton.isShown()) {
-					mSoloButtonsLayout.setVisibility(View.GONE);
-				}
-			}
-		});
 		mMainButtonAnimationRightOut = AnimationUtils.loadAnimation(this, R.anim.main_btn_right_out);
 		mMainButtonAnimationLeftOut = AnimationUtils.loadAnimation(this, R.anim.main_btn_left_out);
-		
+
 		mFadeOutAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_out);
 		mFadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_in);
 
-		mSoloButton = (Button) findViewById(R.id.soloButton);
-		mSoloButton.setOnClickListener(this);
-
-		mMultiplayerButton = (Button) findViewById(R.id.multiplayerButton);
-		mMultiplayerButton.setOnClickListener(this);
+		mPlayButton = (Button) findViewById(R.id.playButton);
+		mPlayButton.setOnClickListener(this);
 
 		mSettingsButton = (Button) findViewById(R.id.settingsButton);
 		mSettingsButton.setOnClickListener(this);
@@ -234,19 +197,14 @@ public class HomeActivity extends WWActivity implements OnClickListener {
 		mTutorialButton = (Button) findViewById(R.id.tutorialButton);
 		mTutorialButton.setOnClickListener(this);
 
-		mCampaignButton = (Button) findViewById(R.id.campaignButton);
-		mCampaignButton.setOnClickListener(this);
-
-		mBattleModeButton = (Button) findViewById(R.id.battleButton);
-		mBattleModeButton.setOnClickListener(this);
-
 		mBackButton = (Button) findViewById(R.id.backButton);
 		mBackButton.setOnClickListener(this);
+		
+        mAppNameView = (View) findViewById(R.id.appName);
 
 		mRadioDifficulty = (RadioGroup) findViewById(R.id.radioDifficulty);
 		// update radio buttons states according to the game difficulty
-		int gameDifficulty = mSharedPrefs.getInt(GameUtils.GAME_PREFS_KEY_DIFFICULTY,
-		        GameUtils.DifficultyLevel.medium.ordinal());
+		int gameDifficulty = mSharedPrefs.getInt(GameUtils.GAME_PREFS_KEY_DIFFICULTY, GameUtils.DifficultyLevel.medium.ordinal());
 		((RadioButton) mRadioDifficulty.getChildAt(gameDifficulty)).setChecked(true);
 		mRadioDifficulty.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
@@ -267,8 +225,8 @@ public class HomeActivity extends WWActivity implements OnClickListener {
 				}
 				editor.putInt(GameUtils.GAME_PREFS_KEY_DIFFICULTY, newDifficultyLevel.ordinal());
 				editor.commit();
-				GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-				        EventAction.button_press, "difficulty_" + newDifficultyLevel.name());
+				GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press,
+						"difficulty_" + newDifficultyLevel.name());
 			}
 		});
 
@@ -292,8 +250,7 @@ public class HomeActivity extends WWActivity implements OnClickListener {
 				}
 				editor.putInt(GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME, newMusicState.ordinal());
 				editor.commit();
-				GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action,
-				        EventAction.button_press, "music_" + newMusicState.name());
+				GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press, "music_" + newMusicState.name());
 			}
 		});
 
@@ -313,8 +270,7 @@ public class HomeActivity extends WWActivity implements OnClickListener {
 	private void goToBattleChooserActivity() {
 		startActivity(new Intent(this, BattleChooserActivity.class));
 		finish();
-		GoogleAnalyticsHandler.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press,
-		        "go_battle");
+		GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press, "go_battle");
 	}
 
 	private void openAboutDialog() {
@@ -351,35 +307,24 @@ public class HomeActivity extends WWActivity implements OnClickListener {
 		view.setEnabled(false);
 	}
 
-	private void showSoloButtons() {
-		mScreenState = ScreenState.SOLO;
-		hideMainHomeButtons();
-		showButton(mTutorialButton, true);
-		showButton(mCampaignButton, false);
-		showButton(mBattleModeButton, true);
-		mSoloButtonsLayout.setVisibility(View.VISIBLE);
-	}
-
-	private void hideSoloButtons() {
-		hideButton(mTutorialButton, true);
-		hideButton(mCampaignButton, false);
-		hideButton(mBattleModeButton, true);
-	}
-
 	private void showMainHomeButtons() {
 		mScreenState = ScreenState.HOME;
 		mBackButton.startAnimation(mFadeOutAnimation);
 		mBackButton.setVisibility(View.GONE);
-		showButton(mSoloButton, true);
-		showButton(mMultiplayerButton, false);
+		mAppNameView.startAnimation(mFadeInAnimation);
+        mAppNameView.setVisibility(View.VISIBLE);
+		showButton(mPlayButton, true);
+		showButton(mTutorialButton, false);
 		showButton(mSettingsButton, true);
 	}
 
 	private void hideMainHomeButtons() {
+		mAppNameView.startAnimation(mFadeOutAnimation);
+        mAppNameView.setVisibility(View.GONE);
 		mBackButton.setVisibility(View.VISIBLE);
 		mBackButton.startAnimation(mFadeInAnimation);
-		hideButton(mSoloButton, true);
-		hideButton(mMultiplayerButton, false);
+		hideButton(mPlayButton, true);
+		hideButton(mTutorialButton, false);
 		hideButton(mSettingsButton, true);
 	}
 
@@ -397,19 +342,41 @@ public class HomeActivity extends WWActivity implements OnClickListener {
 
 	private void showResumeGameDialog(final Battle savedGame) {
 		// ask user if he wants to resume a saved game
-		Dialog dialog = new CustomAlertDialog(this, R.style.Dialog, getString(R.string.resume_saved_battle,
-		        getString(savedGame.getName())), new DialogInterface.OnClickListener() {
+		Dialog dialog = new CustomAlertDialog(this, R.style.Dialog, getString(R.string.resume_saved_battle, getString(savedGame.getName())),
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if (which == R.id.okButton) {
+							// load game
+							Intent i = new Intent(HomeActivity.this, GameActivity.class);
+							Bundle extras = new Bundle();
+							extras.putLong("game_id", savedGame.getId());
+							i.putExtras(extras);
+							dialog.dismiss();
+							startActivity(i);
+							finish();
+						} else {
+							// create new battle
+							dialog.dismiss();
+							goToBattleChooserActivity();
+						}
+					}
+				});
+		dialog.show();
+	}
+
+	private void showTutorialDialog() {
+		// ask user if he wants to do the tutorial as he is a noob
+		Dialog dialog = new CustomAlertDialog(this, R.style.Dialog, getString(R.string.ask_tutorial), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				if (which == R.id.okButton) {
-					// load game
-					Intent i = new Intent(HomeActivity.this, GameActivity.class);
-					Bundle extras = new Bundle();
-					extras.putLong("game_id", savedGame.getId());
-					i.putExtras(extras);
-					dialog.dismiss();
-					startActivity(i);
-					finish();
+					// go to tutorial
+					// Intent intent = new Intent(HomeActivity.this,
+					// TutorialActivity.class);
+					// dialog.dismiss();
+					// startActivity(intent);
+					// finish();
 				} else {
 					// create new battle
 					dialog.dismiss();
@@ -418,10 +385,7 @@ public class HomeActivity extends WWActivity implements OnClickListener {
 			}
 		});
 		dialog.show();
-	}
-
-	private void showCampaignSelector() {
-		ApplicationUtils.openDialogFragment(this, new CampaignChooserFragment(), null);
+		mSharedPrefs.edit().putInt(GameUtils.TUTORIAL_DONE, 1).commit();
 	}
 
 }
