@@ -66,8 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="15dp"
-                android:text="@string/tutorial"
-                android:visibility="gone" />
+                android:text="@string/tutorial" />
 
             <com.glevel.wwii.views.CustomButton
                 android:id="@+id/settingsButton"
@@ -188,6 +187,30 @@
             android:text="@string/back"
             android:textSize="22sp"
             android:visibility="gone" />
+
+        <com.glevel.wwii.views.CustomButton
+            android:id="@+id/shareButton"
+            style="@style/HomeScreenButton"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_margin="5dp"
+            android:layout_toLeftOf="@+id/donateButton"
+            android:padding="8dp"
+            android:text="@string/share"
+            android:textSize="16sp" />
+
+        <com.glevel.wwii.views.CustomButton
+            android:id="@+id/donateButton"
+            style="@style/HomeScreenButton"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="5dp"
+            android:padding="8dp"
+            android:text="@string/support"
+            android:textSize="16sp" />
     </RelativeLayout>
 
 </RelativeLayout>

@@ -1,37 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rootLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bg_battle"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
-    <com.glevel.wwii.views.CustomTextView
-        style="@style/BattleChooserTitle"
+    <ImageView
+        android:id="@+id/allyPovBackground"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/choose_army" />
+        android:layout_height="match_parent"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitXY"
+        android:src="@drawable/bg_battle"
+        android:tint="#c5000000" />
 
-    <RadioGroup
-        android:id="@+id/radioGroupArmy"
+    <ImageView
+        android:id="@+id/germanPovBackground"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="horizontal" >
-    </RadioGroup>
+        android:layout_height="match_parent"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitXY"
+        android:src="@drawable/bg_intro"
+        android:tint="#c5000000"
+        android:visibility="gone" />
 
-    <com.glevel.wwii.views.CustomTextView
-        style="@style/BattleChooserTitle"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/choose_map" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="8dp" >
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/lstMaps"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:overScrollMode="never" />
+        <com.glevel.wwii.views.CustomTextView
+            style="@style/BattleChooserTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_army" />
 
-</LinearLayout>
+        <RadioGroup
+            android:id="@+id/radioGroupArmy"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <com.glevel.wwii.views.CustomRadioButton
+                android:id="@+id/usa_army"
+                style="@style/DifficultyRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="50dp"
+                android:checked="true"
+                android:drawableLeft="@drawable/ic_army_usa"
+                android:padding="12dp"
+                android:text="@string/usa_army" />
+
+            <com.glevel.wwii.views.CustomRadioButton
+                android:id="@+id/german_army"
+                style="@style/DifficultyRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_army_germany"
+                android:padding="12dp"
+                android:text="@string/german_army" />
+        </RadioGroup>
+
+        <com.glevel.wwii.views.CustomTextView
+            style="@style/BattleChooserTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_map" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/lstMaps"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:overScrollMode="never" />
+    </LinearLayout>
+
+</FrameLayout>

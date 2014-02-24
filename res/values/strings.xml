@@ -19,7 +19,7 @@
     <string name="rate_later">Remind me later</string>
     <string name="rate_now">Rate now !</string>
     <string name="rate_title">Rate the app ?</string>
-    <string name="rate_message">If you enjoy using %s, please take a moment to rate it.\nThanks for your support !</string>
+    <string name="rate_message">If you enjoy playing %s, please take a moment to rate it.\n\nThanks for your support !</string>
 
     <!-- About Dialog -->
     <string name="about_title">About WWII</string>
@@ -28,6 +28,10 @@
     <string name="about_contact"><a href="mailto:guillaume.gouchon@gmail.com">Contact me</a> if you have any issue or question.</string>
     <string name="about_other_sources">The game is using AndEngine Game Engine by Nicolas Gramlich.\nLauncher icon by <a href="http://game-icons.net">Game-Icons</a>.</string>
     <string name="about_version">App version : 1.0</string>
+
+    <!-- Share app -->
+    <string name="share_subject">Come play %s on Android !</string>
+    <string name="share_message">This app is cool, you can download it on Google Play ! https://play.google.com/store/apps/details?id=%s</string>
 
     <!-- Home Screen -->
     <string name="play">Play</string>
@@ -39,7 +43,9 @@
     <string name="back">Back</string>
     <string name="resume_saved_battle">You have a saved game located in %s, do you want to finish it ?\nIt will be lost if you start another battle.</string>
     <string name="ask_tutorial">It is recommanded to do the tutorial in order to know how to play !\nWould you like to do it now ?</string>
-    
+    <string name="share">Share</string>
+    <string name="support">Support</string>
+
     <!-- Settings -->
     <string name="music_volume">Music / Sound</string>
     <string name="music_off">Off</string>
@@ -72,7 +78,7 @@
     <string name="not_enough_requisition">You do not have enough requisition points to hire this unit !</string>
     <string name="buy">Hire</string>
     <string name="sell">Sell</string>
-    <string name="confirm_transaction">%1$s %2$s for %3$s requisition points ?</string>
+    <string name="confirm_transaction">%1$s %2$s\nfor %3$s requisition points ?</string>
     <string name="unit_image">Unit image</string>
     <string name="frags_number">Frags : %1$s</string>
     <string name="points">%1$s pts</string>
@@ -84,7 +90,7 @@
     <string name="loading_dots">. . .</string>
     <string name="game_paused">Pause</string>
     <string name="surrender">Surrender</string>
-    <string name="confirm_surrender_message">Are you sure you want to surrender ?</string>
+    <string name="confirm_surrender_message">Are you sure you want\nto surrender ?</string>
     <string name="resume_game">Resume Game</string>
     <string name="save_exit">Exit</string>
     <string name="deployment_phase">Deployment Phase</string>
@@ -141,5 +147,10 @@
         \nAs such, British General Montgomery lay forth a brazen plan to capture key bridges that would be required conquests for the final push into Germany, perhaps ending the war in Europe by Christmas of 1944.
         \nMontgomery relayed his plan and, following acceptance by Supreme Allied Commander in Europe - US General Dwight Eisenhower - put the plan into action.
         \nOn September 17th - just seven days after the official approval, Operation Market Garden was set in motion&#8230;</string>
+
+    <!-- Battles -->
+    <string name="battle_arnhem_streets">Arnhem Streets</string>
+    <string name="battle_oosterbeek">Oosterbeek</string>
+    <string name="battle_nimegue">Nijmegen</string>
 
 </resources>

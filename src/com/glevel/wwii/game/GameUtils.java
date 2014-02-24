@@ -112,7 +112,7 @@ public class GameUtils {
     }
 
     public static Battle createTestData() {
-        Battle battle = new Battle(BattlesData.ARNHEM_BRIDGE);
+        Battle battle = new Battle(BattlesData.ARNHEM_STREETS);
 
         // me
         Player p = new Player("Me", ArmiesData.USA, 0, false, new VictoryCondition(100));

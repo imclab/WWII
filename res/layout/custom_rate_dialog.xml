@@ -3,10 +3,9 @@
     android:id="@+id/rootLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_custom_alert_dialog"
+    android:background="@android:color/black"
     android:gravity="center"
-    android:orientation="vertical"
-    android:padding="2dp" >
+    android:orientation="vertical" >
 
     <com.glevel.wwii.views.CustomTextView
         android:id="@+id/message"
@@ -14,9 +13,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="10dp"
-        android:padding="10dp"
-        android:text="@string/about_title" />
+        android:layout_marginBottom="15dp"
+        android:padding="15dp"
+        android:text="@string/rate_message" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,7 +28,15 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:text="@string/cancel" />
+            android:text="@string/rate_dont_want" />
+
+        <com.glevel.wwii.views.CustomButton
+            android:id="@+id/neutralButton"
+            style="@style/AlertDialogButton"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="@string/rate_later" />
 
         <com.glevel.wwii.views.CustomButton
             android:id="@+id/okButton"
@@ -37,7 +44,7 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:text="@android:string/ok" />
+            android:text="@string/rate_now" />
     </LinearLayout>
 
 </LinearLayout>
