@@ -189,7 +189,7 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
             case R.id.shareButton:
                 MusicManager.playSound(getApplicationContext(), R.raw.main_button);
                 ApplicationUtils.startSharing(this, getString(R.string.share_subject, getString(R.string.app_name)),
-                        getString(R.string.share_message, getPackageName()), R.drawable.ic_launcher);
+                        getString(R.string.share_message, getPackageName()), 0);
                 GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.ui_action,
                         EventAction.button_press, "share_app_button");
                 break;
