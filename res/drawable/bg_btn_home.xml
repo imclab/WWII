@@ -2,25 +2,18 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:state_pressed="true"><shape android:shape="rectangle">
-            <stroke android:width="2dp" android:color="@color/btn_stroke_color" />
+            <stroke android:width="0dp" android:color="@color/btn_stroke_color" />
 
             <corners android:radius="5dp" />
 
-            <gradient android:endColor="@color/bg_btn_pressed" android:gradientRadius="180" android:startColor="@color/bg_btn_green_pressed" android:type="radial" />
-        </shape></item>
-    <item android:state_checked="true"><shape android:shape="rectangle">
-            <stroke android:width="2dp" android:color="@color/bg_btn_green_pressed" />
-
-            <corners android:radius="5dp" />
-
-            <gradient android:endColor="@color/bg_btn_pressed" android:gradientRadius="180" android:startColor="@color/bg_btn_green_pressed" android:type="radial" />
+            <gradient android:endColor="@color/bg_btn_pressed" android:gradientRadius="250" android:startColor="@color/bg_btn_green_pressed" android:type="radial" />
         </shape></item>
     <item><shape android:shape="rectangle">
-            <stroke android:width="2dp" android:color="@color/btn_stroke_color" />
+            <stroke android:width="0dp" android:color="@color/btn_stroke_color" />
 
             <corners android:radius="5dp" />
 
-            <gradient android:endColor="@android:color/black" android:gradientRadius="180" android:startColor="@color/bg_btn_green" android:type="radial" />
+            <gradient android:endColor="@color/btn_edge_color" android:gradientRadius="180" android:startColor="@color/btn_center_color" android:type="radial" />
         </shape></item>
 
 </selector>

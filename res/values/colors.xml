@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="bg_btn_pressed">#88000000</color>
-    <color name="bg_btn_green_pressed">#881E4224</color>
+    <color name="bg_btn_pressed">#aa000000</color>
+    <color name="bg_btn_green_pressed">#bb1E4224</color>
     <color name="bg_btn_green">#1E4224</color>
     <color name="bg_home">#55000000</color>
     <color name="link">#23541D</color>
@@ -10,6 +10,7 @@
     <color name="grey">#D4CDCD</color>
     <color name="white">#FFFFFF</color>
     <color name="red">#D10000</color>
+    <color name="black">#000000</color>
     <color name="orange">#FF9F38</color>
     <color name="yellow">#EDEA39</color>
     <color name="green">#84dd38</color>
@@ -18,7 +19,9 @@
     <color name="elite">#999999</color>
     <color name="yellow_bullet">#D9B904</color>
     <color name="bg_game_gui">#aa000000</color>
-    <color name="bg_game_menu">#cc000000</color>
+    <color name="bg_game_menu">#88000000</color>
     <color name="btn_stroke_color">#000000</color>
+    <color name="btn_center_color">#dd000000</color>
+    <color name="btn_edge_color">#88000000</color>
 
 </resources>
