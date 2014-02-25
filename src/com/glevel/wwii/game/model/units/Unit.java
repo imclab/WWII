@@ -73,16 +73,16 @@ public abstract class Unit extends GameElement {
 	}
 
 	public static enum Experience {
-		recruit(R.color.recruit), veteran(R.color.veteran), elite(R.color.elite);
+		recruit(0), veteran(R.drawable.ic_veteran), elite(R.drawable.ic_elite);
 
-		private final int color;
+		private final int image;
 
-		private Experience(int color) {
-			this.color = color;
+		private Experience(int image) {
+			this.image = image;
 		}
 
-		public int getColor() {
-			return color;
+		public int getImage() {
+			return image;
 		}
 
 	}

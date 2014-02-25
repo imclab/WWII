@@ -204,7 +204,7 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
 				if (mGameActivity.battle.getMap().getTiles()[mGameActivity.tmxLayer.getTMXTileAt(x, y).getTileRow()][mGameActivity.tmxLayer.getTMXTileAt(x, y)
 						.getTileColumn()].getTerrain() != null) {
 					// grants protection
-					mGameActivity.protection.setColor(Color.YELLOW);
+					mGameActivity.protection.setColor(0.2f, 0.2f, 0.7f, 0.5f);
 					mGameActivity.protection.setPosition(x - mGameActivity.protection.getWidth() / 2, y - mGameActivity.protection.getHeight() / 2);
 					mGameActivity.protection.setVisible(true);
 				} else {

@@ -14,15 +14,15 @@
         android:layout_alignParentTop="true"
         android:text="@string/placeholder" />
 
-    <com.glevel.wwii.views.CustomTextView
+    <ImageView
         android:id="@+id/unitExperience"
-        style="@style/UnitText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_height="10dp"
         android:layout_alignParentTop="true"
-        android:text="@string/placeholder"
-        android:textSize="12sp" />
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@+id/unitName"
+        android:scaleType="fitStart"
+        android:visibility="invisible" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -112,8 +112,9 @@
         style="@style/UnitText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:drawableRight="@drawable/ic_frag"
         android:text="@string/placeholder"
         android:textSize="12sp" />
 
