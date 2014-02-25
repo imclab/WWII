@@ -26,7 +26,8 @@
     <string name="about_credits">Game, assets and music\nby <a href="http://www.linkedin.com/profile/view?id=144913212">Guillaume Gouchon</a>.</string>
     <string name="about_blog">Check out <a href="http://glevelapps.blogspot.co.uk">my Blog</a> !</string>
     <string name="about_contact"><a href="mailto:guillaume.gouchon@gmail.com">Contact me</a> if you have any issue or question.</string>
-    <string name="about_other_sources">The game is using AndEngine Game Engine by Nicolas Gramlich.\nLauncher icon by <a href="http://game-icons.net">Game-Icons</a>.</string>
+    <string name="about_other_sources">The game is using AndEngine Game Engine by Nicolas Gramlich.\nLauncher icon by <a href="http://game-icons.net">Game-Icons</a>.
+        \nHistorical resources from National Archives.</string>
     <string name="about_version">App version : 1.0</string>
 
     <!-- Share app -->

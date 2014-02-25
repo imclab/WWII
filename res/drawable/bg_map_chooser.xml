@@ -6,14 +6,14 @@
 
             <corners android:radius="4dp" />
 
-            <gradient android:endColor="@color/bg_btn_pressed" android:gradientRadius="120" android:startColor="@color/bg_btn_green_pressed" android:type="radial" />
+            <solid android:color="@color/bg_btn_pressed" />
         </shape></item>
     <item><shape android:shape="rectangle">
             <stroke android:width="0dp" android:color="@color/bg_btn_green_pressed" />
 
             <corners android:radius="4dp" />
 
-            <gradient android:endColor="@color/btn_edge_color" android:gradientRadius="120" android:startColor="@color/btn_center_color" android:type="radial" />
+            <solid android:color="@color/btn_edge_color" />
         </shape></item>
 
 </selector>

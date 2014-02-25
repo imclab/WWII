@@ -16,7 +16,7 @@ public class Crosshair extends Sprite {
     private static final float ROTATION_SPEED = 0.2f;
     private static final float SCALE_ANIMATION_SPEED = 0.005f;
     private static final float SCALE_ANIMATION_LIMIT = 0.1f;
-    private static final float INITIAL_SCALE = 0.9f;
+    private static final float INITIAL_SCALE = 0.4f;
 
     private static final int DISTANCE_TEXT_X_OFFSET = -40, DISTANCE_TEXT_Y_OFFSET = -40;
 

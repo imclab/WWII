@@ -91,10 +91,10 @@ public class UnitsData {
         switch (army) {
         case GERMANY:
             weapons.add(WeaponsData.buildPanzerschreck());
-            return new Soldier(army, R.string.panzerschreck, R.drawable.ic_launcher, experience, weapons, 1);
+            return new Soldier(army, R.string.panzerschreck, R.drawable.ic_launcher, experience, weapons, 2);
         case USA:
             weapons.add(WeaponsData.buildBazooka());
-            return new Soldier(army, R.string.bazooka, R.drawable.ic_launcher, experience, weapons, 1);
+            return new Soldier(army, R.string.bazooka, R.drawable.ic_launcher, experience, weapons, 2);
         }
         return null;
     }
