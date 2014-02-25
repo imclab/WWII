@@ -83,7 +83,7 @@ public class GameSprite extends CenteredSprite {
     }
 
     public void addMuzzleFlashSprite() {
-        specialSprite = new Sprite(45, -60, GraphicsFactory.mGfxMap.get("muzzle_flash.png"),
+        specialSprite = new Sprite(42, -60, GraphicsFactory.mGfxMap.get("muzzle_flash.png"),
                 getVertexBufferObjectManager());
         specialSprite.setVisible(false);
         attachChild(specialSprite);

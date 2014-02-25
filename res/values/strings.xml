@@ -46,6 +46,7 @@
     <string name="ask_tutorial">It is recommanded to do the tutorial in order to know how to play !\nWould you like to do it now ?</string>
     <string name="share">Share</string>
     <string name="support">Support</string>
+    <string name="advertisement">If you like Strategy Games,\ntry out our cool game <a href="https://play.google.com/store/apps/details?id=com.giggs.apps.chaos">Warlords Online</a> !</string>
 
     <!-- Settings -->
     <string name="music_volume">Music / Sound</string>

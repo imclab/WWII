@@ -99,6 +99,8 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
         mInAppBillingHelper = new InAppBillingHelper(this, this);
 
         ApplicationUtils.showRateDialogIfNeeded(this);
+        ApplicationUtils.showAdvertisementIfNeeded(this);
+
         showMainHomeButtons();
 
         if (savedInstanceState != null) {

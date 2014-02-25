@@ -33,6 +33,11 @@
             android:name=".activities.SplashActivity"
             android:noHistory="true"
             android:screenOrientation="landscape" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activities.HomeActivity"
@@ -51,12 +56,7 @@
         <activity
             android:name=".activities.GameActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
-            android:screenOrientation="landscape" ><intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
+            android:screenOrientation="landscape" >
         </activity>
         <activity
             android:name=".activities.BattleReportActivity"

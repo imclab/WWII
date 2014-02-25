@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
@@ -17,11 +18,13 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.text.method.LinkMovementMethod;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -36,8 +39,10 @@ public class ApplicationUtils {
 
     public static final String PREFS_NB_LAUNCHES = "nb_launches";
     public static final String PREFS_RATE_DIALOG_IN = "rate_dialog_in";
-    public static final int NB_LAUNCHES_WITH_SPLASHSCREEN = 8;
     public static final int NB_LAUNCHES_RATE_DIALOG_APPEARS = 5;
+    public static final int NB_LAUNCHES_WITH_SPLASHSCREEN = 8;
+    public static final int NB_LAUNCHES_ADVERTISEMENT_1 = 3;
+    public static final int NB_LAUNCHES_ADVERTISEMENT_2 = 7;
 
     public static void showRateDialogIfNeeded(final Activity activity) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
@@ -185,6 +190,34 @@ public class ApplicationUtils {
         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, text);
         activity.startActivity(Intent.createChooser(sharingIntent, "Share via"));
 
+    }
+
+    public static boolean isAppInstalled(Context context, String uri) {
+        PackageManager pm = context.getPackageManager();
+        boolean app_installed = false;
+        try {
+            pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+            app_installed = true;
+        } catch (PackageManager.NameNotFoundException e) {
+            app_installed = false;
+        }
+        return app_installed;
+    }
+
+    public static void showAdvertisementIfNeeded(Activity activity) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
+        int nbLaunches = prefs.getInt(PREFS_NB_LAUNCHES, 0);
+        if ((nbLaunches == NB_LAUNCHES_ADVERTISEMENT_1 || nbLaunches == NB_LAUNCHES_ADVERTISEMENT_2)
+                && !isAppInstalled(activity, "com.giggs.apps.chaos")) {
+            Dialog mAdvertisementDialog = new Dialog(activity, R.style.Dialog);
+            mAdvertisementDialog.setCancelable(true);
+            mAdvertisementDialog.setContentView(R.layout.dialog_advertisement);
+            TextView titleTV = (TextView) mAdvertisementDialog.findViewById(R.id.title);
+            titleTV.setMovementMethod(LinkMovementMethod.getInstance());
+            mAdvertisementDialog.findViewById(R.id.image).startAnimation(
+                    AnimationUtils.loadAnimation(activity, R.anim.loading_dots));
+            mAdvertisementDialog.show();
+        }
     }
 
 }
