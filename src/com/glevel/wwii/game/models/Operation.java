@@ -1,4 +1,4 @@
-package com.glevel.wwii.game.model;
+package com.glevel.wwii.game.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;

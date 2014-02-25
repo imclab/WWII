@@ -1,4 +1,4 @@
-package com.glevel.wwii.game.model.map;
+package com.glevel.wwii.game.models.map;
 
 import org.andengine.extension.tmx.TMXLayer;
 

@@ -1,13 +1,13 @@
-package com.glevel.wwii.game.model.weapons;
+package com.glevel.wwii.game.models.weapons;
 
 import org.andengine.util.color.Color;
 
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.andengine.custom.CustomColors;
-import com.glevel.wwii.game.model.Battle;
-import com.glevel.wwii.game.model.Player;
-import com.glevel.wwii.game.model.units.Unit;
-import com.glevel.wwii.game.model.units.Unit.Action;
+import com.glevel.wwii.game.models.Battle;
+import com.glevel.wwii.game.models.Player;
+import com.glevel.wwii.game.models.units.Unit;
+import com.glevel.wwii.game.models.units.Unit.Action;
 
 public class DeflectionWeapon extends Weapon {
 
@@ -41,8 +41,8 @@ public class DeflectionWeapon extends Weapon {
                 .getY(), deflection, angle, Math.random() < 0.5);
 
         // draw explosion sprite
-        battle.getOnNewSprite().drawSprite(impactPosition[0], impactPosition[1], "explosion.png",
-                3 * GameUtils.GAME_LOOP_FREQUENCY, explosionSize);
+        battle.getOnNewSprite().drawAnimatedSprite(impactPosition[0], impactPosition[1], "explosion.png", 30,
+                3 * explosionSize * GameUtils.PIXEL_BY_METER / 64.0f, 0, true);
 
         // get all the units in the explosion
         float distanceToImpact;// in meters
@@ -52,7 +52,7 @@ public class DeflectionWeapon extends Weapon {
                         / GameUtils.PIXEL_BY_METER;
                 if (distanceToImpact < explosionSize) {
                     // increase panic
-                    unit.getShots();
+                    unit.getShots(shooter, battle.getMap());
                     if (distanceToImpact < explosionSize * EXPLOSION_EPICENTER_FACTOR) {
                         // great damage in the explosion's epicenter
                         resolveDamageDiceRoll(CHANCE_TO_HIT_IN_EPICENTER, unit);

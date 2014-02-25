@@ -1,4 +1,4 @@
-package com.glevel.wwii.game.model.orders;
+package com.glevel.wwii.game.models.orders;
 
 public class DefendOrder extends Order {
 

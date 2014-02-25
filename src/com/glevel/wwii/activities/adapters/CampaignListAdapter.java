@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.glevel.wwii.R;
 import com.glevel.wwii.activities.fragments.CampaignChooserFragment;
 import com.glevel.wwii.game.data.CampaignsData.Campaigns;
-import com.glevel.wwii.game.model.Campaign;
+import com.glevel.wwii.game.models.Campaign;
 
 public class CampaignListAdapter extends BaseExpandableListAdapter {
 

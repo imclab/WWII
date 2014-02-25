@@ -1,4 +1,4 @@
-package com.glevel.wwii.game.model.weapons;
+package com.glevel.wwii.game.models.weapons;
 
 public class IndirectWeapon extends DeflectionWeapon {
 

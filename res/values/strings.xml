@@ -31,8 +31,8 @@
     <string name="about_version">App version : 1.0</string>
 
     <!-- Share app -->
-    <string name="share_subject">Come play %s on Android !</string>
-    <string name="share_message">This app is cool, you can download it on Google Play ! https://play.google.com/store/apps/details?id=%s</string>
+    <string name="share_subject">Check out %s on Android !</string>
+    <string name="share_message">This app is cool, you can get it on Google Play !\nhttps://play.google.com/store/apps/details?id=%s</string>
 
     <!-- Home Screen -->
     <string name="play">Play</string>
@@ -74,7 +74,7 @@
     <string name="available_troops">Available Troops</string>
     <string name="start_battle">Start Battle !</string>
     <string name="no_troops">Hire some troops before !</string>
-    <string name="confirm_battle_message">You have some unused requisition points, continue to battlefield ?</string>
+    <string name="confirm_battle_message">You have some requisition points left, continue to battlefield ?</string>
     <string name="no_slots_left">No more unit slot left&#8230;\nSell one of your unit !</string>
     <string name="not_enough_requisition">You do not have enough requisition points to hire this unit !</string>
     <string name="buy">Hire</string>

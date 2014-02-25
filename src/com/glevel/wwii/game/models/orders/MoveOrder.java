@@ -1,4 +1,4 @@
-package com.glevel.wwii.game.model.orders;
+package com.glevel.wwii.game.models.orders;
 
 
 public class MoveOrder extends Order {
@@ -15,7 +15,7 @@ public class MoveOrder extends Order {
         this.yDestination = yDestination;
     }
 
-    public float getxDestination() {
+    public float getXDestination() {
         return xDestination;
     }
 
@@ -23,7 +23,7 @@ public class MoveOrder extends Order {
         this.xDestination = xDestination;
     }
 
-    public float getyDestination() {
+    public float getYDestination() {
         return yDestination;
     }
 

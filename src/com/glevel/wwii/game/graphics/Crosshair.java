@@ -1,24 +1,23 @@
 package com.glevel.wwii.game.graphics;
 
-import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
 import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.color.Color;
 
 import com.glevel.wwii.game.GameUtils;
-import com.glevel.wwii.game.model.Battle;
-import com.glevel.wwii.game.model.units.Unit;
-import com.glevel.wwii.game.model.weapons.Weapon;
+import com.glevel.wwii.game.models.Battle;
+import com.glevel.wwii.game.models.units.Unit;
+import com.glevel.wwii.game.models.weapons.Weapon;
 
-public class Crosshair extends Sprite {
+public class Crosshair extends CenteredSprite {
 
     private static final float ROTATION_SPEED = 0.2f;
     private static final float SCALE_ANIMATION_SPEED = 0.005f;
     private static final float SCALE_ANIMATION_LIMIT = 0.1f;
     private static final float INITIAL_SCALE = 0.4f;
 
-    private static final int DISTANCE_TEXT_X_OFFSET = -40, DISTANCE_TEXT_Y_OFFSET = -40;
+    private static final int DISTANCE_TEXT_X_OFFSET = -80, DISTANCE_TEXT_Y_OFFSET = -80;
 
     private Text mDistanceText = null;
     private boolean mIsGrowing = true;
@@ -43,7 +42,6 @@ public class Crosshair extends Sprite {
         super.setPosition(pX, pY);
     }
 
-    @Override
     public void setVisible(boolean pVisible) {
         if (mDistanceText != null) {
             mDistanceText.setVisible(pVisible);

@@ -9,8 +9,8 @@ import com.glevel.wwii.database.DatabaseHelper;
 import com.glevel.wwii.database.Repository;
 import com.glevel.wwii.game.SaveGameHelper;
 import com.glevel.wwii.game.data.BattlesData;
-import com.glevel.wwii.game.model.Battle;
-import com.glevel.wwii.game.model.Battle.Phase;
+import com.glevel.wwii.game.models.Battle;
+import com.glevel.wwii.game.models.Battle.Phase;
 
 public class BattleDao extends Repository<Battle> {
 

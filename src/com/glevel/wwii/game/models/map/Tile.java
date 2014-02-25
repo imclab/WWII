@@ -1,11 +1,11 @@
-package com.glevel.wwii.game.model.map;
+package com.glevel.wwii.game.models.map;
 
 import org.andengine.extension.tmx.TMXProperties;
 import org.andengine.extension.tmx.TMXTile;
 import org.andengine.extension.tmx.TMXTileProperty;
 import org.andengine.extension.tmx.TMXTiledMap;
 
-import com.glevel.wwii.game.model.GameElement;
+import com.glevel.wwii.game.models.GameElement;
 
 public class Tile extends TMXTile {
 
@@ -18,7 +18,18 @@ public class Tile extends TMXTile {
     }
 
     public static enum TerrainType {
-        house, field, wall, bush, tree
+        house(true), field(true), wall(true), bush(false), tree(true);
+
+        private final boolean isBlockingVision;
+
+        private TerrainType(boolean isBlockingVision) {
+            this.isBlockingVision = isBlockingVision;
+        }
+
+        public boolean isBlockingVision() {
+            return isBlockingVision;
+        }
+
     }
 
     /**

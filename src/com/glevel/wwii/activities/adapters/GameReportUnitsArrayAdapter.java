@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.glevel.wwii.R;
-import com.glevel.wwii.game.model.units.Unit;
+import com.glevel.wwii.game.models.units.Unit;
 
 public class GameReportUnitsArrayAdapter extends UnitsArrayAdapter {
 

@@ -37,6 +37,7 @@
         android:text="@string/about_contact" />
 
     <com.glevel.wwii.views.CustomTextView
+        android:id="@+id/aboutSources"
         style="@style/AboutDialogText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

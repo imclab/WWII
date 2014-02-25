@@ -1,9 +1,9 @@
-package com.glevel.wwii.game.model.units;
+package com.glevel.wwii.game.models.units;
 
 import java.util.List;
 
 import com.glevel.wwii.game.data.ArmiesData;
-import com.glevel.wwii.game.model.weapons.Weapon;
+import com.glevel.wwii.game.models.weapons.Weapon;
 
 public abstract class Vehicle extends Unit {
 
@@ -17,8 +17,8 @@ public abstract class Vehicle extends Unit {
     }
 
     public Vehicle(ArmiesData army, int name, int image, Experience experience, List<Weapon> weapons, int moveSpeed,
-            VehicleType type, int armor, int width, int height) {
-        super(army, name, image, experience, weapons, moveSpeed);
+            VehicleType type, int armor, int width, int height, String spriteName, float spriteScale) {
+        super(army, name, image, experience, weapons, moveSpeed, spriteName, spriteScale);
         this.vehicleType = type;
         this.armor = armor;
         this.width = width;

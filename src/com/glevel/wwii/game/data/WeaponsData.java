@@ -1,10 +1,10 @@
 package com.glevel.wwii.game.data;
 
 import com.glevel.wwii.R;
-import com.glevel.wwii.game.model.weapons.DeflectionWeapon;
-import com.glevel.wwii.game.model.weapons.IndirectWeapon;
-import com.glevel.wwii.game.model.weapons.TurretWeapon;
-import com.glevel.wwii.game.model.weapons.Weapon;
+import com.glevel.wwii.game.models.weapons.DeflectionWeapon;
+import com.glevel.wwii.game.models.weapons.IndirectWeapon;
+import com.glevel.wwii.game.models.weapons.TurretWeapon;
+import com.glevel.wwii.game.models.weapons.Weapon;
 
 public class WeaponsData {
 
@@ -67,7 +67,7 @@ public class WeaponsData {
         } else {
             image = R.drawable.ic_grenade_usa;
         }
-        return new IndirectWeapon(R.string.grenade, image, 5, 1, 30, 2, 1, 1, 1, 1, 3);
+        return new IndirectWeapon(R.string.grenade, image, 5, 1, 25, 2, 1, 1, 1, 1, 2);
     }
 
 }

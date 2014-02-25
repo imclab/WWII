@@ -13,7 +13,7 @@ import com.glevel.wwii.R;
 import com.glevel.wwii.activities.adapters.GameReportUnitsArrayAdapter;
 import com.glevel.wwii.database.DatabaseHelper;
 import com.glevel.wwii.game.SaveGameHelper;
-import com.glevel.wwii.game.model.Battle;
+import com.glevel.wwii.game.models.Battle;
 
 public class BattleReportActivity extends MyActivity {
 

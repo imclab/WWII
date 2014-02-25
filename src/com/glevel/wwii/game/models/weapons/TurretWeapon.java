@@ -1,6 +1,6 @@
-package com.glevel.wwii.game.model.weapons;
+package com.glevel.wwii.game.models.weapons;
 
-import com.glevel.wwii.game.model.GameSprite;
+import com.glevel.wwii.game.models.GameSprite;
 
 public class TurretWeapon extends IndirectWeapon {
 

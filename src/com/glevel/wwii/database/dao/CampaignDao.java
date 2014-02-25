@@ -10,7 +10,7 @@ import com.glevel.wwii.database.DatabaseHelper;
 import com.glevel.wwii.database.Repository;
 import com.glevel.wwii.game.SaveGameHelper;
 import com.glevel.wwii.game.data.CampaignsData.Campaigns;
-import com.glevel.wwii.game.model.Campaign;
+import com.glevel.wwii.game.models.Campaign;
 
 public class CampaignDao extends Repository<Campaign> {
 

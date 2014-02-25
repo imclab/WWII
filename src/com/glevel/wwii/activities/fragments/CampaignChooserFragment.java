@@ -18,9 +18,9 @@ import com.glevel.wwii.activities.adapters.CampaignListAdapter;
 import com.glevel.wwii.database.DatabaseHelper;
 import com.glevel.wwii.database.dao.BattleDao;
 import com.glevel.wwii.game.data.CampaignsData.Campaigns;
-import com.glevel.wwii.game.model.Battle;
-import com.glevel.wwii.game.model.Campaign;
-import com.glevel.wwii.game.model.Player;
+import com.glevel.wwii.game.models.Battle;
+import com.glevel.wwii.game.models.Campaign;
+import com.glevel.wwii.game.models.Player;
 
 public class CampaignChooserFragment extends DialogFragment {
 

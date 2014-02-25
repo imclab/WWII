@@ -1,11 +1,11 @@
-package com.glevel.wwii.game.model;
+package com.glevel.wwii.game.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.glevel.wwii.game.data.ArmiesData;
-import com.glevel.wwii.game.model.units.Unit;
+import com.glevel.wwii.game.models.units.Unit;
 
 public class Player implements Serializable {
 

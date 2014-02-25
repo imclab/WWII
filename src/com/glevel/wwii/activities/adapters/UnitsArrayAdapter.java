@@ -12,10 +12,10 @@ import android.widget.TextView;
 
 import com.glevel.wwii.R;
 import com.glevel.wwii.game.GameUtils;
-import com.glevel.wwii.game.model.units.Soldier;
-import com.glevel.wwii.game.model.units.Unit;
-import com.glevel.wwii.game.model.units.Unit.Experience;
-import com.glevel.wwii.game.model.weapons.Weapon;
+import com.glevel.wwii.game.models.units.Soldier;
+import com.glevel.wwii.game.models.units.Unit;
+import com.glevel.wwii.game.models.units.Unit.Experience;
+import com.glevel.wwii.game.models.weapons.Weapon;
 
 public class UnitsArrayAdapter extends ArrayAdapter<Unit> {
 

@@ -36,7 +36,7 @@ import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.GameUtils.DifficultyLevel;
 import com.glevel.wwii.game.GameUtils.MusicState;
 import com.glevel.wwii.game.SaveGameHelper;
-import com.glevel.wwii.game.model.Battle;
+import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.utils.ApplicationUtils;
 import com.glevel.wwii.utils.MusicManager;
 import com.glevel.wwii.views.CustomAlertDialog;
@@ -330,6 +330,8 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
         blogTV.setMovementMethod(LinkMovementMethod.getInstance());
         TextView contactTV = (TextView) mAboutDialog.findViewById(R.id.aboutContact);
         contactTV.setMovementMethod(LinkMovementMethod.getInstance());
+        TextView sourcesTV = (TextView) mAboutDialog.findViewById(R.id.aboutSources);
+        sourcesTV.setMovementMethod(LinkMovementMethod.getInstance());
         mAboutDialog.show();
     }
 

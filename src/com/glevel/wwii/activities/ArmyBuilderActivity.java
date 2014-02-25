@@ -25,9 +25,9 @@ import com.glevel.wwii.game.SaveGameHelper;
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.data.BattlesData;
 import com.glevel.wwii.game.data.UnitsData;
-import com.glevel.wwii.game.model.Battle;
-import com.glevel.wwii.game.model.Player;
-import com.glevel.wwii.game.model.units.Unit;
+import com.glevel.wwii.game.models.Battle;
+import com.glevel.wwii.game.models.Player;
+import com.glevel.wwii.game.models.units.Unit;
 import com.glevel.wwii.utils.ApplicationUtils;
 import com.glevel.wwii.views.CustomAlertDialog;
 
@@ -56,7 +56,7 @@ public class ArmyBuilderActivity extends MyActivity {
 			if (mPlayer.getUnits().size() == 0) {
 				// the player has no units
 				ApplicationUtils.showToast(ArmyBuilderActivity.this, R.string.no_troops, Toast.LENGTH_SHORT);
-			} else if (mPlayer.getRequisition() > 0) {
+			} else if (mPlayer.getRequisition() > 20) {
 				// the player has some requisition points left, show confirm
 				// dialog
 				Dialog dialog = new CustomAlertDialog(ArmyBuilderActivity.this, R.style.Dialog, getString(R.string.confirm_battle_message),

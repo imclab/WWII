@@ -1,10 +1,10 @@
-package com.glevel.wwii.game.model.units;
+package com.glevel.wwii.game.models.units;
 
 import java.util.List;
 
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.data.NamesData;
-import com.glevel.wwii.game.model.weapons.Weapon;
+import com.glevel.wwii.game.models.weapons.Weapon;
 
 public class Soldier extends Unit {
 
@@ -34,8 +34,9 @@ public class Soldier extends Unit {
 
     private final String realName;
 
-    public Soldier(ArmiesData army, int name, int image, Experience experience, List<Weapon> weapons, int moveSpeed) {
-        super(army, name, image, experience, weapons, moveSpeed);
+    public Soldier(ArmiesData army, int name, int image, Experience experience, List<Weapon> weapons, int moveSpeed,
+            String spriteName, float spriteScale) {
+        super(army, name, image, experience, weapons, moveSpeed, spriteName, spriteScale);
         this.realName = createRandomRealName();
     }
 

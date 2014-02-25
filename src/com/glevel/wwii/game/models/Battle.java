@@ -1,4 +1,4 @@
-package com.glevel.wwii.game.model;
+package com.glevel.wwii.game.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -7,8 +7,8 @@ import java.util.List;
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.data.BattlesData;
 import com.glevel.wwii.game.interfaces.OnNewSpriteToDraw;
-import com.glevel.wwii.game.model.map.Map;
-import com.glevel.wwii.game.model.units.Unit;
+import com.glevel.wwii.game.models.map.Map;
+import com.glevel.wwii.game.models.units.Unit;
 
 public class Battle implements Serializable {
 

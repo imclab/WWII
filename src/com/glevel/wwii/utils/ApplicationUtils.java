@@ -174,15 +174,15 @@ public class ApplicationUtils {
     public static void startSharing(Activity activity, String subject, String text, int image) {
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
         if (image > 0) {
-            sharingIntent.setType("image/jpeg");
-            Uri imageUri = Uri.parse("android.resource://" + activity.getPackageName() + "/drawable/" + image);
-            sharingIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+            // sharingIntent.setType("image/jpeg");
+            // Uri imageUri = Uri.parse("android.resource://" +
+            // activity.getPackageName() + "/drawable/" + image);
+            // sharingIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
         } else {
             sharingIntent.setType("text/plain");
         }
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, text);
-        sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         activity.startActivity(Intent.createChooser(sharingIntent, "Share via"));
 
     }

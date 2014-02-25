@@ -1,10 +1,10 @@
-package com.glevel.wwii.game.model;
+package com.glevel.wwii.game.models;
 
 import java.io.Serializable;
 
 import org.andengine.util.color.Color;
 
-import com.glevel.wwii.game.model.map.Tile;
+import com.glevel.wwii.game.models.map.Tile;
 
 public abstract class GameElement implements Serializable {
 
@@ -18,6 +18,7 @@ public abstract class GameElement implements Serializable {
     protected transient GameSprite sprite;
     private Rank rank;
     private boolean isVisible = false;
+    private float spriteScale;
 
     public static enum Rank {
         neutral, enemy, ally
@@ -31,9 +32,10 @@ public abstract class GameElement implements Serializable {
         this.sprite = sprite;
     }
 
-    public GameElement(int name, String spriteName) {
+    public GameElement(int name, String spriteName, float spriteScale) {
         this.name = name;
         this.spriteName = spriteName;
+        this.setSpriteScale(spriteScale);
     }
 
     public int getName() {
@@ -88,5 +90,13 @@ public abstract class GameElement implements Serializable {
     public void setVisible(boolean isVisible) {
         this.isVisible = isVisible;
         getSprite().setVisible(isVisible);
+    }
+
+    public float getSpriteScale() {
+        return spriteScale;
+    }
+
+    public void setSpriteScale(float spriteScale) {
+        this.spriteScale = spriteScale;
     }
 }

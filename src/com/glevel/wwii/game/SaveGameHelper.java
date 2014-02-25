@@ -10,9 +10,9 @@ import java.util.List;
 
 import com.glevel.wwii.database.DatabaseHelper;
 import com.glevel.wwii.database.dao.BattleDao;
-import com.glevel.wwii.game.model.Battle;
-import com.glevel.wwii.game.model.Operation;
-import com.glevel.wwii.game.model.Player;
+import com.glevel.wwii.game.models.Battle;
+import com.glevel.wwii.game.models.Operation;
+import com.glevel.wwii.game.models.Player;
 
 public class SaveGameHelper {
 

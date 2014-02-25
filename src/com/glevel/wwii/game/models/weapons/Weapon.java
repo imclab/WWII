@@ -1,4 +1,4 @@
-package com.glevel.wwii.game.model.weapons;
+package com.glevel.wwii.game.models.weapons;
 
 import java.io.Serializable;
 
@@ -7,12 +7,12 @@ import org.andengine.util.color.Color;
 import com.glevel.wwii.R;
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.andengine.custom.CustomColors;
-import com.glevel.wwii.game.model.Battle;
-import com.glevel.wwii.game.model.units.Soldier;
-import com.glevel.wwii.game.model.units.Unit;
-import com.glevel.wwii.game.model.units.Unit.Action;
-import com.glevel.wwii.game.model.units.Unit.InjuryState;
-import com.glevel.wwii.game.model.units.Vehicle;
+import com.glevel.wwii.game.models.Battle;
+import com.glevel.wwii.game.models.units.Soldier;
+import com.glevel.wwii.game.models.units.Unit;
+import com.glevel.wwii.game.models.units.Vehicle;
+import com.glevel.wwii.game.models.units.Unit.Action;
+import com.glevel.wwii.game.models.units.Unit.InjuryState;
 
 public class Weapon implements Serializable {
 

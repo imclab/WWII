@@ -1,8 +1,8 @@
 package com.glevel.wwii.game.data;
 
 import com.glevel.wwii.R;
-import com.glevel.wwii.game.model.Battle;
-import com.glevel.wwii.game.model.VictoryCondition;
+import com.glevel.wwii.game.models.Battle;
+import com.glevel.wwii.game.models.VictoryCondition;
 
 public enum OperationsData {
     ARNHEM_BRIDGE(R.string.market_garden_intro_1, 0, 10, new Battle[] { new Battle(BattlesData.ARNHEM_STREETS, 3, 100,

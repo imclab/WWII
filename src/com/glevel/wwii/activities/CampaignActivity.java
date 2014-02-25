@@ -15,8 +15,8 @@ import android.widget.TextView;
 import com.glevel.wwii.MyActivity;
 import com.glevel.wwii.R;
 import com.glevel.wwii.database.DatabaseHelper;
-import com.glevel.wwii.game.model.Campaign;
-import com.glevel.wwii.game.model.Operation;
+import com.glevel.wwii.game.models.Campaign;
+import com.glevel.wwii.game.models.Operation;
 import com.glevel.wwii.views.CustomTextView;
 
 public class CampaignActivity extends MyActivity implements OnClickListener {

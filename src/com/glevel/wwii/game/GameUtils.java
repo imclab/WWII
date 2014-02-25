@@ -8,15 +8,15 @@ import org.andengine.extension.tmx.TMXTile;
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.data.BattlesData;
 import com.glevel.wwii.game.data.UnitsData;
-import com.glevel.wwii.game.model.Battle;
-import com.glevel.wwii.game.model.GameElement;
-import com.glevel.wwii.game.model.Player;
-import com.glevel.wwii.game.model.VictoryCondition;
-import com.glevel.wwii.game.model.map.Map;
-import com.glevel.wwii.game.model.map.Tile;
-import com.glevel.wwii.game.model.map.Tile.TerrainType;
-import com.glevel.wwii.game.model.units.Unit;
-import com.glevel.wwii.game.model.units.Unit.Experience;
+import com.glevel.wwii.game.models.Battle;
+import com.glevel.wwii.game.models.GameElement;
+import com.glevel.wwii.game.models.Player;
+import com.glevel.wwii.game.models.VictoryCondition;
+import com.glevel.wwii.game.models.map.Map;
+import com.glevel.wwii.game.models.map.Tile;
+import com.glevel.wwii.game.models.map.Tile.TerrainType;
+import com.glevel.wwii.game.models.units.Unit;
+import com.glevel.wwii.game.models.units.Unit.Experience;
 
 public class GameUtils {
 
@@ -55,13 +55,16 @@ public class GameUtils {
         return getDistanceBetween(g1.getSprite().getX(), g1.getSprite().getY(), x, y);
     }
 
-    private static final int STEP = 32;
+    private static final int STEP = 2 * PIXEL_BY_METER; // 2 meters
 
     public static boolean canSee(Map map, GameElement g1, GameElement g2) {
-        float dx = g2.getSprite().getX() - g1.getSprite().getX();
-        float dy = g2.getSprite().getY() - g1.getSprite().getY();
+        return canSee(map, g1, g2.getSprite().getX(), g2.getSprite().getY());
+    }
+
+    public static boolean canSee(Map map, GameElement g1, float destinationX, float destinationY) {
+        float dx = destinationX - g1.getSprite().getX();
+        float dy = destinationY - g1.getSprite().getY();
         double angle = Math.atan(dy / dx);
-        float dd = STEP;
         boolean hasArrived = false;
 
         float x = g1.getSprite().getX(), y = g1.getSprite().getY();
@@ -76,25 +79,28 @@ public class GameUtils {
             }
             // go one step further
             if (dx > 0) {
-                x += dd * Math.cos(angle);
-                y += dd * Math.sin(angle);
+                x += STEP * Math.cos(angle);
+                y += STEP * Math.sin(angle);
             } else {
-                x += -dd * Math.cos(angle);
-                y += dd * Math.sin(angle + Math.PI);
+                x += -STEP * Math.cos(angle);
+                y += STEP * Math.sin(angle + Math.PI);
             }
 
-            dx = g2.getSprite().getX() - x;
-            dy = g2.getSprite().getY() - y;
+            dx = destinationX - x;
+            dy = destinationY - y;
 
             // check if can see
             TMXTile tmxTile = map.getTmxLayer().getTMXTileAt(x, y);
             if (tmxTile != null) {
                 Tile t = map.getTiles()[tmxTile.getTileRow()][tmxTile.getTileColumn()];
-                if (t.getContent() != null && Math.sqrt(dx * dx + dy * dy) > 150) {
+                if (t.getContent() != null && Math.sqrt(dx * dx + dy * dy) > PIXEL_BY_METER * 3) {
+                    // target is behind someone else
                     return false;
-                } else if (t.getTerrain() != null && lstTerrain.size() > 0
-                        && t.getTerrain() != lstTerrain.get(lstTerrain.size() - 1)
-                        && Math.sqrt(dx * dx + dy * dy) > 200) {
+                } else if (t.getTerrain() != null
+                        && GameUtils.getDistanceBetween(g1, x, y) > PIXEL_BY_METER * 3
+                        && (g1.getTilePosition().getTerrain() != t.getTerrain() && lstTerrain.size() > 1 || Math
+                                .sqrt(dx * dx + dy * dy) > PIXEL_BY_METER * 3)) {
+                    // target is behind an obstacle
                     return false;
                 } else if (t.getTerrain() != null
                         && (lstTerrain.size() == 0 || t.getTerrain() != lstTerrain.get(lstTerrain.size() - 1))) {
@@ -102,9 +108,10 @@ public class GameUtils {
                 }
             }
 
-            if (Math.sqrt(dx * dx + dy * dy) <= dd) {
-                hasArrived = true;
+            if (Math.sqrt(dx * dx + dy * dy) <= STEP) {
+                return true;
             }
+
             n++;
         }
 
@@ -112,7 +119,7 @@ public class GameUtils {
     }
 
     public static Battle createTestData() {
-        Battle battle = new Battle(BattlesData.ARNHEM_STREETS);
+        Battle battle = new Battle(BattlesData.OOSTERBEEK);
 
         // me
         Player p = new Player("Me", ArmiesData.USA, 0, false, new VictoryCondition(100));
@@ -125,7 +132,7 @@ public class GameUtils {
         battle.getPlayers().add(p);
 
         // enemy
-        p = new Player("Enemy", ArmiesData.GERMANY, 0, true, new VictoryCondition(100));
+        p = new Player("Enemy", ArmiesData.GERMANY, 1, true, new VictoryCondition(100));
         lstUnits = new ArrayList<Unit>();
         e = UnitsData.buildScout(ArmiesData.GERMANY, Experience.recruit).copy();
         lstUnits.add(e);
