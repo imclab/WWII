@@ -318,7 +318,7 @@ public abstract class Unit extends GameElement {
         boolean canSeeTarget = GameUtils.canSee(battle.getMap(), this, target);
         Weapon bestWeapon = null;
         for (Weapon weapon : weapons) {
-            if (weapon.canUseWeapon(target, distance, canSeeTarget)) {
+            if (weapon.canUseWeapon(this, target, distance, canSeeTarget)) {
                 if (bestWeapon == null || weapon.getEfficiencyAgainst(target) > bestWeapon.getEfficiencyAgainst(target)) {
                     bestWeapon = weapon;
                 }

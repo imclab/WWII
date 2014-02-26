@@ -8,6 +8,7 @@ import com.glevel.wwii.R;
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.andengine.custom.CustomColors;
 import com.glevel.wwii.game.models.Battle;
+import com.glevel.wwii.game.models.map.Tile.TerrainType;
 import com.glevel.wwii.game.models.units.Soldier;
 import com.glevel.wwii.game.models.units.Unit;
 import com.glevel.wwii.game.models.units.Vehicle;
@@ -224,7 +225,7 @@ public class Weapon implements Serializable {
         }
     }
 
-    public boolean canUseWeapon(Unit target, float distance, boolean canSeeTarget) {
+    public boolean canUseWeapon(Unit shooter, Unit target, float distance, boolean canSeeTarget) {
         if (target instanceof Vehicle && atPower == 0 || target instanceof Soldier && apPower == 0) {
             // weapon is useless against target
             return false;
@@ -236,6 +237,10 @@ public class Weapon implements Serializable {
             return false;
         } else if (!canSeeTarget && !(this instanceof IndirectWeapon)) {
             // needs to see target
+            return false;
+        } else if (this instanceof IndirectWeapon && range > 200
+                && shooter.getTilePosition().getTerrain() == TerrainType.house) {
+            // mortar cannot shoot from inside a house
             return false;
         }
 
