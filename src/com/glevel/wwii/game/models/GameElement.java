@@ -19,6 +19,7 @@ public abstract class GameElement implements Serializable {
     private Rank rank;
     private boolean isVisible = false;
     private float spriteScale;
+    private float currentX = -1.0f, currentY, currentRotation;
 
     public static enum Rank {
         neutral, enemy, ally
@@ -99,4 +100,29 @@ public abstract class GameElement implements Serializable {
     public void setSpriteScale(float spriteScale) {
         this.spriteScale = spriteScale;
     }
+
+    public void setCurrentX(float currentX) {
+        this.currentX = currentX;
+    }
+
+    public void setCurrentY(float currentY) {
+        this.currentY = currentY;
+    }
+
+    public void setCurrentRotation(float currentRotation) {
+        this.currentRotation = currentRotation;
+    }
+
+    public float getCurrentX() {
+        return currentX;
+    }
+
+    public float getCurrentY() {
+        return currentY;
+    }
+
+    public float getCurrentRotation() {
+        return currentRotation;
+    }
+
 }

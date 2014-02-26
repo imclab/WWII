@@ -32,10 +32,10 @@ import com.glevel.wwii.analytics.GoogleAnalyticsHelper.EventCategory;
 import com.glevel.wwii.billing.InAppBillingHelper;
 import com.glevel.wwii.billing.OnBillingServiceConnectedListener;
 import com.glevel.wwii.database.DatabaseHelper;
+import com.glevel.wwii.game.GameConverterHelper;
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.GameUtils.DifficultyLevel;
 import com.glevel.wwii.game.GameUtils.MusicState;
-import com.glevel.wwii.game.SaveGameHelper;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.utils.ApplicationUtils;
 import com.glevel.wwii.utils.MusicManager;
@@ -148,7 +148,7 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
                 if (mSharedPrefs.getInt(GameUtils.TUTORIAL_DONE, 0) == 0) {
                     showTutorialDialog();
                 } else {
-                    List<Battle> lstBattles = SaveGameHelper.getUnfinishedBattles(mDbHelper);
+                    List<Battle> lstBattles = GameConverterHelper.getUnfinishedBattles(mDbHelper);
                     if (lstBattles.size() > 0) {
                         showResumeGameDialog(lstBattles.get(0));
                     } else {

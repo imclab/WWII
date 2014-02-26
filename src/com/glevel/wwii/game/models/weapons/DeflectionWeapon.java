@@ -18,7 +18,7 @@ public class DeflectionWeapon extends Weapon {
     private static final float EXPLOSION_EPICENTER_FACTOR = 0.5f;
     private static final int CHANCE_TO_HIT_IN_EPICENTER = 100;
     private static final int CHANCE_TO_HIT_AROUND = 50;
-    private static final int BASIC_MAXIMAL_DEFLECTION = 5;// in meters
+    private static final int BASIC_MAXIMAL_DEFLECTION = 7;// in meters
 
     private final int explosionSize;// in meters
 

@@ -11,17 +11,18 @@ import com.glevel.wwii.game.graphics.CenteredSprite;
 
 public class GameSprite extends CenteredSprite {
 
-    private final GameElement mGameElement;
-    private static final int ACTION_MOVE_THRESHOLD = 70;
-    private static final int VALID_ORDER_THRESHOLD = 50;
-    private InputManager mInputManager;
-    private boolean mIsGrabbed = false;
-    private boolean mIsSelected = false;
-    private boolean wasSelected = false;
+    private transient static final int ACTION_MOVE_THRESHOLD = 80;
+    private transient static final int VALID_ORDER_THRESHOLD = 80;
 
-    private Sprite specialSprite;
-    public boolean isFiring;
-    private boolean canBeDragged;
+    private transient final GameElement mGameElement;
+    private transient InputManager mInputManager;
+    private transient boolean mIsGrabbed = false;
+    private transient boolean mIsSelected = false;
+    private transient boolean wasSelected = false;
+
+    private transient Sprite specialSprite;
+    public transient boolean isFiring;
+    private transient boolean canBeDragged;
 
     public GameSprite(GameElement gameElement, InputManager inputManager, float pX, float pY,
             ITextureRegion pTextureRegion, VertexBufferObjectManager mVertexBufferObjectManager) {
@@ -89,6 +90,10 @@ public class GameSprite extends CenteredSprite {
         attachChild(specialSprite);
     }
 
+    public void setCanBeDragged(boolean canBeDragged) {
+        this.canBeDragged = canBeDragged;
+    }
+
     @Override
     protected void onManagedUpdate(float pSecondsElapsed) {
         super.onManagedUpdate(pSecondsElapsed);
@@ -100,8 +105,17 @@ public class GameSprite extends CenteredSprite {
         }
     }
 
-    public void setCanBeDragged(boolean canBeDragged) {
-        this.canBeDragged = canBeDragged;
+    @Override
+    public void setPosition(float pX, float pY) {
+        mGameElement.setCurrentX(pX);
+        mGameElement.setCurrentY(pY);
+        super.setPosition(pX, pY);
+    }
+
+    @Override
+    public void setRotation(float pRotation) {
+        mGameElement.setCurrentRotation(pRotation);
+        super.setRotation(pRotation);
     }
 
 }

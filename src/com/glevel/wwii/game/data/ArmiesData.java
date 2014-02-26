@@ -36,4 +36,8 @@ public enum ArmiesData {
         }
     }
 
+    public boolean isAlly() {
+        return this == ArmiesData.USA;
+    }
+
 }

@@ -19,10 +19,13 @@ public class Battle implements Serializable {
     private final int battleId;
     private final int name;
     private final int image;
-    private final int requisition;
     private final String tileMapName;
     private transient final Map map;
+    private final int alliesRequisition, axisRequisition;
     private final VictoryCondition alliesVictoryCondition, axisVictoryCondition;
+    // deployment
+    private final int alliesDeploymentZoneSize, axisDeploymentZoneSize;
+    private final boolean isAllyLeftSide;
 
     private long id = 0L;
     private int campaignId = 0;
@@ -47,11 +50,15 @@ public class Battle implements Serializable {
         this.battleId = data.getId();
         this.name = data.getName();
         this.image = data.getImage();
-        this.requisition = data.getRequisition();
         this.map = new Map();
         this.tileMapName = data.getTileMapName();
+        this.alliesRequisition = data.getAlliesRequisition();
+        this.axisRequisition = data.getAxisRequisition();
         this.alliesVictoryCondition = new VictoryCondition(90);
         this.axisVictoryCondition = new VictoryCondition(90);
+        this.alliesDeploymentZoneSize = data.getAlliesDeploymentZoneSize();
+        this.axisDeploymentZoneSize = data.getAxisDeploymentZoneSize();
+        this.isAllyLeftSide = data.getIsAllyLeftSide();
     }
 
     /**
@@ -59,17 +66,21 @@ public class Battle implements Serializable {
      * 
      * @param data
      */
-    public Battle(BattlesData data, int importance, int requisition, VictoryCondition alliesVictoryCondition,
+    public Battle(BattlesData data, int importance, VictoryCondition alliesVictoryCondition,
             VictoryCondition axisVictoryCondition) {
         this.battleId = data.getId();
         this.name = data.getName();
         this.image = data.getImage();
         this.importance = importance;
-        this.requisition = requisition;
         this.map = new Map();
         this.tileMapName = data.getTileMapName();
+        this.alliesRequisition = data.getAlliesRequisition();
+        this.axisRequisition = data.getAxisRequisition();
         this.alliesVictoryCondition = alliesVictoryCondition;
         this.axisVictoryCondition = axisVictoryCondition;
+        this.alliesDeploymentZoneSize = data.getAlliesDeploymentZoneSize();
+        this.axisDeploymentZoneSize = data.getAxisDeploymentZoneSize();
+        this.isAllyLeftSide = data.getIsAllyLeftSide();
     }
 
     public int getName() {
@@ -86,10 +97,6 @@ public class Battle implements Serializable {
 
     public void setImportance(int importance) {
         this.importance = importance;
-    }
-
-    public int getRequisition() {
-        return requisition;
     }
 
     public Map getMap() {
@@ -180,7 +187,7 @@ public class Battle implements Serializable {
     }
 
     public VictoryCondition getPlayerVictoryCondition(ArmiesData army) {
-        if (army == ArmiesData.USA) {
+        if (army.isAlly()) {
             return alliesVictoryCondition;
         } else {
             return axisVictoryCondition;
@@ -193,6 +200,50 @@ public class Battle implements Serializable {
 
     public void setDone(boolean isDone) {
         this.isDone = isDone;
+    }
+
+    public int getAlliesDeploymentZoneSize() {
+        return alliesDeploymentZoneSize;
+    }
+
+    public int getAxisDeploymentZoneSize() {
+        return axisDeploymentZoneSize;
+    }
+
+    public boolean isAllyLeftSide() {
+        return isAllyLeftSide;
+    }
+
+    public int[] getDeploymentBoundaries(Player player) {
+        if (player.isAlly()) {
+            if (isAllyLeftSide) {
+                return new int[] { 0, alliesDeploymentZoneSize };
+            } else {
+                return new int[] { map.getWidth() - alliesDeploymentZoneSize, map.getWidth() };
+            }
+        } else {
+            if (isAllyLeftSide) {
+                return new int[] { map.getWidth() - axisDeploymentZoneSize, map.getWidth() };
+            } else {
+                return new int[] { 0, axisDeploymentZoneSize };
+            }
+        }
+    }
+
+    public int getAlliesRequisition() {
+        return alliesRequisition;
+    }
+
+    public int getAxisRequisition() {
+        return axisRequisition;
+    }
+
+    public int getRequisition(Player player) {
+        if (player.isAlly()) {
+            return alliesRequisition;
+        } else {
+            return axisRequisition;
+        }
     }
 
 }

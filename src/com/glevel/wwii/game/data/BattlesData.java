@@ -3,22 +3,29 @@ package com.glevel.wwii.game.data;
 import com.glevel.wwii.R;
 
 public enum BattlesData {
-	OOSTERBEEK(R.string.battle_oosterbeek, R.drawable.oosterbeck, 90, "oosterbeck.tmx"), NIMEGUE(R.string.battle_nimegue,
-            R.drawable.oosterbeck, 90, "map2.tmx"), ARNHEM_STREETS(R.string.battle_arnhem_streets, R.drawable.oosterbeck, 90,
-            "map2.tmx");
+    OOSTERBEEK(R.string.battle_oosterbeek, R.drawable.oosterbeck, "oosterbeck.tmx", 50, 40, 10, 12, true), NIMEGUE(
+            R.string.battle_nimegue, R.drawable.oosterbeck, "map2.tmx", 60, 50, 8, 8, true), ARNHEM_STREETS(
+            R.string.battle_arnhem_streets, R.drawable.oosterbeck, "map2.tmx", 70, 80, 8, 8, true);
 
     private final int id;
     private final int name;
     private final int image;
-    private final int requisition;
     private final String tileMapName;
+    private final int alliesRequisition, axisRequisition;
+    private final int alliesDeploymentZoneSize, axisDeploymentZoneSize;
+    private final boolean isAllyLeftSide;
 
-    BattlesData(int name, int image, int requisition, String tileMapName) {
+    BattlesData(int name, int image, String tileMapName, int alliesRequisition, int axisRequisition,
+            int alliesDeploymentZoneSize, int axisDeploymentZoneSize, boolean isAllyLeftSide) {
         this.id = this.ordinal();
         this.name = name;
         this.image = image;
-        this.requisition = requisition;
         this.tileMapName = tileMapName;
+        this.alliesRequisition = alliesRequisition;
+        this.axisRequisition = axisRequisition;
+        this.alliesDeploymentZoneSize = alliesDeploymentZoneSize;
+        this.axisDeploymentZoneSize = axisDeploymentZoneSize;
+        this.isAllyLeftSide = isAllyLeftSide;
     }
 
     public int getName() {
@@ -29,8 +36,12 @@ public enum BattlesData {
         return image;
     }
 
-    public int getRequisition() {
-        return requisition;
+    public int getAlliesRequisition() {
+        return alliesRequisition;
+    }
+
+    public int getAxisRequisition() {
+        return axisRequisition;
     }
 
     public int getId() {
@@ -39,6 +50,18 @@ public enum BattlesData {
 
     public String getTileMapName() {
         return tileMapName;
+    }
+
+    public int getAlliesDeploymentZoneSize() {
+        return alliesDeploymentZoneSize;
+    }
+
+    public int getAxisDeploymentZoneSize() {
+        return axisDeploymentZoneSize;
+    }
+
+    public boolean getIsAllyLeftSide() {
+        return isAllyLeftSide;
     }
 
 }

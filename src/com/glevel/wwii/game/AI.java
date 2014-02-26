@@ -5,6 +5,7 @@ import java.util.List;
 import com.glevel.wwii.game.data.UnitsData;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.Player;
+import com.glevel.wwii.game.models.orders.DefendOrder;
 import com.glevel.wwii.game.models.orders.FireOrder;
 import com.glevel.wwii.game.models.orders.MoveOrder;
 import com.glevel.wwii.game.models.units.Unit;
@@ -21,7 +22,9 @@ public class AI {
             }
         }
 
-        unit.setOrder(new MoveOrder((float) Math.random() * 1000, (float) Math.random() * 1000));
+        if (unit.getOrder() == null || unit.getOrder() instanceof DefendOrder) {
+            unit.setOrder(new MoveOrder((float) Math.random() * 1000, (float) Math.random() * 1000));
+        }
 
     }
 

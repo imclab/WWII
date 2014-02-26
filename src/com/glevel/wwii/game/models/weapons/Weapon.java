@@ -40,7 +40,7 @@ public class Weapon implements Serializable {
     private static final float LONG_RANGE_PRICE_MODIFIER = 1.5f;
 
     // hit chances
-    private static final int[][] HIT_CHANCES = { { 70, 40, 20, 5 }, { 80, 55, 35, 10 }, { 90, 70, 50, 20 } };
+    private static final int[][] HIT_CHANCES = { { 60, 30, 15, 5 }, { 70, 45, 20, 10 }, { 80, 60, 35, 15 } };
 
     public Weapon(int name, int image, int apPower, int atPower, int range, int nbMagazines, int cadence,
             int magazineSize, int reloadSpeed, int shootSpeed) {
@@ -164,13 +164,16 @@ public class Weapon implements Serializable {
         if (target.getCurrentAction() == Action.hiding || target.getCurrentAction() == Action.reloading) {
             // target is hiding : tohit depends on target's
             // experience
-            tohit -= 5 * (target.getExperience().ordinal() + 1);
+            tohit -= 10 * (target.getExperience().ordinal() + 1);
         }
 
         // tohit depends on weapon range
         if (distance > range / 2) {
             tohit -= 10;
         }
+
+        // tohit depends on weapon cadence
+        tohit -= cadence * 5;
 
         return tohit;
     }
@@ -210,11 +213,11 @@ public class Weapon implements Serializable {
     }
 
     protected static int distanceToRangeCategory(float distance) {
-        if (distance < 50 * GameUtils.PIXEL_BY_METER) {
+        if (distance < 30 * GameUtils.PIXEL_BY_METER) {
             return 0;
-        } else if (distance < 100 * GameUtils.PIXEL_BY_METER) {
+        } else if (distance < 80 * GameUtils.PIXEL_BY_METER) {
             return 1;
-        } else if (distance < 200 * GameUtils.PIXEL_BY_METER) {
+        } else if (distance < 150 * GameUtils.PIXEL_BY_METER) {
             return 2;
         } else {
             return 3;

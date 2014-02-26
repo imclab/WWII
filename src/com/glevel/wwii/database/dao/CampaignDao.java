@@ -8,7 +8,7 @@ import android.database.DatabaseUtils;
 
 import com.glevel.wwii.database.DatabaseHelper;
 import com.glevel.wwii.database.Repository;
-import com.glevel.wwii.game.SaveGameHelper;
+import com.glevel.wwii.game.GameConverterHelper;
 import com.glevel.wwii.game.data.CampaignsData.Campaigns;
 import com.glevel.wwii.game.models.Campaign;
 
@@ -64,8 +64,8 @@ public class CampaignDao extends Repository<Campaign> {
         DatabaseUtils.dumpCursor(c);
         Campaign entity = new Campaign(Campaigns.values()[c.getInt(1)]);
         entity.setId(c.getLong(0));
-        entity.setPlayer(SaveGameHelper.getPlayerFromLoadGame(c.getBlob(2)));
-        entity.setOperations(SaveGameHelper.getOperationsListFromLoadGame(c.getBlob(3)));
+        entity.setPlayer(GameConverterHelper.getPlayerFromLoadGame(c.getBlob(2)));
+        entity.setOperations(GameConverterHelper.getOperationsListFromLoadGame(c.getBlob(3)));
         return entity;
     }
 
@@ -74,8 +74,8 @@ public class CampaignDao extends Repository<Campaign> {
         ContentValues args = new ContentValues();
         args.put(ID, (entity.getId() == 0 ? null : entity.getId()));
         args.put(CAMPAIGN_ID, entity.getCampaignId());
-        args.put(PLAYER, SaveGameHelper.toByte(entity.getPlayer()).toByteArray());
-        args.put(OPERATIONS, SaveGameHelper.toByte(entity.getOperations()).toByteArray());
+        args.put(PLAYER, GameConverterHelper.toByte(entity.getPlayer()).toByteArray());
+        args.put(OPERATIONS, GameConverterHelper.toByte(entity.getOperations()).toByteArray());
         return args;
     }
 

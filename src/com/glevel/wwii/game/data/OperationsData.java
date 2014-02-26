@@ -5,7 +5,7 @@ import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.VictoryCondition;
 
 public enum OperationsData {
-    ARNHEM_BRIDGE(R.string.market_garden_intro_1, 0, 10, new Battle[] { new Battle(BattlesData.ARNHEM_STREETS, 3, 100,
+    ARNHEM_BRIDGE(R.string.market_garden_intro_1, 0, 10, new Battle[] { new Battle(BattlesData.ARNHEM_STREETS, 3,
             new VictoryCondition(100), new VictoryCondition(100)) });
 
     private final int introText;

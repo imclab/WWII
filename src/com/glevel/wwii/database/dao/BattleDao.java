@@ -7,7 +7,7 @@ import android.database.Cursor;
 
 import com.glevel.wwii.database.DatabaseHelper;
 import com.glevel.wwii.database.Repository;
-import com.glevel.wwii.game.SaveGameHelper;
+import com.glevel.wwii.game.GameConverterHelper;
 import com.glevel.wwii.game.data.BattlesData;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.Battle.Phase;
@@ -64,7 +64,7 @@ public class BattleDao extends Repository<Battle> {
     public Battle convertCursorRowToObject(Cursor c) {
         Battle entity = new Battle(BattlesData.values()[c.getInt(1)]);
         entity.setId(c.getLong(0));
-        entity.setPlayers(SaveGameHelper.getPlayersFromLoadGame(c.getBlob(2)));
+        entity.setPlayers(GameConverterHelper.getPlayersFromLoadGame(c.getBlob(2)));
         entity.setCampaignId(c.getInt(3));
         entity.setPhase(Phase.values()[c.getInt(4)]);
         return entity;
@@ -75,7 +75,7 @@ public class BattleDao extends Repository<Battle> {
         ContentValues args = new ContentValues();
         args.put(ID, (entity.getId() == 0 ? null : entity.getId()));
         args.put(BATTLE_ID, entity.getBattleId());
-        args.put(PLAYERS, SaveGameHelper.toByte(entity.getPlayers()).toByteArray());
+        args.put(PLAYERS, GameConverterHelper.toByte(entity.getPlayers()).toByteArray());
         args.put(CAMPAIGN_ID, entity.getCampaignId());
         args.put(PHASE, entity.getPhase().ordinal());
         return args;

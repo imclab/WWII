@@ -32,6 +32,9 @@ public class GraphicsFactory {
     }
 
     public void initGraphics(Battle battle) {
+        mGfxMap = new HashMap<String, TextureRegion>();
+        mTiledGfxMap = new HashMap<String, TiledTextureRegion>();
+
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
 
         // load all game elements graphics

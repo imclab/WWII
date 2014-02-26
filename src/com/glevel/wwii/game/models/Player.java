@@ -22,7 +22,6 @@ public class Player implements Serializable {
 
     private List<Unit> units = new ArrayList<Unit>();
     private int requisition;
-    private int xPositionDeployment;
 
     /**
      * Campaign's player constructor
@@ -87,16 +86,12 @@ public class Player implements Serializable {
         return units;
     }
 
-    public int getXPositionDeployment() {
-        return xPositionDeployment;
-    }
-
-    public void setXPositionDeployment(int xPositionDeployment) {
-        this.xPositionDeployment = xPositionDeployment;
-    }
-
     public void setVictoryCondition(VictoryCondition victoryCondition) {
         this.victoryCondition = victoryCondition;
+    }
+
+    public boolean isAlly() {
+        return army == ArmiesData.USA;
     }
 
 }

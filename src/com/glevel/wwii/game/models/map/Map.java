@@ -6,7 +6,6 @@ public class Map {
 
     private Tile[][] tiles;
     private TMXLayer tmxLayer;
-    private final boolean isAllyLeftSide = true;
 
     public Tile[][] getTiles() {
         return tiles;
@@ -22,10 +21,6 @@ public class Map {
 
     public int getHeight() {
         return tiles.length;
-    }
-
-    public boolean isAllyLeftSide() {
-        return isAllyLeftSide;
     }
 
     public TMXLayer getTmxLayer() {

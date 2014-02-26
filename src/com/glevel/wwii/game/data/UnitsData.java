@@ -129,12 +129,12 @@ public class UnitsData {
         switch (army) {
         case GERMANY:
             weapons.add(WeaponsData.buildPak43());
-            return new Soldier(army, R.string.at_cannon, R.drawable.ic_launcher, experience, weapons, 0, "soldier.png",
-                    1.2f);
+            return new Soldier(army, R.string.at_cannon, R.drawable.ic_launcher, experience, weapons, 0, "german_at_50.png",
+                    1.0f);
         case USA:
             weapons.add(WeaponsData.buildCannon75(15));
             return new Soldier(army, R.string.at_cannon, R.drawable.ic_launcher, experience, weapons, 0,
-                    "german_at_50.png", 1.1f);
+                    "german_at_50.png", 0.8f);
         }
         return null;
     }

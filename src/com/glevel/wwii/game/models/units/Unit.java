@@ -423,7 +423,7 @@ public abstract class Unit extends GameElement {
                     2.0f, 100, true);
         } else if (this instanceof Soldier) {
             // blood
-            battle.getOnNewSprite().drawAnimatedSprite(getSprite().getX(), getSprite().getY(), "blood.png", 120, 0.8f,
+            battle.getOnNewSprite().drawAnimatedSprite(getSprite().getX(), getSprite().getY(), "blood.png", 120, 0.6f,
                     0, false);
         }
 

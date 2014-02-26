@@ -16,18 +16,18 @@ import com.glevel.wwii.game.models.map.Map;
 import com.glevel.wwii.game.models.map.Tile;
 import com.glevel.wwii.game.models.map.Tile.TerrainType;
 import com.glevel.wwii.game.models.units.Unit;
+import com.glevel.wwii.game.models.units.Vehicle;
 import com.glevel.wwii.game.models.units.Unit.Experience;
 
 public class GameUtils {
 
+    /**
+     * Commons settings
+     */
     public static final String GAME_PREFS_FILENAME = "com.glevel.wwii";
     public static final String GAME_PREFS_KEY_DIFFICULTY = "game_difficulty";
     public static final String GAME_PREFS_KEY_MUSIC_VOLUME = "game_music_volume";
     public static final String TUTORIAL_DONE = "tutorial_done";
-
-    public static final int PIXEL_BY_METER = 15;
-
-    public static final int GAME_LOOP_FREQUENCY = 10;// per second
 
     public static enum DifficultyLevel {
         easy, medium, hard
@@ -37,10 +37,27 @@ public class GameUtils {
         off, on
     }
 
+    /**
+     * Armies settings
+     */
     public static final int MAX_UNIT_PER_ARMY = 8;
     public static final float SELL_PRICE_FACTOR = 1.0f;
 
-    public static final int DEPLOYMENT_ZONE_SIZE = 8;
+    /**
+     * Game settings
+     */
+    public static final int CAMERA_WIDTH = 800;
+    public static final int CAMERA_HEIGHT = 480;
+
+    public static final int GAME_LOOP_FREQUENCY = 10;// per second
+    public static final int UPDATE_VISION_FREQUENCY = 10;
+    public static final int AI_FREQUENCY = 10;
+    public static final int CHECK_VICTORY_FREQUENCY = 10;
+
+    public static final int PIXEL_BY_METER = 15;
+    public static final int PIXEL_BY_TILE = 32;
+
+    private static final int RAYCASTER_STEP = 2 * PIXEL_BY_METER; // 2 meters
 
     public static float getDistanceBetween(float x1, float y1, float x2, float y2) {
         return (float) Math.sqrt((Math.pow(Math.abs(x1 - x2), 2) + Math.pow(Math.abs(y1 - y2), 2)));
@@ -54,8 +71,6 @@ public class GameUtils {
     public static float getDistanceBetween(GameElement g1, float x, float y) {
         return getDistanceBetween(g1.getSprite().getX(), g1.getSprite().getY(), x, y);
     }
-
-    private static final int STEP = 2 * PIXEL_BY_METER; // 2 meters
 
     public static boolean canSee(Map map, GameElement g1, GameElement g2) {
         return canSee(map, g1, g2.getSprite().getX(), g2.getSprite().getY());
@@ -79,11 +94,11 @@ public class GameUtils {
             }
             // go one step further
             if (dx > 0) {
-                x += STEP * Math.cos(angle);
-                y += STEP * Math.sin(angle);
+                x += RAYCASTER_STEP * Math.cos(angle);
+                y += RAYCASTER_STEP * Math.sin(angle);
             } else {
-                x += -STEP * Math.cos(angle);
-                y += STEP * Math.sin(angle + Math.PI);
+                x += -RAYCASTER_STEP * Math.cos(angle);
+                y += RAYCASTER_STEP * Math.sin(angle + Math.PI);
             }
 
             dx = destinationX - x;
@@ -93,22 +108,25 @@ public class GameUtils {
             TMXTile tmxTile = map.getTmxLayer().getTMXTileAt(x, y);
             if (tmxTile != null) {
                 Tile t = map.getTiles()[tmxTile.getTileRow()][tmxTile.getTileColumn()];
-                if (t.getContent() != null && Math.sqrt(dx * dx + dy * dy) > PIXEL_BY_METER * 3) {
-                    // target is behind someone else
+                if (t.getContent() != null && t.getContent() instanceof Vehicle
+                        && Math.sqrt(dx * dx + dy * dy) > PIXEL_BY_METER * 1) {
+                    // target is hidden behind a vehicle
                     return false;
                 } else if (t.getTerrain() != null
+                        && t.getTerrain().isBlockingVision()
                         && GameUtils.getDistanceBetween(g1, x, y) > PIXEL_BY_METER * 3
                         && (g1.getTilePosition().getTerrain() != t.getTerrain() && lstTerrain.size() > 1 || Math
                                 .sqrt(dx * dx + dy * dy) > PIXEL_BY_METER * 3)) {
                     // target is behind an obstacle
                     return false;
-                } else if (t.getTerrain() != null
+                } else if (t.getTerrain() != null && t.getTerrain().isBlockingVision()
                         && (lstTerrain.size() == 0 || t.getTerrain() != lstTerrain.get(lstTerrain.size() - 1))) {
+                    // counts number of different obstacles
                     lstTerrain.add(t.getTerrain());
                 }
             }
 
-            if (Math.sqrt(dx * dx + dy * dy) <= STEP) {
+            if (Math.sqrt(dx * dx + dy * dy) <= RAYCASTER_STEP) {
                 return true;
             }
 

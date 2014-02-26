@@ -8,13 +8,15 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.util.List;
 
+import android.os.Message;
+
 import com.glevel.wwii.database.DatabaseHelper;
 import com.glevel.wwii.database.dao.BattleDao;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.Operation;
 import com.glevel.wwii.game.models.Player;
 
-public class SaveGameHelper {
+public class GameConverterHelper {
 
     /**
      * Saves a battle.
@@ -45,6 +47,29 @@ public class SaveGameHelper {
      */
     public static void deleteSavedBattles(DatabaseHelper dbHelper, int campaignId) {
         dbHelper.getBattleDao().delete(BattleDao.CAMPAIGN_ID + "=?", new String[] { "" + campaignId });
+    }
+
+    /**
+     * Gets a Battle object from a byte array.
+     * 
+     * @param blob
+     * @return
+     */
+    public static Battle getBattleFromLoadGame(byte[] blob) {
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(blob);
+            ObjectInputStream in = new ObjectInputStream(bais);
+            Battle battle = (Battle) in.readObject();
+            in.close();
+            return battle;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -108,6 +133,52 @@ public class SaveGameHelper {
             List<Operation> operations = (List<Operation>) in.readObject();
             in.close();
             return operations;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Gets a Message object from a byte array.
+     * 
+     * @param blob
+     * @return
+     */
+    public static Message getMessageFromByte(byte[] blob) {
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(blob);
+            ObjectInputStream in = new ObjectInputStream(bais);
+            Message msg = (Message) in.readObject();
+            in.close();
+            return msg;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Gets an object from a byte array.
+     * 
+     * @param blob
+     * @return
+     */
+    public static Object getObjectFromByte(byte[] blob) {
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(blob);
+            ObjectInputStream in = new ObjectInputStream(bais);
+            Object o = (Object) in.readObject();
+            in.close();
+            return o;
         } catch (IOException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {

@@ -178,10 +178,9 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
         if (mGameActivity.battle.getPhase() == Phase.deployment) {
             // during deployment phase
             TMXTile tmxtile = mGameActivity.tmxLayer.getTMXTileAt(x, y);
-            if (tmxtile != null
-                    && tmxtile.getTileColumn() >= mGameActivity.battle.getMe().getXPositionDeployment()
-                    && tmxtile.getTileColumn() <= mGameActivity.battle.getMe().getXPositionDeployment()
-                            + GameUtils.DEPLOYMENT_ZONE_SIZE - 1) {
+            int[] deploymentBoundaries = mGameActivity.battle.getDeploymentBoundaries(mGameActivity.battle.getMe());
+            if (tmxtile != null && tmxtile.getTileColumn() >= deploymentBoundaries[0]
+                    && tmxtile.getTileColumn() < deploymentBoundaries[1]) {
                 gameSprite.setPosition(x, y);
                 gameSprite.getGameElement().setTilePosition(
                         mGameActivity.battle.getMap().getTiles()[tmxtile.getTileRow()][tmxtile.getTileColumn()]);
