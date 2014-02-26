@@ -25,7 +25,7 @@ public class Weapon implements Serializable {
     private final int image;
     private final int apPower;
     private final int atPower;
-    private final int range;
+    protected final int range;
     private final int magazineSize;
     private final int reloadSpeed;
     private final int shootSpeed;
