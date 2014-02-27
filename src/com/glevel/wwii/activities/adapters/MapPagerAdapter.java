@@ -34,6 +34,8 @@ public class MapPagerAdapter extends PagerAdapter {
 
         ImageView mapImage = (ImageView) layout.findViewById(R.id.mapImage);
         mapImage.setImageResource(map.getImage());
+        
+        layout.setTag(R.string.id, map.ordinal());
 
         layout.setOnClickListener(mMapClickedListener);
 
