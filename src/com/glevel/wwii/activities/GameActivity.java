@@ -58,7 +58,7 @@ import com.glevel.wwii.game.models.map.Tile;
 import com.glevel.wwii.game.models.orders.FireOrder;
 import com.glevel.wwii.game.models.orders.MoveOrder;
 import com.glevel.wwii.game.models.orders.Order;
-import com.glevel.wwii.game.models.units.Unit;
+import com.glevel.wwii.game.models.units.categories.Unit;
 
 public class GameActivity extends CustomLayoutGameActivity implements OnNewSpriteToDraw {
 

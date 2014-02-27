@@ -1,4 +1,4 @@
-package com.glevel.wwii.game.models.weapons;
+package com.glevel.wwii.game.models.weapons.categories;
 
 import java.io.Serializable;
 
@@ -10,12 +10,12 @@ import com.glevel.wwii.game.andengine.custom.CustomColors;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.map.Tile.TerrainType;
 import com.glevel.wwii.game.models.units.Soldier;
-import com.glevel.wwii.game.models.units.Unit;
-import com.glevel.wwii.game.models.units.Vehicle;
-import com.glevel.wwii.game.models.units.Unit.Action;
-import com.glevel.wwii.game.models.units.Unit.InjuryState;
+import com.glevel.wwii.game.models.units.categories.Unit;
+import com.glevel.wwii.game.models.units.categories.Vehicle;
+import com.glevel.wwii.game.models.units.categories.Unit.Action;
+import com.glevel.wwii.game.models.units.categories.Unit.InjuryState;
 
-public class Weapon implements Serializable {
+public abstract class Weapon implements Serializable {
 
     /**
      * 
@@ -165,7 +165,7 @@ public class Weapon implements Serializable {
         if (target.getCurrentAction() == Action.hiding || target.getCurrentAction() == Action.reloading) {
             // target is hiding : tohit depends on target's
             // experience
-            tohit -= 10 * (target.getExperience().ordinal() + 1);
+            tohit -= 5 * (target.getExperience().ordinal() + 1);
         }
 
         // tohit depends on weapon range
@@ -174,7 +174,7 @@ public class Weapon implements Serializable {
         }
 
         // tohit depends on weapon cadence
-        tohit -= cadence * 5;
+        tohit -= cadence * 3;
 
         return tohit;
     }

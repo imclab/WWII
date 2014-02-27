@@ -22,9 +22,9 @@ import com.glevel.wwii.analytics.GoogleAnalyticsHelper.EventAction;
 import com.glevel.wwii.analytics.GoogleAnalyticsHelper.EventCategory;
 import com.glevel.wwii.game.models.GameSprite;
 import com.glevel.wwii.game.models.units.Soldier;
-import com.glevel.wwii.game.models.units.Unit;
-import com.glevel.wwii.game.models.units.Unit.Experience;
-import com.glevel.wwii.game.models.weapons.Weapon;
+import com.glevel.wwii.game.models.units.categories.Unit;
+import com.glevel.wwii.game.models.units.categories.Unit.Experience;
+import com.glevel.wwii.game.models.weapons.categories.Weapon;
 import com.glevel.wwii.views.CustomAlertDialog;
 
 public class GameGUI {

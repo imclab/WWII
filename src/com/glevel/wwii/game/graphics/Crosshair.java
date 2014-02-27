@@ -7,8 +7,8 @@ import org.andengine.util.color.Color;
 
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.models.Battle;
-import com.glevel.wwii.game.models.units.Unit;
-import com.glevel.wwii.game.models.weapons.Weapon;
+import com.glevel.wwii.game.models.units.categories.Unit;
+import com.glevel.wwii.game.models.weapons.categories.Weapon;
 
 public class Crosshair extends CenteredSprite {
 

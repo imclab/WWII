@@ -15,9 +15,10 @@ import com.glevel.wwii.game.models.VictoryCondition;
 import com.glevel.wwii.game.models.map.Map;
 import com.glevel.wwii.game.models.map.Tile;
 import com.glevel.wwii.game.models.map.Tile.TerrainType;
-import com.glevel.wwii.game.models.units.Unit;
-import com.glevel.wwii.game.models.units.Vehicle;
-import com.glevel.wwii.game.models.units.Unit.Experience;
+import com.glevel.wwii.game.models.units.categories.Unit;
+import com.glevel.wwii.game.models.units.categories.Vehicle;
+import com.glevel.wwii.game.models.units.categories.Unit.Action;
+import com.glevel.wwii.game.models.units.categories.Unit.Experience;
 
 public class GameUtils {
 
@@ -73,6 +74,16 @@ public class GameUtils {
     }
 
     public static boolean canSee(Map map, GameElement g1, GameElement g2) {
+
+        // hiding units are more difficult to see
+        if (!g2.isVisible() && getDistanceBetween(g1, g2) > 20 * PIXEL_BY_METER && g2 instanceof Unit) {
+            Unit unit = (Unit) g2;
+            if (unit.getCurrentAction() == Action.hiding && unit.getTilePosition().getTerrain() != null
+                    && Math.random() < 0.9f) {
+                return false;
+            }
+        }
+
         return canSee(map, g1, g2.getSprite().getX(), g2.getSprite().getY());
     }
 
@@ -127,7 +138,7 @@ public class GameUtils {
             }
 
             if (Math.sqrt(dx * dx + dy * dy) <= RAYCASTER_STEP) {
-                return true;
+                break;
             }
 
             n++;

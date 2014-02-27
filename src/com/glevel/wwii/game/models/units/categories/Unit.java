@@ -1,4 +1,4 @@
-package com.glevel.wwii.game.models.units;
+package com.glevel.wwii.game.models.units.categories;
 
 import java.util.List;
 
@@ -11,10 +11,13 @@ import com.glevel.wwii.game.models.GameElement;
 import com.glevel.wwii.game.models.map.Map;
 import com.glevel.wwii.game.models.orders.DefendOrder;
 import com.glevel.wwii.game.models.orders.FireOrder;
+import com.glevel.wwii.game.models.orders.HideOrder;
 import com.glevel.wwii.game.models.orders.MoveOrder;
 import com.glevel.wwii.game.models.orders.Order;
-import com.glevel.wwii.game.models.weapons.TurretWeapon;
-import com.glevel.wwii.game.models.weapons.Weapon;
+import com.glevel.wwii.game.models.units.Soldier;
+import com.glevel.wwii.game.models.units.Tank;
+import com.glevel.wwii.game.models.weapons.Turret;
+import com.glevel.wwii.game.models.weapons.categories.Weapon;
 
 public abstract class Unit extends GameElement {
 
@@ -27,7 +30,7 @@ public abstract class Unit extends GameElement {
 
     protected final ArmiesData army;
     private final int image;
-    private final int moveSpeed;
+    protected final int moveSpeed;
     private List<Weapon> weapons;
     protected Experience experience;
     private String spriteName;
@@ -36,7 +39,7 @@ public abstract class Unit extends GameElement {
     private InjuryState health;
     private int frags;
     private boolean isAvailable;
-    private Order order;
+    private Order order = new HideOrder();
     private Action currentAction;
     private int panic;
     private int aimCounter = 0;
@@ -61,7 +64,7 @@ public abstract class Unit extends GameElement {
 
     public abstract float getUnitTerrainProtection();
 
-    protected abstract int getUnitPrice();
+    public abstract int getPrice();
 
     public static enum InjuryState {
         none(R.color.green), injured(R.color.yellow), badlyInjured(R.color.orange), dead(R.color.red);
@@ -94,7 +97,7 @@ public abstract class Unit extends GameElement {
     }
 
     public static enum Action {
-        waiting, walking, running, firing, hiding, reloading, aiming
+        waiting, walking, running, firing, hiding, reloading, aiming, defending
     }
 
     public InjuryState getHealth() {
@@ -167,9 +170,9 @@ public abstract class Unit extends GameElement {
 
     public int getRealSellPrice(boolean isSelling) {
         if (isSelling) {
-            return (int) (getUnitPrice() * GameUtils.SELL_PRICE_FACTOR);
+            return (int) (getPrice() * GameUtils.SELL_PRICE_FACTOR);
         } else {
-            return getUnitPrice();
+            return getPrice();
         }
     }
 
@@ -238,9 +241,9 @@ public abstract class Unit extends GameElement {
         // get most suitable weapon
         Weapon weapon = getBestWeapon(battle, target);
         if (weapon != null) {
-            if (weapon instanceof TurretWeapon) {
+            if (weapon instanceof Turret) {
                 // turrets take time to rotate
-                TurretWeapon turret = (TurretWeapon) weapon;
+                Turret turret = (Turret) weapon;
                 boolean isRotatingOver = turret.rotateTurret(sprite, target.getSprite().getX(), target.getSprite()
                         .getY());
                 if (!isRotatingOver) {
@@ -332,6 +335,16 @@ public abstract class Unit extends GameElement {
         health = InjuryState.values()[Math.min(InjuryState.dead.ordinal(), health.ordinal() + damage)];
     }
 
+    public void defendPosition() {
+        this.currentAction = Action.defending;
+
+        if (GameActivity.gameCounter % 3 == 0) {
+            if (this.panic > 0) {
+                this.panic--;
+            }
+        }
+    }
+
     public void hide() {
         this.currentAction = Action.hiding;
 
@@ -351,30 +364,31 @@ public abstract class Unit extends GameElement {
     }
 
     public void resolveOrder(Battle battle) {
-        if (this.panic > 0) {
+        if (panic > 0) {
             // test if the unit can react
-            if (Math.random() * 10 + getExperience().ordinal() < this.panic) {
+            if (Math.random() * 10 + getExperience().ordinal() < panic) {
                 // the unit is under fire
                 hide();
                 return;
             }
         }
 
-        if (this.order instanceof MoveOrder) {
+        if (order instanceof MoveOrder) {
             // TODO update A*
-        } else if (this.order instanceof DefendOrder) {
+        } else if (order instanceof DefendOrder) {
             // search for enemies
             for (Unit u : battle.getEnemies(this)) {
                 if (!u.isDead() && GameUtils.canSee(battle.getMap(), this, u)) {
-                    // fire on enemy
                     order = new FireOrder(u);
                     return;
                 }
             }
             // stay ambush
-            hide();
-        } else if (this.order instanceof FireOrder) {
+            defendPosition();
+        } else if (order instanceof FireOrder) {
             fire(battle);
+        } else if (order instanceof HideOrder) {
+            hide();
         }
     }
 
@@ -417,7 +431,7 @@ public abstract class Unit extends GameElement {
         sprite.setCanBeDragged(false);
         order = null;
         // draw sprite
-        if (this instanceof Tank || weapons.size() > 0 && weapons.get(0) instanceof TurretWeapon) {
+        if (this instanceof Tank || weapons.size() > 0 && weapons.get(0) instanceof Turret) {
             // smoke
             battle.getOnNewSprite().drawAnimatedSprite(getSprite().getX(), getSprite().getY() - 70, "smoke.png", 120,
                     2.0f, 100, true);

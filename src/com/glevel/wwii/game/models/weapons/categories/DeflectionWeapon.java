@@ -1,4 +1,4 @@
-package com.glevel.wwii.game.models.weapons;
+package com.glevel.wwii.game.models.weapons.categories;
 
 import org.andengine.util.color.Color;
 
@@ -6,10 +6,10 @@ import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.andengine.custom.CustomColors;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.Player;
-import com.glevel.wwii.game.models.units.Unit;
-import com.glevel.wwii.game.models.units.Unit.Action;
+import com.glevel.wwii.game.models.units.categories.Unit;
+import com.glevel.wwii.game.models.units.categories.Unit.Action;
 
-public class DeflectionWeapon extends Weapon {
+public abstract class DeflectionWeapon extends Weapon {
 
     /**
      * 

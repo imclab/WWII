@@ -1,9 +1,9 @@
-package com.glevel.wwii.game.models.weapons;
+package com.glevel.wwii.game.models.weapons.categories;
 
 import com.glevel.wwii.game.models.map.Tile.TerrainType;
-import com.glevel.wwii.game.models.units.Unit;
+import com.glevel.wwii.game.models.units.categories.Unit;
 
-public class IndirectWeapon extends DeflectionWeapon {
+public abstract class IndirectWeapon extends DeflectionWeapon {
 
     /**
      * 

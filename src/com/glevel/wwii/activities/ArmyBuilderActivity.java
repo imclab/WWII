@@ -27,7 +27,7 @@ import com.glevel.wwii.game.data.BattlesData;
 import com.glevel.wwii.game.data.UnitsData;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.Player;
-import com.glevel.wwii.game.models.units.Unit;
+import com.glevel.wwii.game.models.units.categories.Unit;
 import com.glevel.wwii.utils.ApplicationUtils;
 import com.glevel.wwii.views.CustomAlertDialog;
 

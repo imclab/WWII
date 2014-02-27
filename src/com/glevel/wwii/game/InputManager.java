@@ -20,8 +20,10 @@ import com.glevel.wwii.game.models.GameSprite;
 import com.glevel.wwii.game.models.Player;
 import com.glevel.wwii.game.models.orders.DefendOrder;
 import com.glevel.wwii.game.models.orders.FireOrder;
+import com.glevel.wwii.game.models.orders.HideOrder;
 import com.glevel.wwii.game.models.orders.MoveOrder;
-import com.glevel.wwii.game.models.units.Unit;
+import com.glevel.wwii.game.models.units.categories.Unit;
+import com.glevel.wwii.game.models.weapons.categories.IndirectWeapon;
 
 public class InputManager implements IOnSceneTouchListener, IScrollDetectorListener, IPinchZoomDetectorListener {
 
@@ -152,9 +154,13 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
 
     public void giveHideOrder(GameSprite gameSprite) {
         if (gameSprite == selectedElement) {
-            // give defend order
             Unit unit = (Unit) selectedElement.getGameElement();
-            unit.setOrder(new DefendOrder());
+            // switch between hide and defend orders
+            if (unit.getOrder() instanceof HideOrder) {
+                unit.setOrder(new DefendOrder());
+            } else {
+                unit.setOrder(new HideOrder());
+            }
         }
     }
 
@@ -196,7 +202,8 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
                     && !((Unit) g.getGameElement()).isDead() && g.isVisible()
                     && ((Unit) g.getGameElement()).getArmy() != ((Unit) selectedElement.getGameElement()).getArmy()) {
                 // attack
-                if (GameUtils.canSee(mGameActivity.battle.getMap(), selectedElement.getGameElement(), x, y)) {
+                if (((Unit) selectedElement.getGameElement()).getWeapons().get(0) instanceof IndirectWeapon
+                        || GameUtils.canSee(mGameActivity.battle.getMap(), selectedElement.getGameElement(), x, y)) {
                     mGameActivity.orderLine.setColor(Color.RED);
                 } else {
                     mGameActivity.orderLine.setColor(Color.BLACK);
@@ -209,7 +216,8 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
                 mGameActivity.protection.setVisible(false);
             } else if (!((Unit) gameSprite.getGameElement()).canMove()) {
                 // immobile units
-                if (GameUtils.canSee(mGameActivity.battle.getMap(), selectedElement.getGameElement(), x, y)) {
+                if (((Unit) selectedElement.getGameElement()).getWeapons().get(0) instanceof IndirectWeapon
+                        || GameUtils.canSee(mGameActivity.battle.getMap(), selectedElement.getGameElement(), x, y)) {
                     mGameActivity.orderLine.setColor(Color.RED);
                 } else {
                     mGameActivity.orderLine.setColor(Color.BLACK);

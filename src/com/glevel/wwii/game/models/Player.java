@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.glevel.wwii.game.data.ArmiesData;
-import com.glevel.wwii.game.models.units.Unit;
+import com.glevel.wwii.game.models.units.categories.Unit;
 
 public class Player implements Serializable {
 

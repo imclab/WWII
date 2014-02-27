@@ -1,8 +1,9 @@
 package com.glevel.wwii.game.models.weapons;
 
 import com.glevel.wwii.game.models.GameSprite;
+import com.glevel.wwii.game.models.weapons.categories.IndirectWeapon;
 
-public class TurretWeapon extends IndirectWeapon {
+public class Turret extends IndirectWeapon {
 
     /**
      * 
@@ -10,7 +11,7 @@ public class TurretWeapon extends IndirectWeapon {
     private static final long serialVersionUID = -2063295813207549974L;
     private int turretRotationSpeed;
 
-    public TurretWeapon(int name, int image, int apPower, int atPower, int range, int nbMagazines, int cadence,
+    public Turret(int name, int image, int apPower, int atPower, int range, int nbMagazines, int cadence,
             int magazineSize, int reloadSpeed, int shootSpeed, int explosionSize, int turretRotationSpeed) {
         super(name, image, apPower, atPower, range, nbMagazines, cadence, magazineSize, reloadSpeed, shootSpeed,
                 explosionSize);

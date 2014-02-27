@@ -6,9 +6,9 @@ import java.util.List;
 import com.glevel.wwii.R;
 import com.glevel.wwii.game.models.units.Soldier;
 import com.glevel.wwii.game.models.units.Tank;
-import com.glevel.wwii.game.models.units.Unit;
-import com.glevel.wwii.game.models.units.Unit.Experience;
-import com.glevel.wwii.game.models.weapons.Weapon;
+import com.glevel.wwii.game.models.units.categories.Unit;
+import com.glevel.wwii.game.models.units.categories.Unit.Experience;
+import com.glevel.wwii.game.models.weapons.categories.Weapon;
 
 public class UnitsData {
 
@@ -23,10 +23,14 @@ public class UnitsData {
             lstUnits.add(buildScout(army, Experience.veteran));
             lstUnits.add(buildScout(army, Experience.elite));
             lstUnits.add(buildHMG(army, Experience.veteran));
+            lstUnits.add(buildHMG(army, Experience.elite));
             lstUnits.add(buildBazooka(army, Experience.recruit));
             lstUnits.add(buildBazooka(army, Experience.veteran));
+            lstUnits.add(buildBazooka(army, Experience.elite));
             lstUnits.add(buildMortar(army, Experience.veteran));
             lstUnits.add(buildATCannon(army, Experience.veteran));
+            lstUnits.add(buildATCannon(army, Experience.elite));
+            lstUnits.add(buildPantherG(army, Experience.veteran));
             lstUnits.add(buildPantherG(army, Experience.veteran));
             break;
         case USA:
@@ -35,10 +39,12 @@ public class UnitsData {
             lstUnits.add(buildScout(army, Experience.veteran));
             lstUnits.add(buildScout(army, Experience.elite));
             lstUnits.add(buildHMG(army, Experience.veteran));
+            lstUnits.add(buildHMG(army, Experience.elite));
             lstUnits.add(buildBazooka(army, Experience.recruit));
             lstUnits.add(buildBazooka(army, Experience.veteran));
             lstUnits.add(buildMortar(army, Experience.veteran));
             lstUnits.add(buildATCannon(army, Experience.veteran));
+            lstUnits.add(buildATCannon(army, Experience.elite));
             lstUnits.add(buildShermanM4A1(army, Experience.veteran));
             break;
         }
@@ -129,8 +135,8 @@ public class UnitsData {
         switch (army) {
         case GERMANY:
             weapons.add(WeaponsData.buildPak43());
-            return new Soldier(army, R.string.at_cannon, R.drawable.ic_launcher, experience, weapons, 0, "german_at_50.png",
-                    1.0f);
+            return new Soldier(army, R.string.at_cannon, R.drawable.ic_launcher, experience, weapons, 0,
+                    "german_at_50.png", 1.0f);
         case USA:
             weapons.add(WeaponsData.buildCannon75(15));
             return new Soldier(army, R.string.at_cannon, R.drawable.ic_launcher, experience, weapons, 0,
