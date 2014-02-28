@@ -48,6 +48,7 @@ import com.glevel.wwii.game.graphics.DeploymentZone;
 import com.glevel.wwii.game.graphics.Protection;
 import com.glevel.wwii.game.graphics.SelectionCircle;
 import com.glevel.wwii.game.interfaces.OnNewSpriteToDraw;
+import com.glevel.wwii.game.logic.MapLogic;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.Battle.Phase;
 import com.glevel.wwii.game.models.GameElement;
@@ -107,7 +108,7 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
             // load last saved battle
             battle = GameConverterHelper.getUnfinishedBattles(mDbHelper).get(0);
         } else {
-            // load game
+            // load game or new game
             long gameId = extras.getLong("game_id", 0);
             battle = mDbHelper.getBattleDao().getById(gameId);
         }
@@ -227,43 +228,41 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
 
         // add armies to scene
         for (Player player : battle.getPlayers()) {
-            int[] deploymentBoundaries = battle.getDeploymentBoundaries(player);
-            for (Unit unit : player.getUnits()) {
 
-                if (unit.getCurrentX() >= 0.0f) {
+            int[] deploymentBoundaries = battle.getDeploymentBoundaries(player);
+
+            if (!battle.isStarted()) {
+                // deploy troops for the first time
+                AI.deployTroops(battle, player);
+            }
+
+            for (Unit unit : player.getUnits()) {
+                // add element to scene / create sprite
+                addElementToScene(unit, player.getArmyIndex() == 0);
+                // init units rotation
+                unit.getSprite().setRotation(deploymentBoundaries[0] == 0 ? 90 : -90);
+
+                if (battle.isStarted()) {
                     // load position and rotation
                     float currentX = unit.getCurrentX();
                     float currentY = unit.getCurrentY();
                     float currentRotation = unit.getCurrentRotation();
                     TMXTile t = tmxLayer.getTMXTile((int) (currentX / GameUtils.PIXEL_BY_TILE),
                             (int) (currentY / GameUtils.PIXEL_BY_TILE));
-                    addElementToScene(unit, t, player.getArmyIndex() == 0);
                     unit.setTilePosition(battle.getMap().getTiles()[t.getTileRow()][t.getTileColumn()]);
                     unit.getSprite().setX(currentX);
                     unit.getSprite().setY(currentX);
                     unit.getSprite().setRotation(currentRotation);
-                } else {
-                    // position randomly the units
-                    TMXTile t = tmxLayer.getTMXTile((int) (deploymentBoundaries[0] + 1 + Math.random() * 4),
-                            (int) (Math.random() * (battle.getMap().getHeight() - 1)));
-                    addElementToScene(unit, t, player.getArmyIndex() == 0);
-                    unit.setTilePosition(battle.getMap().getTiles()[t.getTileRow()][t.getTileColumn()]);
-
-                    // init units rotation
-                    if (deploymentBoundaries[0] == 0) {
-                        unit.getSprite().setRotation(90);
-                    } else {
-                        unit.getSprite().setRotation(-90);
-                    }
                 }
-
             }
+
         }
 
         pOnPopulateSceneCallback.onPopulateSceneFinished();
 
         // init camera position
-        this.mCamera.setCenter(battle.getDeploymentBoundaries(battle.getMe())[0], tmxLayer.getHeight() / 2);
+        this.mCamera.setCenter(battle.getDeploymentBoundaries(battle.getMe())[0] * GameUtils.PIXEL_BY_TILE,
+                tmxLayer.getHeight() / 2);
 
         // hide loading screen
         mGameGUI.hideLoadingScreen();
@@ -276,6 +275,7 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
             startRenderLoop();
         }
 
+        battle.setHasStarted(true);
     }
 
     private void startDeploymentPhase() {
@@ -351,6 +351,11 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
         if (mMustSaveGame) {
             GameConverterHelper.saveGame(mDbHelper, battle);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         mDbHelper.close();
     }
 
@@ -432,7 +437,7 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
         for (Unit u : battle.getMe().getUnits()) {
             if (!u.isDead()) {
                 for (Unit e : battle.getEnemies(u)) {
-                    if (GameUtils.canSee(battle.getMap(), u, e)) {
+                    if (MapLogic.canSee(battle.getMap(), u, e)) {
                         e.setVisible(true);
                     }
                 }
@@ -456,10 +461,13 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
         }
     }
 
-    public void addElementToScene(GameElement gameElement, TMXTile tile, boolean isMySquad) {
+    public void addElementToScene(GameElement gameElement, boolean isMySquad) {
         // create sprite
-        final GameSprite sprite = new GameSprite(gameElement, mInputManager, tile.getTileX(), tile.getTileY(),
+        final GameSprite sprite = new GameSprite(gameElement, mInputManager, 0, 0,
                 GraphicsFactory.mGfxMap.get(gameElement.getSpriteName()), getVertexBufferObjectManager());
+        if (gameElement.getTilePosition() != null) {
+            sprite.setPosition(gameElement.getTilePosition().getTileX(), gameElement.getTilePosition().getTileY());
+        }
         gameElement.setSprite(sprite);
         gameElement.setRank(isMySquad ? Rank.ally : Rank.enemy);
         mScene.registerTouchArea(sprite);

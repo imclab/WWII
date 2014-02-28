@@ -4,6 +4,7 @@ import org.andengine.util.color.Color;
 
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.andengine.custom.CustomColors;
+import com.glevel.wwii.game.logic.MapLogic;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.Player;
 import com.glevel.wwii.game.models.units.categories.Unit;
@@ -24,20 +25,20 @@ public abstract class DeflectionWeapon extends Weapon {
 
     public DeflectionWeapon(int name, int image, int apPower, int atPower, int range, int nbMagazines, int cadence,
             int magazineSize, int reloadSpeed, int shootSpeed, int explosionSize) {
-        super(name, image, apPower, atPower, range, nbMagazines, cadence, magazineSize, reloadSpeed, shootSpeed);
+        super(name, image, apPower, atPower, range, nbMagazines, cadence, magazineSize, reloadSpeed, shootSpeed, null);
         this.explosionSize = explosionSize;
     }
 
     @Override
     public void resolveFireShot(Battle battle, Unit shooter, Unit target) {
-        float distance = GameUtils.getDistanceBetween(shooter, target);
+        float distance = MapLogic.getDistanceBetween(shooter, target);
 
         // deflection depends on distance and experience of the shooter
         int deflection = (int) (Math.random() * (getMaxDeflection(shooter, distance)) * GameUtils.PIXEL_BY_METER);
         double angle = Math.random() * 360;
 
         // calculate impact position
-        float[] impactPosition = GameUtils.getCoordinatesAfterTranslation(target.getSprite().getX(), target.getSprite()
+        float[] impactPosition = MapLogic.getCoordinatesAfterTranslation(target.getSprite().getX(), target.getSprite()
                 .getY(), deflection, angle, Math.random() < 0.5);
 
         // draw explosion sprite
@@ -48,7 +49,7 @@ public abstract class DeflectionWeapon extends Weapon {
         float distanceToImpact;// in meters
         for (Player p : battle.getPlayers()) {
             for (Unit unit : p.getUnits()) {
-                distanceToImpact = GameUtils.getDistanceBetween(unit, impactPosition[0], impactPosition[1])
+                distanceToImpact = MapLogic.getDistanceBetween(unit, impactPosition[0], impactPosition[1])
                         / GameUtils.PIXEL_BY_METER;
                 if (distanceToImpact < explosionSize) {
                     // increase panic
@@ -82,7 +83,7 @@ public abstract class DeflectionWeapon extends Weapon {
 
     @Override
     public Color getDistanceColor(Unit shooter, Unit target) {
-        int defl = getMaxDeflection(shooter, GameUtils.getDistanceBetween(shooter, target)) - BASIC_MAXIMAL_DEFLECTION;
+        int defl = getMaxDeflection(shooter, MapLogic.getDistanceBetween(shooter, target)) - BASIC_MAXIMAL_DEFLECTION;
         if (defl <= -1) {
             return Color.GREEN;
         } else if (defl == 0) {

@@ -137,6 +137,7 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
     public void onDestroy() {
         super.onDestroy();
         mInAppBillingHelper.onDestroy();
+        mDbHelper.close();
     }
 
     @Override

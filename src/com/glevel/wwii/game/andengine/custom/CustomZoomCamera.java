@@ -9,6 +9,7 @@ public class CustomZoomCamera extends ZoomCamera {
 
     public CustomZoomCamera(final float pX, final float pY, final float pWidth, final float pHeight) {
         super(pX, pY, pWidth, pHeight);
+        setZoomFactor(ZOOM_MIN_LIMIT);
     }
 
     @Override

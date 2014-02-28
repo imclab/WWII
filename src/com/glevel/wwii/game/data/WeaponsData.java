@@ -14,27 +14,30 @@ import com.glevel.wwii.game.models.weapons.categories.Weapon;
 public class WeaponsData {
 
     public static Weapon buildGarandM1() {
-        return new Rifle(R.string.garandM1, R.drawable.ic_garand, 2, 0, 400, 8, 1, 8, 2, 2);
+        return new Rifle(R.string.garandM1, R.drawable.ic_garand, 2, 0, 400, 8, 1, 8, 2, 2,
+                new int[] { 50, 40, 35, 25 });
     }
 
     public static Weapon buildMauserG98() {
-        return new Rifle(R.string.mauser, R.drawable.ic_mauser, 2, 0, 400, 8, 1, 5, 3, 2);
+        return new Rifle(R.string.mauser, R.drawable.ic_mauser, 2, 0, 400, 8, 1, 5, 3, 2, new int[] { 50, 40, 35, 25 });
     }
 
     public static Weapon buildThompson() {
-        return new PM(R.string.thompson, R.drawable.ic_thompson, 3, 0, 50, 6, 5, 30, 2, 10);
+        return new PM(R.string.thompson, R.drawable.ic_thompson, 3, 0, 50, 6, 5, 30, 2, 10,
+                new int[] { 40, 35, 15, 10 });
     }
 
     public static Weapon buildMP40() {
-        return new PM(R.string.mp40, R.drawable.ic_mp40, 4, 0, 100, 6, 4, 32, 2, 10);
+        return new PM(R.string.mp40, R.drawable.ic_mp40, 4, 0, 100, 6, 4, 32, 2, 10, new int[] { 40, 35, 15, 10 });
     }
 
     public static Weapon buildBrowningM2() {
-        return new HMG(R.string.browningM2, R.drawable.ic_browning_m2, 4, 1, 1200, 5, 10, 100, 5, 10);
+        return new HMG(R.string.browningM2, R.drawable.ic_browning_m2, 4, 1, 1200, 5, 10, 100, 5, 10, new int[] { 50,
+                45, 40, 25 });
     }
 
     public static Weapon buildMG42() {
-        return new HMG(R.string.mg42, R.drawable.ic_mg42, 5, 1, 1200, 8, 8, 80, 5, 10);
+        return new HMG(R.string.mg42, R.drawable.ic_mg42, 5, 1, 1200, 8, 8, 80, 5, 10, new int[] { 55, 50, 45, 30 });
     }
 
     public static DeflectionWeapon buildMortar50() {

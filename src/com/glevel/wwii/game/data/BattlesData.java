@@ -3,7 +3,7 @@ package com.glevel.wwii.game.data;
 import com.glevel.wwii.R;
 
 public enum BattlesData {
-    OOSTERBEEK(R.string.battle_oosterbeek, R.drawable.oosterbeck, "oosterbeck.tmx", 70, 70, 10, 12, true), NIMEGUE(
+    OOSTERBEEK(R.string.battle_oosterbeek, R.drawable.oosterbeck, "oosterbeck.tmx", 700, 70, 10, 12, true), NIMEGUE(
             R.string.battle_nimegue, R.drawable.nijmegen, "nijmegen.tmx", 85, 50, 8, 27, true), ARNHEM_STREETS(
             R.string.battle_arnhem_streets, R.drawable.oosterbeck, "oosterbeck.tmx", 60, 100, 8, 8, true);
 

@@ -44,6 +44,11 @@ public class BattleReportActivity extends MyActivity {
         // get battle info
         Bundle extras = getIntent().getExtras();
         battle = mDbHelper.getBattleDao().getById(extras.getLong("game_id"));
+        if (battle == null) {
+            leaveReport();
+            return;
+        }
+
         mIsVictory = extras.getBoolean("victory");
 
         // erase saved game from database
@@ -51,6 +56,12 @@ public class BattleReportActivity extends MyActivity {
 
         setContentView(R.layout.activity_battle_report);
         setupUI();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mDbHelper.close();
     }
 
     @Override

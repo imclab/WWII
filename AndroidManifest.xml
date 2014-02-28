@@ -37,11 +37,6 @@
             android:name=".activities.SplashActivity"
             android:noHistory="true"
             android:screenOrientation="landscape" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".activities.HomeActivity"
@@ -56,6 +51,11 @@
             android:name=".activities.ArmyBuilderActivity"
             android:noHistory="true"
             android:screenOrientation="landscape" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activities.GameActivity"

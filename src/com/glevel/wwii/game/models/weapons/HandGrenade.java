@@ -13,7 +13,6 @@ public class HandGrenade extends IndirectWeapon {
             int magazineSize, int reloadSpeed, int shootSpeed, int explosionSize) {
         super(name, image, apPower, atPower, range, nbMagazines, cadence, magazineSize, reloadSpeed, shootSpeed,
                 explosionSize);
-        // TODO Auto-generated constructor stub
     }
 
 }

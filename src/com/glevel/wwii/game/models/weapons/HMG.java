@@ -10,9 +10,8 @@ public class HMG extends Weapon {
     private static final long serialVersionUID = -1692340744939005519L;
 
     public HMG(int name, int image, int apPower, int atPower, int range, int nbMagazines, int cadence,
-            int magazineSize, int reloadSpeed, int shootSpeed) {
-        super(name, image, apPower, atPower, range, nbMagazines, cadence, magazineSize, reloadSpeed, shootSpeed);
-        // TODO Auto-generated constructor stub
+            int magazineSize, int reloadSpeed, int shootSpeed, int[] accuracy) {
+        super(name, image, apPower, atPower, range, nbMagazines, cadence, magazineSize, reloadSpeed, shootSpeed, accuracy);
     }
 
 }

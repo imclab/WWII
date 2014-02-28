@@ -1,9 +1,9 @@
 package com.glevel.wwii.game.models.weapons;
 
 import com.glevel.wwii.game.models.GameSprite;
-import com.glevel.wwii.game.models.weapons.categories.IndirectWeapon;
+import com.glevel.wwii.game.models.weapons.categories.DeflectionWeapon;
 
-public class Turret extends IndirectWeapon {
+public class Turret extends DeflectionWeapon {
 
     /**
      * 

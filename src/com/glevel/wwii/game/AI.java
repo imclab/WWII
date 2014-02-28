@@ -5,12 +5,11 @@ import java.util.List;
 
 import com.glevel.wwii.game.data.BattlesData;
 import com.glevel.wwii.game.data.UnitsData;
+import com.glevel.wwii.game.logic.MapLogic;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.Player;
-import com.glevel.wwii.game.models.orders.DefendOrder;
+import com.glevel.wwii.game.models.map.Tile;
 import com.glevel.wwii.game.models.orders.FireOrder;
-import com.glevel.wwii.game.models.orders.HideOrder;
-import com.glevel.wwii.game.models.orders.MoveOrder;
 import com.glevel.wwii.game.models.units.Soldier;
 import com.glevel.wwii.game.models.units.Tank;
 import com.glevel.wwii.game.models.units.categories.Unit;
@@ -27,16 +26,20 @@ public class AI {
     public static void updateUnitOrder(Battle battle, Unit unit) {
         // TODO
         for (Unit u : battle.getEnemies(unit)) {
-            if (!u.isDead() && GameUtils.getDistanceBetween(unit, u) < 30 * GameUtils.PIXEL_BY_METER
-                    && GameUtils.canSee(battle.getMap(), unit, u)) {
+            if (!u.isDead() && MapLogic.getDistanceBetween(unit, u) < 30 * GameUtils.PIXEL_BY_METER
+                    && MapLogic.canSee(battle.getMap(), unit, u)) {
                 unit.setOrder(new FireOrder(u));
                 return;
             }
         }
 
-        if (unit.getOrder() == null || unit.getOrder() instanceof DefendOrder || unit.getOrder() instanceof HideOrder) {
-            unit.setOrder(new MoveOrder((float) Math.random() * 1000, (float) Math.random() * 1000));
-        }
+        // if (unit.getOrder() == null || unit.getOrder() instanceof DefendOrder
+        // || unit.getOrder() instanceof HideOrder) {
+        // unit.setOrder(new MoveOrder((float) Math.random() *
+        // battle.getMap().getWidth() * GameUtils.PIXEL_BY_TILE,
+        // (float) Math.random() * battle.getMap().getHeight() *
+        // GameUtils.PIXEL_BY_TILE));
+        // }
 
     }
 
@@ -75,7 +78,7 @@ public class AI {
             break;
         case balanced:
             // buy tank
-            buyUnitsRandomly(player, Tank.class, Turret.class, 0, 1, 0.5f);
+            buyUnitsRandomly(player, Tank.class, Turret.class, 1, 1, 0.5f);
 
             // buy AT cannon
             buyUnitsRandomly(player, Soldier.class, Turret.class, 0, 1, 0.5f);
@@ -171,4 +174,18 @@ public class AI {
         }
     }
 
+    public static void deployTroops(Battle battle, Player player) {
+        int[] deploymentBoundaries = battle.getDeploymentBoundaries(player);
+        for (Unit unit : player.getUnits()) {
+            // get a random position
+            Tile tile = null;
+            do {
+                tile = battle.getMap().getTiles()[(int) (Math.random() * (battle.getMap().getHeight() - 1))][(int) (1 + deploymentBoundaries[0] + Math
+                        .random() * (deploymentBoundaries[1] - deploymentBoundaries[0] - 1))];
+            } while (!unit.canMoveIn(tile));
+
+            // position the units
+            unit.setTilePosition(tile);
+        }
+    }
 }

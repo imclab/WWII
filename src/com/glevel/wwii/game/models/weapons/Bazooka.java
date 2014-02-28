@@ -2,7 +2,6 @@ package com.glevel.wwii.game.models.weapons;
 
 import com.glevel.wwii.game.models.weapons.categories.DeflectionWeapon;
 
-
 public class Bazooka extends DeflectionWeapon {
 
     /**

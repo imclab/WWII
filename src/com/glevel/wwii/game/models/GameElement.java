@@ -62,11 +62,11 @@ public abstract class GameElement implements Serializable {
     public Color getSelectionColor() {
         switch (rank) {
         case enemy:
-            return Color.RED;
+            return new Color(1.0f, 0.3f, 0.3f, 0.8f);
         case ally:
-            return Color.WHITE;
+            return new Color(1.0f, 1.0f, 1.0f, 0.8f);
         }
-        return Color.YELLOW;
+        return new Color(1.0f, 1.0f, 0.0f, 0.8f);
     }
 
     public Rank getRank() {

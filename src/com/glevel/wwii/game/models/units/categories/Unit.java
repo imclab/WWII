@@ -6,9 +6,13 @@ import com.glevel.wwii.R;
 import com.glevel.wwii.activities.GameActivity;
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.data.ArmiesData;
+import com.glevel.wwii.game.logic.MapLogic;
+import com.glevel.wwii.game.logic.pathfinding.MovingElement;
+import com.glevel.wwii.game.logic.pathfinding.Node;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.GameElement;
 import com.glevel.wwii.game.models.map.Map;
+import com.glevel.wwii.game.models.map.Tile;
 import com.glevel.wwii.game.models.orders.DefendOrder;
 import com.glevel.wwii.game.models.orders.FireOrder;
 import com.glevel.wwii.game.models.orders.HideOrder;
@@ -19,7 +23,7 @@ import com.glevel.wwii.game.models.units.Tank;
 import com.glevel.wwii.game.models.weapons.Turret;
 import com.glevel.wwii.game.models.weapons.categories.Weapon;
 
-public abstract class Unit extends GameElement {
+public abstract class Unit extends GameElement implements MovingElement {
 
     /**
      * 
@@ -39,8 +43,8 @@ public abstract class Unit extends GameElement {
     private InjuryState health;
     private int frags;
     private boolean isAvailable;
-    private Order order = new HideOrder();
-    private Action currentAction;
+    protected Order order = new HideOrder();
+    protected Action currentAction;
     private int panic;
     private int aimCounter = 0;
 
@@ -97,7 +101,7 @@ public abstract class Unit extends GameElement {
     }
 
     public static enum Action {
-        waiting, walking, running, firing, hiding, reloading, aiming, defending
+        waiting, moving, running, firing, hiding, reloading, aiming, defending
     }
 
     public InjuryState getHealth() {
@@ -194,26 +198,31 @@ public abstract class Unit extends GameElement {
         return unit;
     }
 
+    public void updateMovementPath(Map map) {
+    }
+
     public void move() {
-        this.currentAction = Action.walking;
-        // update position
+        this.currentAction = Action.moving;
         MoveOrder moveOrder = (MoveOrder) order;
+
         updateUnitRotation(moveOrder.getXDestination(), moveOrder.getYDestination());
         float dx = moveOrder.getXDestination() - sprite.getX();
         float dy = moveOrder.getYDestination() - sprite.getY();
         double angle = Math.atan(dy / dx);
         float dd = moveSpeed * 10 * 0.04f * getUnitSpeed();
+
         boolean hasArrived = false;
-        if (Math.sqrt(dx * dx + dy * dy) <= dd) {
+        float distanceLeft = (float) Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+        if (distanceLeft < dd) {
             hasArrived = true;
-            dd = (float) Math.sqrt(dx * dx + dy * dy);
+            dd = distanceLeft;
         }
 
-        float[] newPosition = GameUtils.getCoordinatesAfterTranslation(sprite.getX(), sprite.getY(), dd, angle, dx > 0);
+        float[] newPosition = MapLogic.getCoordinatesAfterTranslation(sprite.getX(), sprite.getY(), dd, angle, dx > 0);
         sprite.setPosition(newPosition[0], newPosition[1]);
 
         if (hasArrived) {
-            setOrder(null);
+            order = null;
         }
     }
 
@@ -232,7 +241,7 @@ public abstract class Unit extends GameElement {
         FireOrder f = (FireOrder) order;
 
         Unit target = f.getTarget();
-        if (target.isDead() || !GameUtils.canSee(battle.getMap(), this, target)) {
+        if (target.isDead() || !MapLogic.canSee(battle.getMap(), this, target)) {
             // if target is dead or is not visible anymore, stop to shoot
             order = new DefendOrder();
             return;
@@ -317,8 +326,8 @@ public abstract class Unit extends GameElement {
     }
 
     public Weapon getBestWeapon(Battle battle, Unit target) {
-        float distance = GameUtils.getDistanceBetween(this, target);
-        boolean canSeeTarget = GameUtils.canSee(battle.getMap(), this, target);
+        float distance = MapLogic.getDistanceBetween(this, target);
+        boolean canSeeTarget = MapLogic.canSee(battle.getMap(), this, target);
         Weapon bestWeapon = null;
         for (Weapon weapon : weapons) {
             if (weapon.canUseWeapon(this, target, distance, canSeeTarget)) {
@@ -374,11 +383,11 @@ public abstract class Unit extends GameElement {
         }
 
         if (order instanceof MoveOrder) {
-            // TODO update A*
+            updateMovementPath(battle.getMap());
         } else if (order instanceof DefendOrder) {
             // search for enemies
             for (Unit u : battle.getEnemies(this)) {
-                if (!u.isDead() && GameUtils.canSee(battle.getMap(), this, u)) {
+                if (!u.isDead() && MapLogic.canSee(battle.getMap(), this, u)) {
                     order = new FireOrder(u);
                     return;
                 }
@@ -416,7 +425,7 @@ public abstract class Unit extends GameElement {
 
         // fight back
         if (order == null || order instanceof DefendOrder || order instanceof MoveOrder && Math.random() < 0.5) {
-            if (GameUtils.canSee(map, this, shooter)) {
+            if (MapLogic.canSee(map, this, shooter)) {
                 order = new FireOrder(shooter);
             }
         }
@@ -445,6 +454,11 @@ public abstract class Unit extends GameElement {
 
     public boolean canMove() {
         return moveSpeed > 0;
+    }
+
+    @Override
+    public boolean canMoveIn(Node node) {
+        return ((Tile) node).getContent() == null;
     }
 
 }
