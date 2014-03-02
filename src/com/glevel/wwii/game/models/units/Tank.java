@@ -3,7 +3,8 @@ package com.glevel.wwii.game.models.units;
 import java.util.List;
 
 import com.glevel.wwii.game.data.ArmiesData;
-import com.glevel.wwii.game.models.weapons.Weapon;
+import com.glevel.wwii.game.models.units.categories.Vehicle;
+import com.glevel.wwii.game.models.weapons.categories.Weapon;
 
 public class Tank extends Vehicle {
 
@@ -21,29 +22,23 @@ public class Tank extends Vehicle {
 
     @Override
     public float getUnitSpeed() {
+
         // depends on health
         float healthFactor = 1 - getHealth().ordinal() * 0.25f;
+
+        // depends on terrain
         switch (getTilePosition().getGround()) {
         case concrete:
             return 1.0f * healthFactor;
         case grass:
             return 1.0f * healthFactor;
         case mud:
-            return 0.6f * healthFactor;
+            return 0.7f * healthFactor;
         case water:
             return 0.1f * healthFactor;
         }
+
         return 0;
     }
 
-    @Override
-    public float getUnitTerrainProtection() {
-        return 1.0f;
-    }
-
-    @Override
-    protected int getUnitPrice() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
 }

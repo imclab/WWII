@@ -1,4 +1,4 @@
-package com.glevel.wwii.game.models.weapons;
+package com.glevel.wwii.game.models.weapons.categories;
 
 import java.io.Serializable;
 
@@ -7,15 +7,16 @@ import org.andengine.util.color.Color;
 import com.glevel.wwii.R;
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.andengine.custom.CustomColors;
+import com.glevel.wwii.game.logic.MapLogic;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.map.Tile.TerrainType;
 import com.glevel.wwii.game.models.units.Soldier;
-import com.glevel.wwii.game.models.units.Unit;
-import com.glevel.wwii.game.models.units.Vehicle;
-import com.glevel.wwii.game.models.units.Unit.Action;
-import com.glevel.wwii.game.models.units.Unit.InjuryState;
+import com.glevel.wwii.game.models.units.categories.Unit;
+import com.glevel.wwii.game.models.units.categories.Unit.Action;
+import com.glevel.wwii.game.models.units.categories.Unit.InjuryState;
+import com.glevel.wwii.game.models.units.categories.Vehicle;
 
-public class Weapon implements Serializable {
+public abstract class Weapon implements Serializable {
 
     /**
      * 
@@ -29,6 +30,7 @@ public class Weapon implements Serializable {
     private final int magazineSize;
     private final int reloadSpeed;
     private final int shootSpeed;
+    private final int[] accuracy;
 
     private int cadence;
     private int ammoAmount;
@@ -37,14 +39,9 @@ public class Weapon implements Serializable {
 
     // price
     private static final int WEAPON_BASE_PRICE = 2;
-    private static final int LONG_RANGE_THRESHOLD = 1000;// in meters
-    private static final float LONG_RANGE_PRICE_MODIFIER = 1.5f;
-
-    // hit chances
-    private static final int[][] HIT_CHANCES = { { 60, 30, 15, 5 }, { 70, 45, 20, 10 }, { 80, 60, 35, 15 } };
 
     public Weapon(int name, int image, int apPower, int atPower, int range, int nbMagazines, int cadence,
-            int magazineSize, int reloadSpeed, int shootSpeed) {
+            int magazineSize, int reloadSpeed, int shootSpeed, int[] accuracy) {
         this.name = name;
         this.image = image;
         this.apPower = apPower;
@@ -56,15 +53,12 @@ public class Weapon implements Serializable {
         this.reloadCounter = magazineSize;
         this.reloadSpeed = reloadSpeed;
         this.shootSpeed = shootSpeed;
+        this.accuracy = accuracy;
     }
 
     public int getPrice() {
         int price = WEAPON_BASE_PRICE;
-        price += 0.1 * (apPower + atPower) * ammoAmount / magazineSize;
-        // long range
-        if (range > LONG_RANGE_THRESHOLD) {
-            price *= LONG_RANGE_PRICE_MODIFIER;
-        }
+        price += 0.1 * (apPower + atPower + cadence / 4) * ammoAmount / magazineSize;
         return price;
     }
 
@@ -155,26 +149,26 @@ public class Weapon implements Serializable {
     }
 
     private int getToHit(Unit shooter, Unit target) {
-        float distance = GameUtils.getDistanceBetween(shooter, target);
+        float distance = MapLogic.getDistanceBetween(shooter, target);
 
-        int tohit = HIT_CHANCES[shooter.getExperience().ordinal()][distanceToRangeCategory(distance)];
+        int tohit = accuracy[distanceToRangeCategory(distance)];
 
         // add terrain protection
         tohit *= target.getUnitTerrainProtection();
 
+        // target is hiding : tohit depends on target's experience
         if (target.getCurrentAction() == Action.hiding || target.getCurrentAction() == Action.reloading) {
-            // target is hiding : tohit depends on target's
-            // experience
-            tohit -= 10 * (target.getExperience().ordinal() + 1);
-        }
-
-        // tohit depends on weapon range
-        if (distance > range / 2) {
-            tohit -= 10;
+            tohit -= 5 * (target.getExperience().ordinal() + 1);
         }
 
         // tohit depends on weapon cadence
-        tohit -= cadence * 5;
+        tohit -= cadence * 3;
+
+        // experience modifier
+        tohit += shooter.getExperience().ordinal() * 7;
+
+        // panic modifier
+        tohit -= shooter.getPanic();
 
         return tohit;
     }
@@ -214,11 +208,11 @@ public class Weapon implements Serializable {
     }
 
     protected static int distanceToRangeCategory(float distance) {
-        if (distance < 30 * GameUtils.PIXEL_BY_METER) {
+        if (distance < 25 * GameUtils.PIXEL_BY_METER) {
             return 0;
-        } else if (distance < 80 * GameUtils.PIXEL_BY_METER) {
+        } else if (distance < 50 * GameUtils.PIXEL_BY_METER) {
             return 1;
-        } else if (distance < 150 * GameUtils.PIXEL_BY_METER) {
+        } else if (distance < 75 * GameUtils.PIXEL_BY_METER) {
             return 2;
         } else {
             return 3;

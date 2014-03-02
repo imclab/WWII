@@ -3,65 +3,65 @@ package com.glevel.wwii.game.data;
 import com.glevel.wwii.R;
 
 public enum BattlesData {
-	OOSTERBEEK(R.string.battle_oosterbeek, R.drawable.oosterbeck, "oosterbeck.tmx", 50, 40, 10, 12, true), NIMEGUE(R.string.battle_nimegue,
-			R.drawable.oosterbeck, "nijmegen.tmx", 60, 50, 8, 25, true), ARNHEM_STREETS(R.string.battle_arnhem_streets, R.drawable.oosterbeck,
-			"oosterbeck.tmx", 70, 80, 8, 8, true);
+    OOSTERBEEK(R.string.battle_oosterbeek, R.drawable.oosterbeck, "oosterbeck.tmx", 700, 70, 10, 12, true), NIMEGUE(
+            R.string.battle_nimegue, R.drawable.nijmegen, "nijmegen.tmx", 85, 50, 8, 27, true), ARNHEM_STREETS(
+            R.string.battle_arnhem_streets, R.drawable.oosterbeck, "oosterbeck.tmx", 60, 100, 8, 8, true);
 
-	private final int id;
-	private final int name;
-	private final int image;
-	private final String tileMapName;
-	private final int alliesRequisition, axisRequisition;
-	private final int alliesDeploymentZoneSize, axisDeploymentZoneSize;
-	private final boolean isAllyLeftSide;
+    private final int id;
+    private final int name;
+    private final int image;
+    private final String tileMapName;
+    private final int alliesRequisition, axisRequisition;
+    private final int alliesDeploymentZoneSize, axisDeploymentZoneSize;
+    private final boolean isAllyLeftSide;
 
-	BattlesData(int name, int image, String tileMapName, int alliesRequisition, int axisRequisition, int alliesDeploymentZoneSize, int axisDeploymentZoneSize,
-			boolean isAllyLeftSide) {
-		this.id = this.ordinal();
-		this.name = name;
-		this.image = image;
-		this.tileMapName = tileMapName;
-		this.alliesRequisition = alliesRequisition;
-		this.axisRequisition = axisRequisition;
-		this.alliesDeploymentZoneSize = alliesDeploymentZoneSize;
-		this.axisDeploymentZoneSize = axisDeploymentZoneSize;
-		this.isAllyLeftSide = isAllyLeftSide;
-	}
+    BattlesData(int name, int image, String tileMapName, int alliesRequisition, int axisRequisition,
+            int alliesDeploymentZoneSize, int axisDeploymentZoneSize, boolean isAllyLeftSide) {
+        this.id = this.ordinal();
+        this.name = name;
+        this.image = image;
+        this.tileMapName = tileMapName;
+        this.alliesRequisition = alliesRequisition;
+        this.axisRequisition = axisRequisition;
+        this.alliesDeploymentZoneSize = alliesDeploymentZoneSize;
+        this.axisDeploymentZoneSize = axisDeploymentZoneSize;
+        this.isAllyLeftSide = isAllyLeftSide;
+    }
 
-	public int getName() {
-		return name;
-	}
+    public int getName() {
+        return name;
+    }
 
-	public int getImage() {
-		return image;
-	}
+    public int getImage() {
+        return image;
+    }
 
-	public int getAlliesRequisition() {
-		return alliesRequisition;
-	}
+    public int getAlliesRequisition() {
+        return alliesRequisition;
+    }
 
-	public int getAxisRequisition() {
-		return axisRequisition;
-	}
+    public int getAxisRequisition() {
+        return axisRequisition;
+    }
 
-	public int getId() {
-		return id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public String getTileMapName() {
-		return tileMapName;
-	}
+    public String getTileMapName() {
+        return tileMapName;
+    }
 
-	public int getAlliesDeploymentZoneSize() {
-		return alliesDeploymentZoneSize;
-	}
+    public int getAlliesDeploymentZoneSize() {
+        return alliesDeploymentZoneSize;
+    }
 
-	public int getAxisDeploymentZoneSize() {
-		return axisDeploymentZoneSize;
-	}
+    public int getAxisDeploymentZoneSize() {
+        return axisDeploymentZoneSize;
+    }
 
-	public boolean getIsAllyLeftSide() {
-		return isAllyLeftSide;
-	}
+    public boolean getIsAllyLeftSide() {
+        return isAllyLeftSide;
+    }
 
 }

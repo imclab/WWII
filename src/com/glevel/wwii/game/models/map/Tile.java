@@ -5,9 +5,10 @@ import org.andengine.extension.tmx.TMXTile;
 import org.andengine.extension.tmx.TMXTileProperty;
 import org.andengine.extension.tmx.TMXTiledMap;
 
+import com.glevel.wwii.game.logic.pathfinding.Node;
 import com.glevel.wwii.game.models.GameElement;
 
-public class Tile extends TMXTile {
+public class Tile extends TMXTile implements Node {
 
     private GameElement content = null;
     private GroundType ground = GroundType.grass;
@@ -29,7 +30,6 @@ public class Tile extends TMXTile {
         public boolean isBlockingVision() {
             return isBlockingVision;
         }
-
     }
 
     /**
@@ -95,6 +95,21 @@ public class Tile extends TMXTile {
 
     public void setGround(GroundType ground) {
         this.ground = ground;
+    }
+
+    @Override
+    public String getId() {
+        return getTileRow() + "-" + getTileColumn();
+    }
+
+    @Override
+    public int getX() {
+        return getTileColumn();
+    }
+
+    @Override
+    public int getY() {
+        return getTileRow();
     }
 
 }

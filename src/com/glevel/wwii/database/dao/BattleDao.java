@@ -20,6 +20,7 @@ public class BattleDao extends Repository<Battle> {
     public static final String PLAYERS = "players";
     public static final String CAMPAIGN_ID = "campaign_id";
     public static final String PHASE = "phase";
+    public static final String HAS_STARTED = "has_started";
 
     public BattleDao(DatabaseHelper dataBaseHelper) {
         super(dataBaseHelper);
@@ -67,6 +68,7 @@ public class BattleDao extends Repository<Battle> {
         entity.setPlayers(GameConverterHelper.getPlayersFromLoadGame(c.getBlob(2)));
         entity.setCampaignId(c.getInt(3));
         entity.setPhase(Phase.values()[c.getInt(4)]);
+        entity.setHasStarted(c.getInt(5) == 1);
         return entity;
     }
 
@@ -78,6 +80,7 @@ public class BattleDao extends Repository<Battle> {
         args.put(PLAYERS, GameConverterHelper.toByte(entity.getPlayers()).toByteArray());
         args.put(CAMPAIGN_ID, entity.getCampaignId());
         args.put(PHASE, entity.getPhase().ordinal());
+        args.put(HAS_STARTED, entity.isStarted());
         return args;
     }
 

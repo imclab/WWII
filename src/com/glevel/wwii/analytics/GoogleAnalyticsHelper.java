@@ -2,9 +2,6 @@ package com.glevel.wwii.analytics;
 
 import android.content.Context;
 
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.Tracker;
-
 public class GoogleAnalyticsHelper {
 
     public static enum EventCategory {
@@ -16,7 +13,7 @@ public class GoogleAnalyticsHelper {
     }
 
     public static void sendEvent(Context context, EventCategory category, EventAction action, String label) {
-        EasyTracker easyTracker = EasyTracker.getInstance(context);
+        // EasyTracker easyTracker = EasyTracker.getInstance(context);
         // easyTracker.send(MapBuilder.createEvent(category.name(),
         // action.name(), label, null).build());
     }
@@ -30,7 +27,7 @@ public class GoogleAnalyticsHelper {
     }
 
     public static void sendTiming(Context context, TimingCategory category, TimingName name, long loadTime) {
-        Tracker easyTracker = EasyTracker.getInstance(context);
+        // Tracker easyTracker = EasyTracker.getInstance(context);
         // easyTracker.send(MapBuilder.createTiming(category.name(), loadTime,
         // name.name(), null).build());
     }

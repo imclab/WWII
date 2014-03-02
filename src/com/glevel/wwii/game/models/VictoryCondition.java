@@ -3,7 +3,7 @@ package com.glevel.wwii.game.models;
 import java.io.Serializable;
 import java.util.List;
 
-import com.glevel.wwii.game.models.units.Unit;
+import com.glevel.wwii.game.models.units.categories.Unit;
 
 public class VictoryCondition implements Serializable {
 

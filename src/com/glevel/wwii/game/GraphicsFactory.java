@@ -40,7 +40,7 @@ public class GraphicsFactory {
         // load all game elements graphics
         for (Player player : battle.getPlayers()) {
             for (GameElement gameElement : player.getUnits()) {
-                loadGfxFromAssets(128, 128, gameElement.getSpriteName());
+                loadGfxFromAssets(164, 164, gameElement.getSpriteName());
             }
         }
 

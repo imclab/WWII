@@ -1,16 +1,17 @@
 package com.glevel.wwii.game.models.weapons;
 
 import com.glevel.wwii.game.models.map.Tile.TerrainType;
-import com.glevel.wwii.game.models.units.Unit;
+import com.glevel.wwii.game.models.units.categories.Unit;
+import com.glevel.wwii.game.models.weapons.categories.IndirectWeapon;
 
-public class IndirectWeapon extends DeflectionWeapon {
+public class Mortar extends IndirectWeapon {
 
     /**
      * 
      */
-    private static final long serialVersionUID = 2274584769324690466L;
+    private static final long serialVersionUID = 8787512407777567492L;
 
-    public IndirectWeapon(int name, int image, int apPower, int atPower, int range, int nbMagazines, int cadence,
+    public Mortar(int name, int image, int apPower, int atPower, int range, int nbMagazines, int cadence,
             int magazineSize, int reloadSpeed, int shootSpeed, int explosionSize) {
         super(name, image, apPower, atPower, range, nbMagazines, cadence, magazineSize, reloadSpeed, shootSpeed,
                 explosionSize);
@@ -22,7 +23,7 @@ public class IndirectWeapon extends DeflectionWeapon {
         if (range > 200 && target.getTilePosition().getTerrain() == TerrainType.house) {
             return;
         }
-        
+
         super.resolveDamageDiceRoll(tohit, target);
     }
 

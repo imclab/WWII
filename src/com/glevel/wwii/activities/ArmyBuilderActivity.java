@@ -27,7 +27,7 @@ import com.glevel.wwii.game.data.BattlesData;
 import com.glevel.wwii.game.data.UnitsData;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.Player;
-import com.glevel.wwii.game.models.units.Unit;
+import com.glevel.wwii.game.models.units.categories.Unit;
 import com.glevel.wwii.utils.ApplicationUtils;
 import com.glevel.wwii.views.CustomAlertDialog;
 
@@ -45,7 +45,7 @@ public class ArmyBuilderActivity extends MyActivity {
     private Button mStartBattleBtn;
     private UnitsArrayAdapter mMyArmyAdapter;
 
-    private DatabaseHelper dbHelper;
+    private DatabaseHelper mDbHelper;
 
     /**
      * Callbacks
@@ -114,6 +114,7 @@ public class ArmyBuilderActivity extends MyActivity {
         // init human player
         mPlayer = new Player("Me", mPlayerArmy, 0, false, mBattle.getPlayerVictoryCondition(mPlayerArmy));
         mBattle.getPlayers().add(mPlayer);
+        AI.createArmy(mPlayer, mBattle);
 
         // create AI's player
         Player enemyPlayer = new Player("Enemy", mPlayerArmy.getEnemy(), mBattle.getPlayers().size(), true,
@@ -129,7 +130,7 @@ public class ArmyBuilderActivity extends MyActivity {
         setContentView(R.layout.activity_army_builder);
         setupUI();
 
-        dbHelper = new DatabaseHelper(getApplicationContext());
+        mDbHelper = new DatabaseHelper(getApplicationContext());
     }
 
     @Override
@@ -141,7 +142,7 @@ public class ArmyBuilderActivity extends MyActivity {
     private void setupUI() {
         // init requisition points value
         mRequisitionPointsTV = (TextView) findViewById(R.id.requisitionPoints);
-        updateRequisitionPointsLeft(mBattle.getRequisition(mPlayer));
+        updateRequisitionPointsLeft(mPlayer.getRequisition());
 
         // init army flag
         TextView viewTitle = (TextView) findViewById(R.id.title);
@@ -163,6 +164,12 @@ public class ArmyBuilderActivity extends MyActivity {
                 mAvailableUnits, false);
         mAvailableTroopsList.setAdapter(mAvailableTroopsAdapter);
         mAvailableTroopsList.setOnItemClickListener(onAvailableUnitClicked);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mDbHelper.close();
     }
 
     private void updateRequisitionPointsLeft(int newValue) {
@@ -216,7 +223,7 @@ public class ArmyBuilderActivity extends MyActivity {
     }
 
     private void startGame() {
-        long gameId = GameConverterHelper.saveGame(dbHelper, mBattle);
+        long gameId = GameConverterHelper.saveGame(mDbHelper, mBattle);
         Intent intent = new Intent(this, GameActivity.class);
         Bundle args = new Bundle();
         args.putLong("game_id", gameId);

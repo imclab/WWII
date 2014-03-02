@@ -4,7 +4,8 @@ import java.util.List;
 
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.data.NamesData;
-import com.glevel.wwii.game.models.weapons.Weapon;
+import com.glevel.wwii.game.models.units.categories.Unit;
+import com.glevel.wwii.game.models.weapons.categories.Weapon;
 
 public class Soldier extends Unit {
 
@@ -28,9 +29,9 @@ public class Soldier extends Unit {
 
     // price
     private static final int SOLDIER_BASE_PRICE = 5;
-    private static final float RECRUIT_PRICE_MODIFIER = 0.5f;
+    private static final float RECRUIT_PRICE_MODIFIER = 0.7f;
     private static final float VETERAN_PRICE_MODIFIER = 1.0f;
-    private static final float ELITE_PRICE_MODIFIER = 2.0f;
+    private static final float ELITE_PRICE_MODIFIER = 1.5f;
 
     private final String realName;
 
@@ -103,12 +104,14 @@ public class Soldier extends Unit {
     }
 
     @Override
-    protected int getUnitPrice() {
+    public int getPrice() {
         int price = SOLDIER_BASE_PRICE;
-        // add weapon price
+        
+        // add weapons price
         for (Weapon weapon : getWeapons()) {
             price += weapon.getPrice();
         }
+        
         // experience modifier
         switch (getExperience()) {
         case recruit:
@@ -123,4 +126,5 @@ public class Soldier extends Unit {
         }
         return price;
     }
+    
 }

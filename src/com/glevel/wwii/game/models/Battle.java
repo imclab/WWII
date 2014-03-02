@@ -8,7 +8,7 @@ import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.data.BattlesData;
 import com.glevel.wwii.game.interfaces.OnNewSpriteToDraw;
 import com.glevel.wwii.game.models.map.Map;
-import com.glevel.wwii.game.models.units.Unit;
+import com.glevel.wwii.game.models.units.categories.Unit;
 
 public class Battle implements Serializable {
 
@@ -33,6 +33,7 @@ public class Battle implements Serializable {
     private transient List<Player> players = new ArrayList<Player>();
     private transient Phase phase = Phase.deployment;
     private transient OnNewSpriteToDraw onNewSprite;
+    private boolean hasStarted = false;
 
     // for campaign mode
     private boolean isDone = false;
@@ -54,8 +55,8 @@ public class Battle implements Serializable {
         this.tileMapName = data.getTileMapName();
         this.alliesRequisition = data.getAlliesRequisition();
         this.axisRequisition = data.getAxisRequisition();
-        this.alliesVictoryCondition = new VictoryCondition(90);
-        this.axisVictoryCondition = new VictoryCondition(90);
+        this.alliesVictoryCondition = new VictoryCondition(100);
+        this.axisVictoryCondition = new VictoryCondition(100);
         this.alliesDeploymentZoneSize = data.getAlliesDeploymentZoneSize();
         this.axisDeploymentZoneSize = data.getAxisDeploymentZoneSize();
         this.isAllyLeftSide = data.getIsAllyLeftSide();
@@ -202,14 +203,6 @@ public class Battle implements Serializable {
         this.isDone = isDone;
     }
 
-    public int getAlliesDeploymentZoneSize() {
-        return alliesDeploymentZoneSize;
-    }
-
-    public int getAxisDeploymentZoneSize() {
-        return axisDeploymentZoneSize;
-    }
-
     public boolean isAllyLeftSide() {
         return isAllyLeftSide;
     }
@@ -230,20 +223,20 @@ public class Battle implements Serializable {
         }
     }
 
-    public int getAlliesRequisition() {
-        return alliesRequisition;
-    }
-
-    public int getAxisRequisition() {
-        return axisRequisition;
-    }
-
     public int getRequisition(Player player) {
         if (player.isAlly()) {
             return alliesRequisition;
         } else {
             return axisRequisition;
         }
+    }
+
+    public boolean isStarted() {
+        return hasStarted;
+    }
+
+    public void setHasStarted(boolean hasStarted) {
+        this.hasStarted = hasStarted;
     }
 
 }

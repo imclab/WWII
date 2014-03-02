@@ -1,6 +1,6 @@
 package com.glevel.wwii.game.models.orders;
 
-import com.glevel.wwii.game.models.units.Unit;
+import com.glevel.wwii.game.models.units.categories.Unit;
 
 public class FireOrder extends Order {
 

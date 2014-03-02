@@ -15,13 +15,17 @@ import org.andengine.util.color.Color;
 import android.view.MotionEvent;
 
 import com.glevel.wwii.activities.GameActivity;
+import com.glevel.wwii.game.logic.MapLogic;
 import com.glevel.wwii.game.models.Battle.Phase;
 import com.glevel.wwii.game.models.GameSprite;
 import com.glevel.wwii.game.models.Player;
+import com.glevel.wwii.game.models.map.Tile;
 import com.glevel.wwii.game.models.orders.DefendOrder;
 import com.glevel.wwii.game.models.orders.FireOrder;
+import com.glevel.wwii.game.models.orders.HideOrder;
 import com.glevel.wwii.game.models.orders.MoveOrder;
-import com.glevel.wwii.game.models.units.Unit;
+import com.glevel.wwii.game.models.units.categories.Unit;
+import com.glevel.wwii.game.models.weapons.categories.IndirectWeapon;
 
 public class InputManager implements IOnSceneTouchListener, IScrollDetectorListener, IPinchZoomDetectorListener {
 
@@ -145,16 +149,23 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
             selectedElement = gameSprite;
             mGameActivity.selectionCircle.setColor(selectedElement.getGameElement().getSelectionColor());
             gameSprite.setZIndex(10);
-            mGameActivity.selectionCircle.setZIndex(-10);
+            mGameActivity.selectionCircle.setZIndex(1);
+            mGameActivity.selectionCircle.setPosition(
+                    0,
+                    - (selectedElement.getHeightScaled() - mGameActivity.selectionCircle.getHeight()));
             gameSprite.attachChild(mGameActivity.selectionCircle);
         }
     }
 
     public void giveHideOrder(GameSprite gameSprite) {
         if (gameSprite == selectedElement) {
-            // give defend order
             Unit unit = (Unit) selectedElement.getGameElement();
-            unit.setOrder(new DefendOrder());
+            // switch between hide and defend orders
+            if (unit.getOrder() instanceof HideOrder) {
+                unit.setOrder(new DefendOrder());
+            } else {
+                unit.setOrder(new HideOrder());
+            }
         }
     }
 
@@ -178,16 +189,18 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
         if (mGameActivity.battle.getPhase() == Phase.deployment) {
             // during deployment phase
             TMXTile tmxtile = mGameActivity.tmxLayer.getTMXTileAt(x, y);
+            Tile tile = mGameActivity.battle.getMap().getTiles()[tmxtile.getTileRow()][tmxtile.getTileColumn()];
             int[] deploymentBoundaries = mGameActivity.battle.getDeploymentBoundaries(mGameActivity.battle.getMe());
             if (tmxtile != null && tmxtile.getTileColumn() >= deploymentBoundaries[0]
-                    && tmxtile.getTileColumn() < deploymentBoundaries[1]) {
+                    && tmxtile.getTileColumn() < deploymentBoundaries[1]
+                    && ((Unit) gameSprite.getGameElement()).canMoveIn(tile)) {
                 gameSprite.setPosition(x, y);
                 gameSprite.getGameElement().setTilePosition(
                         mGameActivity.battle.getMap().getTiles()[tmxtile.getTileRow()][tmxtile.getTileColumn()]);
             }
         } else {
             // get distance
-            int distance = (int) GameUtils.getDistanceBetween(gameSprite.getX(), gameSprite.getY(), x, y);
+            int distance = (int) MapLogic.getDistanceBetween(gameSprite.getX(), gameSprite.getY(), x, y);
 
             // during combat phase
             mGameActivity.orderLine.setPosition(gameSprite.getX(), gameSprite.getY(), x, y);
@@ -196,7 +209,8 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
                     && !((Unit) g.getGameElement()).isDead() && g.isVisible()
                     && ((Unit) g.getGameElement()).getArmy() != ((Unit) selectedElement.getGameElement()).getArmy()) {
                 // attack
-                if (GameUtils.canSee(mGameActivity.battle.getMap(), selectedElement.getGameElement(), x, y)) {
+                if (((Unit) selectedElement.getGameElement()).getWeapons().get(0) instanceof IndirectWeapon
+                        || MapLogic.canSee(mGameActivity.battle.getMap(), selectedElement.getGameElement(), x, y)) {
                     mGameActivity.orderLine.setColor(Color.RED);
                 } else {
                     mGameActivity.orderLine.setColor(Color.BLACK);
@@ -209,7 +223,8 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
                 mGameActivity.protection.setVisible(false);
             } else if (!((Unit) gameSprite.getGameElement()).canMove()) {
                 // immobile units
-                if (GameUtils.canSee(mGameActivity.battle.getMap(), selectedElement.getGameElement(), x, y)) {
+                if (((Unit) selectedElement.getGameElement()).getWeapons().get(0) instanceof IndirectWeapon
+                        || MapLogic.canSee(mGameActivity.battle.getMap(), selectedElement.getGameElement(), x, y)) {
                     mGameActivity.orderLine.setColor(Color.RED);
                 } else {
                     mGameActivity.orderLine.setColor(Color.BLACK);
