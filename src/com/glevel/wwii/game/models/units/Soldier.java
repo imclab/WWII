@@ -114,13 +114,13 @@ public class Soldier extends Unit {
         
         // experience modifier
         switch (getExperience()) {
-        case recruit:
+        case RECRUIT:
             price *= RECRUIT_PRICE_MODIFIER;
             break;
-        case veteran:
+        case VETERAN:
             price *= VETERAN_PRICE_MODIFIER;
             break;
-        case elite:
+        case ELITE:
             price *= ELITE_PRICE_MODIFIER;
             break;
         }

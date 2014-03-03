@@ -56,7 +56,7 @@ public abstract class DeflectionWeapon extends Weapon {
                     unit.getShots(shooter, battle.getMap());
                     if (distanceToImpact < explosionSize * EXPLOSION_EPICENTER_FACTOR) {
                         // great damage in the explosion's epicenter
-                        resolveDamageDiceRoll(CHANCE_TO_HIT_IN_EPICENTER, unit);
+                        resolveDamageDiceRoll(CHANCE_TO_HIT_IN_EPICENTER, shooter, unit);
                     } else {
                         // minor damage further
                         int tohit = CHANCE_TO_HIT_AROUND;
@@ -64,13 +64,13 @@ public abstract class DeflectionWeapon extends Weapon {
                         // add terrain protection
                         tohit *= unit.getUnitTerrainProtection();
 
-                        if (unit.getCurrentAction() == Action.hiding || unit.getCurrentAction() == Action.reloading) {
+                        if (unit.getCurrentAction() == Action.HIDING || unit.getCurrentAction() == Action.RELOADING) {
                             // target is hiding : tohit depends on target's
                             // experience
                             tohit -= 5 * (unit.getExperience().ordinal() + 1);
                         }
 
-                        resolveDamageDiceRoll(tohit, unit);
+                        resolveDamageDiceRoll(tohit, shooter, unit);
                     }
                 }
             }

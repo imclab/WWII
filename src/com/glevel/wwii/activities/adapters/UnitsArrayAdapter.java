@@ -101,7 +101,7 @@ public class UnitsArrayAdapter extends ArrayAdapter<Unit> {
 			}
 
 			// experience
-			if (unit.getExperience() != Experience.recruit) {
+			if (unit.getExperience() != Experience.RECRUIT) {
 				viewHolder.unitExperience.setImageResource(unit.getExperience().getImage());
 				viewHolder.unitExperience.setVisibility(View.VISIBLE);
 			} else {

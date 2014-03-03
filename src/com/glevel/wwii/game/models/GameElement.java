@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.andengine.util.color.Color;
 
+import com.glevel.wwii.game.graphics.UnitSprite;
 import com.glevel.wwii.game.models.map.Tile;
 
 public abstract class GameElement implements Serializable {
@@ -15,7 +16,7 @@ public abstract class GameElement implements Serializable {
     protected final int name;
     private final String spriteName;
     private transient Tile tilePosition;
-    protected transient GameSprite sprite;
+    protected transient UnitSprite sprite;
     private Rank rank;
     private boolean isVisible = false;
     private float spriteScale;
@@ -25,11 +26,11 @@ public abstract class GameElement implements Serializable {
         neutral, enemy, ally
     }
 
-    public GameSprite getSprite() {
+    public UnitSprite getSprite() {
         return sprite;
     }
 
-    public void setSprite(GameSprite sprite) {
+    public void setSprite(UnitSprite sprite) {
         this.sprite = sprite;
     }
 
@@ -62,11 +63,11 @@ public abstract class GameElement implements Serializable {
     public Color getSelectionColor() {
         switch (rank) {
         case enemy:
-            return new Color(1.0f, 0.3f, 0.3f, 0.8f);
+            return new Color(1.0f, 0.0f, 0.0f, 0.7f);
         case ally:
-            return new Color(1.0f, 1.0f, 1.0f, 0.8f);
+            return new Color(1.0f, 1.0f, 1.0f, 0.7f);
         }
-        return new Color(1.0f, 1.0f, 0.0f, 0.8f);
+        return new Color(1.0f, 1.0f, 0.0f, 0.7f);
     }
 
     public Rank getRank() {

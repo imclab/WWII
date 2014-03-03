@@ -15,6 +15,7 @@ import android.content.Context;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.GameElement;
 import com.glevel.wwii.game.models.Player;
+import com.glevel.wwii.game.models.units.Tank;
 
 public class GraphicsFactory {
 
@@ -41,6 +42,9 @@ public class GraphicsFactory {
         for (Player player : battle.getPlayers()) {
             for (GameElement gameElement : player.getUnits()) {
                 loadGfxFromAssets(164, 164, gameElement.getSpriteName());
+                if (gameElement instanceof Tank) {
+                    loadGfxFromAssets(164, 164, gameElement.getSpriteName().replace(".png", "") + "_turret.png");
+                }
             }
         }
 

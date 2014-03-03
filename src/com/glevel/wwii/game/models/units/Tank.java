@@ -16,7 +16,7 @@ public class Tank extends Vehicle {
 
     public Tank(ArmiesData army, int name, int image, Experience experience, List<Weapon> weapons, int moveSpeed,
             int armor, String spriteName, float spriteScale) {
-        super(army, name, image, experience, weapons, moveSpeed, VehicleType.tank, armor, TANK_VIRTUAL_WIDTH,
+        super(army, name, image, experience, weapons, moveSpeed, VehicleType.TANK, armor, TANK_VIRTUAL_WIDTH,
                 TANK_VIRTUAL_HEIGHT, spriteName, spriteScale);
     }
 

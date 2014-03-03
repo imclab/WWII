@@ -55,9 +55,9 @@ public class GameUtils {
         // me
         Player p = new Player("Me", ArmiesData.USA, 0, false, new VictoryCondition(100));
         ArrayList<Unit> lstUnits = new ArrayList<Unit>();
-        Unit e = UnitsData.buildATCannon(ArmiesData.USA, Experience.elite).copy();
+        Unit e = UnitsData.buildATCannon(ArmiesData.USA, Experience.ELITE).copy();
         lstUnits.add(e);
-        Unit e2 = UnitsData.buildRifleMan(ArmiesData.USA, Experience.veteran).copy();
+        Unit e2 = UnitsData.buildRifleMan(ArmiesData.USA, Experience.VETERAN).copy();
         lstUnits.add(e2);
         p.setUnits(lstUnits);
         battle.getPlayers().add(p);
@@ -65,11 +65,11 @@ public class GameUtils {
         // enemy
         p = new Player("Enemy", ArmiesData.GERMANY, 1, true, new VictoryCondition(100));
         lstUnits = new ArrayList<Unit>();
-        e = UnitsData.buildScout(ArmiesData.GERMANY, Experience.recruit).copy();
+        e = UnitsData.buildScout(ArmiesData.GERMANY, Experience.RECRUIT).copy();
         lstUnits.add(e);
-        e2 = UnitsData.buildRifleMan(ArmiesData.GERMANY, Experience.veteran).copy();
+        e2 = UnitsData.buildRifleMan(ArmiesData.GERMANY, Experience.VETERAN).copy();
         lstUnits.add(e2);
-        e2 = UnitsData.buildRifleMan(ArmiesData.GERMANY, Experience.elite).copy();
+        e2 = UnitsData.buildRifleMan(ArmiesData.GERMANY, Experience.ELITE).copy();
         lstUnits.add(e2);
         p.setUnits(lstUnits);
         battle.getPlayers().add(p);
