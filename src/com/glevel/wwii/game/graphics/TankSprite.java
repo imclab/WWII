@@ -1,5 +1,6 @@
 package com.glevel.wwii.game.graphics;
 
+import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
@@ -12,21 +13,38 @@ import com.glevel.wwii.game.models.weapons.categories.Weapon;
 
 public class TankSprite extends UnitSprite {
 
+    // firing
     private transient CenteredSprite turretSprite;
     private transient Sprite mainWeaponMuzzle, secondaryWeaponMuzzle;
-    private transient boolean isMainWeaponFiring, isSecondaryWeaponFiring;
+    private transient boolean isMainWeaponFiring = false, isSecondaryWeaponFiring = false;
+
+    // movement
+    private transient boolean isMoving = false;
+    private transient AnimatedSprite moveSmoke;
 
     public TankSprite(GameElement gameElement, InputManager inputManager, float pX, float pY,
             ITextureRegion pTextureRegion, VertexBufferObjectManager mVertexBufferObjectManager) {
         super(gameElement, inputManager, pX, pY, pTextureRegion, mVertexBufferObjectManager);
         addTurretSprite();
+        addVehicleSmokeSprite();
         addMuzzleFlashSprites();
+        setZIndex(40);
     }
 
     private void addTurretSprite() {
-        turretSprite = new CenteredSprite(0, 0, GraphicsFactory.mGfxMap.get("panzeriv_turret.png"),
-                getVertexBufferObjectManager());
+        turretSprite = new CenteredSprite(0, 0, GraphicsFactory.mGfxMap.get(getGameElement().getSpriteName().replace(
+                ".png", "")
+                + "_turret.png"), getVertexBufferObjectManager());
         attachChild(turretSprite);
+    }
+
+    private void addVehicleSmokeSprite() {
+        moveSmoke = new AnimatedSprite(30, 92, GraphicsFactory.mTiledGfxMap.get("tank_move_smoke.png"),
+                getVertexBufferObjectManager());
+        moveSmoke.setScale(1.0f, 0.8f);
+        moveSmoke.setRotation(180);
+        moveSmoke.setVisible(false);
+        attachChild(moveSmoke);
     }
 
     private void addMuzzleFlashSprites() {
@@ -59,6 +77,15 @@ public class TankSprite extends UnitSprite {
         } else if (secondaryWeaponMuzzle.isVisible()) {
             secondaryWeaponMuzzle.setVisible(false);
         }
+
+        if (isMoving && !moveSmoke.isVisible()) {
+            moveSmoke.setVisible(true);
+            moveSmoke.animate(150, true);
+        } else if (!isMoving && moveSmoke.isVisible()) {
+            moveSmoke.setVisible(false);
+            moveSmoke.stopAnimation();
+            isMoving = false;
+        }
     }
 
     @Override
@@ -80,6 +107,10 @@ public class TankSprite extends UnitSprite {
 
     public Sprite getTurretSprite() {
         return turretSprite;
+    }
+
+    public void updateMovingAnimation(boolean isMoving) {
+        this.isMoving = isMoving;
     }
 
 }

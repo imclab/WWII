@@ -48,12 +48,14 @@ public abstract class GameElement implements Serializable {
         return tilePosition;
     }
 
-    public void setTilePosition(Tile tilePosition) {
+    public void setTilePosition(Battle battle, Tile tilePosition) {
         if (this.tilePosition != null) {
             this.tilePosition.setContent(null);
         }
         this.tilePosition = tilePosition;
-        this.tilePosition.setContent(this);
+        if (tilePosition != null) {
+            this.tilePosition.setContent(this);
+        }
     }
 
     public String getSpriteName() {

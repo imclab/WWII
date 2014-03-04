@@ -62,4 +62,30 @@ public class Turret extends DeflectionWeapon {
         return Math.abs(rotationStep) < turretRotationSpeed;
     }
 
+    public boolean rotateTurretTo(UnitSprite sprite, float finalAngle) {
+        double rotationStep = 0.0;
+
+        // rotate turret
+        if (sprite instanceof TankSprite) {
+            TankSprite tankSprite = (TankSprite) sprite;
+            double dTau = finalAngle - tankSprite.getTurretSpriteRotation() - tankSprite.getRotation();
+            if (dTau > 0) {
+                rotationStep = Math.min(dTau, turretRotationSpeed);
+            } else if (dTau < 0) {
+                rotationStep = Math.max(dTau, -turretRotationSpeed);
+            }
+            tankSprite.setTurretSpriteRotation((float) (tankSprite.getTurretSpriteRotation() + rotationStep));
+        } else {
+            double dTau = finalAngle - sprite.getRotation();
+            if (dTau > 0) {
+                rotationStep = Math.min(dTau, turretRotationSpeed);
+            } else if (dTau < 0) {
+                rotationStep = Math.max(dTau, -turretRotationSpeed);
+            }
+            sprite.setRotation((float) (sprite.getRotation() + rotationStep));
+        }
+
+        return Math.abs(rotationStep) < turretRotationSpeed;
+    }
+
 }

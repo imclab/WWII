@@ -78,10 +78,10 @@ public class AI {
             break;
         case balanced:
             // buy tank
-            buyUnitsRandomly(player, Tank.class, Turret.class, 1, 1, 0.5f);
+            buyUnitsRandomly(player, Tank.class, Turret.class, 5, 5, 0.5f);
 
             // buy AT cannon
-            buyUnitsRandomly(player, Soldier.class, Turret.class, 0, 1, 0.5f);
+            buyUnitsRandomly(player, Soldier.class, Turret.class, 1, 1, 0.5f);
 
             // buy HMG
             buyUnitsRandomly(player, Soldier.class, HMG.class, 1, 2, 1.0f);
@@ -185,7 +185,7 @@ public class AI {
             } while (!unit.canMoveIn(tile));
 
             // position the units
-            unit.setTilePosition(tile);
+            unit.setTilePosition(battle, tile);
         }
     }
 }

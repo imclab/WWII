@@ -23,8 +23,12 @@ public class Tank extends Vehicle {
     @Override
     public float getUnitSpeed() {
 
+        if (getHealth() == InjuryState.BADLYINJURED) {
+            return 0;
+        }
+
         // depends on health
-        float healthFactor = 1 - getHealth().ordinal() * 0.25f;
+        float healthFactor = 1 - getHealth().ordinal() * 0.5f;
 
         // depends on terrain
         switch (getTilePosition().getGround()) {

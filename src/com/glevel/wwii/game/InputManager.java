@@ -197,10 +197,9 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
             int[] deploymentBoundaries = mGameActivity.battle.getDeploymentBoundaries(mGameActivity.battle.getMe());
             if (tmxtile != null && tmxtile.getTileColumn() >= deploymentBoundaries[0]
                     && tmxtile.getTileColumn() < deploymentBoundaries[1]
-                    && ((Unit) gameSprite.getGameElement()).canMoveIn(tile)) {
+                    && ((Unit) gameSprite.getGameElement()).canBeDeployedThere(mGameActivity.battle, tile)) {
                 gameSprite.setPosition(x, y);
-                gameSprite.getGameElement().setTilePosition(
-                        mGameActivity.battle.getMap().getTiles()[tmxtile.getTileRow()][tmxtile.getTileColumn()]);
+                gameSprite.getGameElement().setTilePosition(mGameActivity.battle, tile);
             }
         } else {
             // get distance
@@ -214,7 +213,8 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
                     && ((Unit) g.getGameElement()).getArmy() != ((Unit) selectedElement.getGameElement()).getArmy()) {
                 // attack
                 if (((Unit) selectedElement.getGameElement()).getWeapons().get(0) instanceof IndirectWeapon
-                        || MapLogic.canSee(mGameActivity.battle.getMap(), selectedElement.getGameElement(), x, y)) {
+                        || MapLogic.canSee(mGameActivity.battle.getMap(), selectedElement.getGameElement(),
+                                g.getGameElement())) {
                     mGameActivity.orderLine.setColor(Color.RED);
                 } else {
                     mGameActivity.orderLine.setColor(Color.BLACK);
@@ -228,6 +228,9 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
             } else if (!((Unit) gameSprite.getGameElement()).canMove()) {
                 // immobile units
                 if (((Unit) selectedElement.getGameElement()).getWeapons().get(0) instanceof IndirectWeapon
+                        || g != null
+                        && MapLogic.canSee(mGameActivity.battle.getMap(), selectedElement.getGameElement(),
+                                g.getGameElement())
                         || MapLogic.canSee(mGameActivity.battle.getMap(), selectedElement.getGameElement(), x, y)) {
                     mGameActivity.orderLine.setColor(Color.RED);
                 } else {
@@ -241,8 +244,8 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
                 mGameActivity.protection.setVisible(false);
             } else {
                 // move
-                if (mGameActivity.battle.getMap().getTiles()[mGameActivity.tmxLayer.getTMXTileAt(x, y).getTileRow()][mGameActivity.tmxLayer
-                        .getTMXTileAt(x, y).getTileColumn()].getTerrain() != null) {
+                Tile tile = MapLogic.getTileAtCoordinates(mGameActivity.battle.getMap(), x, y);
+                if (tile.getTerrain() != null) {
                     // grants protection
                     mGameActivity.protection.setPosition(x, y);
                     mGameActivity.protection.setVisible(true);

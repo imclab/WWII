@@ -18,6 +18,7 @@ public class SoldierSprite extends UnitSprite {
             ITextureRegion pTextureRegion, VertexBufferObjectManager mVertexBufferObjectManager) {
         super(gameElement, inputManager, pX, pY, pTextureRegion, mVertexBufferObjectManager);
         addMuzzleFlashSprite();
+        setZIndex(30);
     }
 
     private void addMuzzleFlashSprite() {

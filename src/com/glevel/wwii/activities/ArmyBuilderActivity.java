@@ -102,6 +102,8 @@ public class ArmyBuilderActivity extends MyActivity {
         }
     };
 
+    private UnitsArrayAdapter mAvailableTroopsAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,6 +136,19 @@ public class ArmyBuilderActivity extends MyActivity {
     }
 
     @Override
+    protected void onPause() {
+        // TODO Auto-generated method stub
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mMyArmyList.setAdapter(mMyArmyAdapter);
+        mAvailableTroopsList.setAdapter(mAvailableTroopsAdapter);
+    }
+
+    @Override
     public void onBackPressed() {
         startActivity(new Intent(this, BattleChooserActivity.class));
         finish();
@@ -155,14 +170,13 @@ public class ArmyBuilderActivity extends MyActivity {
         // init my army list
         mMyArmyList = (ListView) findViewById(R.id.myArmyList);
         mMyArmyAdapter = new UnitsArrayAdapter(this, R.layout.army_list_item, mPlayer.getUnits(), true);
-        mMyArmyList.setAdapter(mMyArmyAdapter);
+
         mMyArmyList.setOnItemClickListener(onMyUnitClicked);
 
         // init available troops list
         mAvailableTroopsList = (ListView) findViewById(R.id.availableTroopsList);
-        UnitsArrayAdapter mAvailableTroopsAdapter = new UnitsArrayAdapter(this, R.layout.army_list_item,
+        mAvailableTroopsAdapter = new UnitsArrayAdapter(this, R.layout.army_list_item,
                 mAvailableUnits, false);
-        mAvailableTroopsList.setAdapter(mAvailableTroopsAdapter);
         mAvailableTroopsList.setOnItemClickListener(onAvailableUnitClicked);
     }
 

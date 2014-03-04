@@ -129,6 +129,10 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
         // used to keep only one saved battle for each game mode / campaign
         battle.setId(0L);
         GameConverterHelper.deleteSavedBattles(mDbHelper, battle.getCampaignId());
+
+        // logs FPS
+        // final FPSLogger fpsLogger = new FPSLogger();
+        // this.mEngine.registerUpdateHandler(fpsLogger);
     }
 
     @Override
@@ -253,9 +257,8 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
                     float currentX = unit.getCurrentX();
                     float currentY = unit.getCurrentY();
                     float currentRotation = unit.getCurrentRotation();
-                    TMXTile t = tmxLayer.getTMXTile((int) (currentX / GameUtils.PIXEL_BY_TILE),
-                            (int) (currentY / GameUtils.PIXEL_BY_TILE));
-                    unit.setTilePosition(battle.getMap().getTiles()[t.getTileRow()][t.getTileColumn()]);
+                    Tile t = MapLogic.getTileAtCoordinates(battle.getMap(), currentX, currentY);
+                    unit.setTilePosition(battle, battle.getMap().getTiles()[t.getTileRow()][t.getTileColumn()]);
                     unit.getSprite().setX(currentX);
                     unit.getSprite().setY(currentX);
                     unit.getSprite().setRotation(currentRotation);
@@ -263,6 +266,8 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
             }
 
         }
+
+        mScene.sortChildren(true);
 
         pOnPopulateSceneCallback.onPopulateSceneFinished();
 
@@ -429,6 +434,8 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
                 crosshair.setVisible(false);
             }
         }
+
+        mScene.sortChildren(true);
     }
 
     /**
@@ -456,12 +463,7 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
             for (Unit unit : player.getUnits()) {
                 if (unit.getOrder() != null && unit.getOrder() instanceof MoveOrder) {
                     // move unit
-                    unit.move();
-                    TMXTile newTile = tmxLayer.getTMXTileAt(unit.getSprite().getX(), unit.getSprite().getY());
-                    if (newTile.getTileX() != unit.getTilePosition().getTileX()
-                            || newTile.getTileY() != unit.getTilePosition().getTileY()) {
-                        unit.setTilePosition(battle.getMap().getTiles()[newTile.getTileRow()][newTile.getTileColumn()]);
-                    }
+                    unit.move(battle);
                 }
             }
         }
@@ -549,7 +551,7 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
 
     @Override
     public void drawAnimatedSprite(float x, float y, String spriteName, int frameDuration, float scale, int loopCount,
-            final boolean removeAfter) {
+            final boolean removeAfter, int zIndex) {
         if (GraphicsFactory.mTiledGfxMap.get(spriteName) == null) {
             return;
         }
@@ -557,36 +559,42 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
         final AnimatedSprite sprite = new AnimatedSprite(0, 0, GraphicsFactory.mTiledGfxMap.get(spriteName),
                 getVertexBufferObjectManager());
         sprite.setPosition(x - sprite.getWidth() / 2.0f, y - sprite.getWidth() / 2.0f);
+        sprite.setZIndex(zIndex);
         sprite.setScale(scale);
-        sprite.animate(frameDuration, loopCount, new IAnimationListener() {
-            @Override
-            public void onAnimationStarted(AnimatedSprite pAnimatedSprite, int pInitialLoopCount) {
-            }
-
-            @Override
-            public void onAnimationLoopFinished(AnimatedSprite pAnimatedSprite, int pRemainingLoopCount,
-                    int pInitialLoopCount) {
-            }
-
-            @Override
-            public void onAnimationFrameChanged(AnimatedSprite pAnimatedSprite, int pOldFrameIndex, int pNewFrameIndex) {
-            }
-
-            @Override
-            public void onAnimationFinished(AnimatedSprite pAnimatedSprite) {
-                if (removeAfter) {
-                    // remove sprite
-                    runOnUpdateThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mScene.detachChild(sprite);
-                        }
-                    });
-                } else {
-                    pAnimatedSprite.setCurrentTileIndex(1);
+        if (loopCount == -1) {
+            sprite.animate(frameDuration, true);
+        } else {
+            sprite.animate(frameDuration, loopCount, new IAnimationListener() {
+                @Override
+                public void onAnimationStarted(AnimatedSprite pAnimatedSprite, int pInitialLoopCount) {
                 }
-            }
-        });
+
+                @Override
+                public void onAnimationLoopFinished(AnimatedSprite pAnimatedSprite, int pRemainingLoopCount,
+                        int pInitialLoopCount) {
+                }
+
+                @Override
+                public void onAnimationFrameChanged(AnimatedSprite pAnimatedSprite, int pOldFrameIndex,
+                        int pNewFrameIndex) {
+                }
+
+                @Override
+                public void onAnimationFinished(AnimatedSprite pAnimatedSprite) {
+                    if (removeAfter) {
+                        // remove sprite
+                        runOnUpdateThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mScene.detachChild(sprite);
+                            }
+                        });
+                    } else {
+                        pAnimatedSprite.setCurrentTileIndex(1);
+                    }
+                }
+            });
+        }
         mScene.attachChild(sprite);
     }
 

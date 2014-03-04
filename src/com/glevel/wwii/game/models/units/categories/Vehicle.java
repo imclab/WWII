@@ -1,21 +1,24 @@
 package com.glevel.wwii.game.models.units.categories;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import org.andengine.extension.tmx.TMXTile;
 
 import com.glevel.wwii.activities.GameActivity;
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.data.ArmiesData;
+import com.glevel.wwii.game.graphics.TankSprite;
 import com.glevel.wwii.game.logic.MapLogic;
 import com.glevel.wwii.game.logic.pathfinding.AStar;
 import com.glevel.wwii.game.logic.pathfinding.Node;
 import com.glevel.wwii.game.models.Battle;
+import com.glevel.wwii.game.models.Battle.Phase;
 import com.glevel.wwii.game.models.map.Map;
 import com.glevel.wwii.game.models.map.Tile;
 import com.glevel.wwii.game.models.map.Tile.TerrainType;
 import com.glevel.wwii.game.models.orders.DefendOrder;
 import com.glevel.wwii.game.models.orders.MoveOrder;
+import com.glevel.wwii.game.models.orders.Order;
+import com.glevel.wwii.game.models.units.Soldier;
 import com.glevel.wwii.game.models.weapons.Turret;
 import com.glevel.wwii.game.models.weapons.categories.Weapon;
 
@@ -33,14 +36,17 @@ public abstract class Vehicle extends Unit {
     private static final float ELITE_PRICE_MODIFIER = 1.5f;
 
     // movement
-    private static final int REVERSE_THRESHOLD = 10 * GameUtils.PIXEL_BY_METER;// in
+    private static final int REVERSE_THRESHOLD = 20 * GameUtils.PIXEL_BY_METER;// in
                                                                                // meters
     private static final float REVERSE_SPEED = 0.5f;
     private static final float ROTATION_SPEED = 0.6f;
+    private transient List<Tile> realTilesPosition = new ArrayList<Tile>();
+    private static final float VEHICLE_RADIUS_SIZE = 2.5f;// in meters
 
     // fire
     private static final float MG_MAX_FIRE_ANGLE = 30.0f;
 
+    @SuppressWarnings("unused")
     private float nextX = -1.0f, nextY = -1.0f;
 
     protected static enum VehicleType {
@@ -54,6 +60,7 @@ public abstract class Vehicle extends Unit {
         this.armor = armor;
         this.width = width;
         this.height = height;
+        setOrder(new DefendOrder());
     }
 
     private final VehicleType vehicleType;
@@ -117,8 +124,12 @@ public abstract class Vehicle extends Unit {
     @Override
     public float getUnitSpeed() {
 
+        if (getHealth() == InjuryState.BADLYINJURED) {
+            return 0;
+        }
+
         // depends on health
-        float healthFactor = 1 - getHealth().ordinal() * 0.25f;
+        float healthFactor = 1 - getHealth().ordinal() * 0.5f;
 
         // depends on terrain
         switch (getTilePosition().getGround()) {
@@ -139,7 +150,7 @@ public abstract class Vehicle extends Unit {
     public boolean canMoveIn(Node node) {
         Tile tile = (Tile) node;
         if (tile.getTerrain() != null && tile.getTerrain() != TerrainType.field
-                && tile.getTerrain() != TerrainType.bush) {
+                && tile.getTerrain() != TerrainType.bush && tile.getTerrain() != TerrainType.tree) {
             return false;
         }
 
@@ -148,12 +159,11 @@ public abstract class Vehicle extends Unit {
 
     @Override
     public void updateMovementPath(Map map) {
-        MoveOrder moveOrder = (MoveOrder) order;
+        MoveOrder moveOrder = (MoveOrder) getOrder();
 
-        TMXTile tmxTile = map.getTmxLayer().getTMXTileAt(moveOrder.getXDestination(), moveOrder.getYDestination());
-        Tile destinationTile = map.getTiles()[tmxTile.getTileRow()][tmxTile.getTileColumn()];
-        tmxTile = map.getTmxLayer().getTMXTileAt(sprite.getX(), sprite.getY());
-        Tile originTile = map.getTiles()[tmxTile.getTileRow()][tmxTile.getTileColumn()];
+        Tile destinationTile = MapLogic.getTileAtCoordinates(map, moveOrder.getXDestination(),
+                moveOrder.getYDestination());
+        Tile originTile = MapLogic.getTileAtCoordinates(map, sprite.getX(), sprite.getY());
         List<Tile> path = new AStar<Tile>().search(map.getTiles(), originTile, destinationTile, true, this, 5);
 
         if (path != null && path.size() > 1) {
@@ -163,17 +173,37 @@ public abstract class Vehicle extends Unit {
     }
 
     @Override
-    public void move() {
+    public void setOrder(Order order) {
+        if (sprite != null) {
+            if (order instanceof MoveOrder) {
+                ((TankSprite) sprite).updateMovingAnimation(true);
+            } else {
+                ((TankSprite) sprite).updateMovingAnimation(false);
+            }
+        }
+        super.setOrder(order);
+    }
+
+    @Override
+    public void move(Battle battle) {
+        if (!canMove()) {
+            setOrder(new DefendOrder());
+            return;
+        }
+
         currentAction = Action.MOVING;
-        MoveOrder moveOrder = (MoveOrder) order;
+        MoveOrder moveOrder = (MoveOrder) getOrder();
 
         if (nextX >= 0) {
 
             // cannot rotate and move at the same time
             RotationStatus rotationStatus = updateUnitRotation(moveOrder.getXDestination(), moveOrder.getYDestination());
             if (rotationStatus == RotationStatus.ROTATING) {
+                ((TankSprite) getSprite()).updateMovingAnimation(false);
                 return;
             }
+
+            ((TankSprite) getSprite()).updateMovingAnimation(true);
 
             float dx = moveOrder.getXDestination() - sprite.getX();
             float dy = moveOrder.getYDestination() - sprite.getY();
@@ -191,10 +221,28 @@ public abstract class Vehicle extends Unit {
 
             float[] newPosition = MapLogic.getCoordinatesAfterTranslation(sprite.getX(), sprite.getY(), dd, angle,
                     dx > 0);
+
+            Tile nextTile = MapLogic.getTileAtCoordinates(battle.getMap(), newPosition[0], newPosition[1]);
+
+            if (!canMoveIn(nextTile)) {
+                // run over soldiers
+                if (nextTile.getContent() instanceof Soldier) {
+                    Soldier soldier = (Soldier) nextTile.getContent();
+                    instantlyKilledSomeone(battle, soldier);
+                } else {
+                    return;
+                }
+            }
+
             sprite.setPosition(newPosition[0], newPosition[1]);
 
+            if (nextTile.getTileX() != getTilePosition().getTileX()
+                    || nextTile.getTileY() != getTilePosition().getTileY()) {
+                setTilePosition(battle, nextTile);
+            }
+
             if (hasArrived) {
-                order = null;
+                setOrder(null);
             }
         }
     }
@@ -229,7 +277,11 @@ public abstract class Vehicle extends Unit {
         if (dTau > 0) {
             rotationStep = Math.min(dTau, ROTATION_SPEED);
         } else if (dTau < 0) {
-            rotationStep = Math.max(dTau, -ROTATION_SPEED);
+            if (dx > 0) {
+                rotationStep = Math.min(dTau, ROTATION_SPEED);
+            } else {
+                rotationStep = Math.max(dTau, -ROTATION_SPEED);
+            }
         }
         sprite.setRotation((float) (sprite.getRotation() + rotationStep));
 
@@ -241,7 +293,7 @@ public abstract class Vehicle extends Unit {
 
         if (target.isDead() || !MapLogic.canSee(battle.getMap(), this, target)) {
             // if target is dead or is not visible anymore, stop to shoot
-            order = new DefendOrder();
+            setOrder(new DefendOrder());
             return;
         }
 
@@ -256,7 +308,7 @@ public abstract class Vehicle extends Unit {
 
         if (!canShoot) {
             // no weapon available for this fire order
-            this.order = new DefendOrder();
+            setOrder(new DefendOrder());
         }
     }
 
@@ -280,27 +332,27 @@ public abstract class Vehicle extends Unit {
             }
 
             if (weapon.getReloadCounter() > 0) {
-                if (aimCounter == 0) {
-                    aimCounter = -10;
+                if (weapon.getAimCounter() == 0) {
+                    weapon.setAimCounter(-10);
                     // aiming
                     this.currentAction = Action.AIMING;
-                } else if (aimCounter < 0) {
-                    aimCounter++;
-                    if (aimCounter == 0) {
-                        aimCounter = weapon.getCadence();
+                } else if (weapon.getAimCounter() < 0) {
+                    weapon.setAimCounter(weapon.getAimCounter() + 1);
+                    if (weapon.getAimCounter() == 0) {
+                        weapon.setAimCounter(weapon.getCadence());
                     }
                     // aiming
                     this.currentAction = Action.AIMING;
                 } else if (GameActivity.gameCounter % (11 - weapon.getShootSpeed()) == 0) {
                     // firing !!!
+                    currentAction = Action.FIRING;
 
                     // add muzzle flash sprite
                     sprite.startFireAnimation(weapon);
 
                     weapon.setAmmoAmount(weapon.getAmmoAmount() - 1);
                     weapon.setReloadCounter(weapon.getReloadCounter() - 1);
-                    aimCounter--;
-                    currentAction = Action.FIRING;
+                    weapon.setAimCounter(weapon.getAimCounter() - 1);
 
                     // if not a lot of ammo, more aiming !
                     if (weapon.getAmmoAmount() == weapon.getMagazineSize() * 2) {
@@ -316,7 +368,7 @@ public abstract class Vehicle extends Unit {
 
                         if (target.isDead()) {
                             target.died(battle);
-                            killedSomeone();
+                            killedSomeone(target);
                         }
                     }
                 }
@@ -336,6 +388,47 @@ public abstract class Vehicle extends Unit {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void setTilePosition(Battle battle, Tile tilePosition) {
+        super.setTilePosition(battle, tilePosition);
+        updateTilesPosition(battle);
+    }
+
+    private void updateTilesPosition(Battle battle) {
+        if (realTilesPosition != null) {
+            for (Tile t : realTilesPosition) {
+                t.setContent(null);
+            }
+        }
+
+        realTilesPosition = new ArrayList<Tile>();
+        List<Tile> adjacentTiles = MapLogic.getAdjacentTiles(battle.getMap(), getTilePosition(),
+                (int) Math.ceil(VEHICLE_RADIUS_SIZE * GameUtils.PIXEL_BY_METER / GameUtils.PIXEL_BY_TILE), true);
+        for (Tile t : adjacentTiles) {
+            // run over soldiers
+            if (battle.getPhase() == Phase.combat && t.getContent() instanceof Soldier) {
+                Soldier soldier = (Soldier) t.getContent();
+                instantlyKilledSomeone(battle, soldier);
+            }
+
+            t.setContent(this);
+            realTilesPosition.add(t);
+        }
+    }
+
+    @Override
+    public boolean canBeDeployedThere(Battle battle, Tile tile) {
+        List<Tile> adjacentTiles = MapLogic.getAdjacentTiles(battle.getMap(), tile,
+                (int) Math.ceil(VEHICLE_RADIUS_SIZE * GameUtils.PIXEL_BY_METER / GameUtils.PIXEL_BY_TILE), true);
+        for (Tile t : adjacentTiles) {
+            if (t.getContent() != null && t.getContent() != this) {
+                return false;
+            }
+        }
+
+        return super.canBeDeployedThere(battle, tile);
     }
 
 }

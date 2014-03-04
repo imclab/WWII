@@ -30,8 +30,8 @@ public class UnitsData {
             lstUnits.add(buildMortar(army, Experience.VETERAN));
             lstUnits.add(buildATCannon(army, Experience.VETERAN));
             lstUnits.add(buildATCannon(army, Experience.ELITE));
-            lstUnits.add(buildPantherG(army, Experience.VETERAN));
-            lstUnits.add(buildPantherG(army, Experience.ELITE));
+            lstUnits.add(buildPanzerIV(army, Experience.VETERAN));
+            lstUnits.add(buildPanzerIV(army, Experience.ELITE));
             break;
         case USA:
             lstUnits.add(buildRifleMan(army, Experience.RECRUIT));
@@ -57,13 +57,13 @@ public class UnitsData {
         case GERMANY:
             weapons.add(WeaponsData.buildMauserG98());
             weapons.add(WeaponsData.buildHandGrenades(army));
-            return new Soldier(army, R.string.rifleman, R.drawable.ic_launcher, experience, weapons, 3, "soldier.png",
-                    SOLDIER_SCALE);
+            return new Soldier(army, R.string.rifleman, R.drawable.ic_launcher, experience, weapons, 3,
+                    "german_soldier.png", SOLDIER_SCALE);
         case USA:
             weapons.add(WeaponsData.buildGarandM1());
             weapons.add(WeaponsData.buildHandGrenades(army));
-            return new Soldier(army, R.string.rifleman, R.drawable.ic_launcher, experience, weapons, 3, "soldier.png",
-                    SOLDIER_SCALE);
+            return new Soldier(army, R.string.rifleman, R.drawable.ic_launcher, experience, weapons, 3,
+                    "usa_soldier.png", SOLDIER_SCALE);
         }
         return null;
     }
@@ -74,12 +74,12 @@ public class UnitsData {
         case GERMANY:
             weapons.add(WeaponsData.buildMP40());
             weapons.add(WeaponsData.buildPanzerfaust());
-            return new Soldier(army, R.string.scout, R.drawable.ic_launcher, experience, weapons, 3, "soldier.png",
-                    SOLDIER_SCALE);
+            return new Soldier(army, R.string.scout, R.drawable.ic_launcher, experience, weapons, 3,
+                    "german_soldier.png", SOLDIER_SCALE);
         case USA:
             weapons.add(WeaponsData.buildThompson());
             weapons.add(WeaponsData.buildHandGrenades(army));
-            return new Soldier(army, R.string.scout, R.drawable.ic_launcher, experience, weapons, 3, "soldier.png",
+            return new Soldier(army, R.string.scout, R.drawable.ic_launcher, experience, weapons, 3, "usa_soldier.png",
                     SOLDIER_SCALE);
         }
         return null;
@@ -90,11 +90,11 @@ public class UnitsData {
         switch (army) {
         case GERMANY:
             weapons.add(WeaponsData.buildMG42());
-            return new Soldier(army, R.string.hmg, R.drawable.ic_launcher, experience, weapons, 1, "soldier.png",
-                    SOLDIER_SCALE);
+            return new Soldier(army, R.string.hmg, R.drawable.ic_launcher, experience, weapons, 1,
+                    "german_soldier.png", SOLDIER_SCALE);
         case USA:
             weapons.add(WeaponsData.buildBrowningM2());
-            return new Soldier(army, R.string.hmg, R.drawable.ic_launcher, experience, weapons, 1, "soldier.png",
+            return new Soldier(army, R.string.hmg, R.drawable.ic_launcher, experience, weapons, 1, "usa_soldier.png",
                     SOLDIER_SCALE);
         }
         return null;
@@ -106,11 +106,11 @@ public class UnitsData {
         case GERMANY:
             weapons.add(WeaponsData.buildPanzerschreck());
             return new Soldier(army, R.string.panzerschreck, R.drawable.ic_launcher, experience, weapons, 2,
-                    "soldier.png", SOLDIER_SCALE);
+                    "german_soldier.png", SOLDIER_SCALE);
         case USA:
             weapons.add(WeaponsData.buildBazooka());
-            return new Soldier(army, R.string.bazooka, R.drawable.ic_launcher, experience, weapons, 2, "soldier.png",
-                    SOLDIER_SCALE);
+            return new Soldier(army, R.string.bazooka, R.drawable.ic_launcher, experience, weapons, 2,
+                    "usa_soldier.png", SOLDIER_SCALE);
         }
         return null;
     }
@@ -120,12 +120,12 @@ public class UnitsData {
         switch (army) {
         case GERMANY:
             weapons.add(WeaponsData.buildMortar81());
-            return new Soldier(army, R.string.mortar, R.drawable.ic_launcher, experience, weapons, 1, "soldier.png",
-                    SOLDIER_SCALE);
+            return new Soldier(army, R.string.mortar, R.drawable.ic_launcher, experience, weapons, 1,
+                    "german_soldier.png", SOLDIER_SCALE);
         case USA:
             weapons.add(WeaponsData.buildMortar50());
-            return new Soldier(army, R.string.mortar, R.drawable.ic_launcher, experience, weapons, 1, "soldier.png",
-                    SOLDIER_SCALE);
+            return new Soldier(army, R.string.mortar, R.drawable.ic_launcher, experience, weapons, 1,
+                    "usa_soldier.png", SOLDIER_SCALE);
         }
         return null;
     }
@@ -138,7 +138,7 @@ public class UnitsData {
             return new Soldier(army, R.string.at_cannon, R.drawable.ic_launcher, experience, weapons, 0,
                     "german_at_50.png", 1.0f);
         case USA:
-            weapons.add(WeaponsData.buildCannon75(10));
+            weapons.add(WeaponsData.buildCannon75(8));
             return new Soldier(army, R.string.at_cannon, R.drawable.ic_launcher, experience, weapons, 0,
                     "german_at_50.png", 0.8f);
         }
@@ -149,15 +149,15 @@ public class UnitsData {
         List<Weapon> weapons = new ArrayList<Weapon>();
         weapons.add(WeaponsData.buildCannon75(5));
         weapons.add(WeaponsData.buildBrowningM2());
-        return new Tank(army, R.string.shermanM4A1, R.drawable.ic_launcher, experience, weapons, 3, 3, "panzeriv.png",
-                TANK_SCALE);
+        return new Tank(army, R.string.shermanM4A1, R.drawable.ic_shermanm4a1, experience, weapons, 2, 3,
+                "shermanM4A1.png", TANK_SCALE);
     }
 
-    public static Unit buildPantherG(ArmiesData army, Experience experience) {
+    public static Unit buildPanzerIV(ArmiesData army, Experience experience) {
         List<Weapon> weapons = new ArrayList<Weapon>();
-        weapons.add(WeaponsData.buildCannon75(8));
+        weapons.add(WeaponsData.buildCannon75(7));
         weapons.add(WeaponsData.buildMG42());
-        return new Tank(army, R.string.pantherG, R.drawable.ic_launcher, experience, weapons, 3, 3, "panzeriv.png",
+        return new Tank(army, R.string.panzeriv, R.drawable.ic_panzeriv, experience, weapons, 2, 3, "panzerIV.png",
                 TANK_SCALE);
     }
 

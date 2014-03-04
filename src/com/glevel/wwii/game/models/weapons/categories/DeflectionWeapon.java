@@ -1,12 +1,15 @@
 package com.glevel.wwii.game.models.weapons.categories;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.andengine.util.color.Color;
 
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.andengine.custom.CustomColors;
 import com.glevel.wwii.game.logic.MapLogic;
 import com.glevel.wwii.game.models.Battle;
-import com.glevel.wwii.game.models.Player;
+import com.glevel.wwii.game.models.map.Tile;
 import com.glevel.wwii.game.models.units.categories.Unit;
 import com.glevel.wwii.game.models.units.categories.Unit.Action;
 
@@ -16,15 +19,15 @@ public abstract class DeflectionWeapon extends Weapon {
      * 
      */
     private static final long serialVersionUID = -3068800131021401992L;
-    private static final float EXPLOSION_EPICENTER_FACTOR = 0.5f;
+    private static final float EXPLOSION_EPICENTER_SIZE_FACTOR = 0.4f;
     private static final int CHANCE_TO_HIT_IN_EPICENTER = 100;
-    private static final int CHANCE_TO_HIT_AROUND = 50;
+    private static final int CHANCE_TO_HIT_AROUND_EPICENTER = 50;
     private static final int BASIC_MAXIMAL_DEFLECTION = 7;// in meters
 
-    private final int explosionSize;// in meters
+    private final float explosionSize;// in meters
 
     public DeflectionWeapon(int name, int image, int apPower, int atPower, int range, int nbMagazines, int cadence,
-            int magazineSize, int reloadSpeed, int shootSpeed, int explosionSize) {
+            int magazineSize, int reloadSpeed, int shootSpeed, float explosionSize) {
         super(name, image, apPower, atPower, range, nbMagazines, cadence, magazineSize, reloadSpeed, shootSpeed, null);
         this.explosionSize = explosionSize;
     }
@@ -42,36 +45,50 @@ public abstract class DeflectionWeapon extends Weapon {
                 .getY(), deflection, angle, Math.random() < 0.5);
 
         // draw explosion sprite
-        battle.getOnNewSprite().drawAnimatedSprite(impactPosition[0], impactPosition[1], "explosion.png", 30,
-                3 * explosionSize * GameUtils.PIXEL_BY_METER / 64.0f, 0, true);
+        battle.getOnNewSprite().drawAnimatedSprite(impactPosition[0], impactPosition[1], "explosion.png", 40,
+                3 * explosionSize * GameUtils.PIXEL_BY_METER / 64.0f, 0, true, 100);
 
         // get all the units in the explosion
-        float distanceToImpact;// in meters
-        for (Player p : battle.getPlayers()) {
-            for (Unit unit : p.getUnits()) {
-                distanceToImpact = MapLogic.getDistanceBetween(unit, impactPosition[0], impactPosition[1])
-                        / GameUtils.PIXEL_BY_METER;
-                if (distanceToImpact < explosionSize) {
-                    // increase panic
-                    unit.getShots(shooter, battle.getMap());
-                    if (distanceToImpact < explosionSize * EXPLOSION_EPICENTER_FACTOR) {
-                        // great damage in the explosion's epicenter
-                        resolveDamageDiceRoll(CHANCE_TO_HIT_IN_EPICENTER, shooter, unit);
-                    } else {
-                        // minor damage further
-                        int tohit = CHANCE_TO_HIT_AROUND;
+        Tile centerTile = MapLogic.getTileAtCoordinates(battle.getMap(), impactPosition[0], impactPosition[1]);
+        int explosionSizeInTiles = (int) Math.ceil(explosionSize * GameUtils.PIXEL_BY_METER / GameUtils.PIXEL_BY_TILE);
+        List<Tile> adjacentTiles = MapLogic.getAdjacentTiles(battle.getMap(), centerTile, explosionSizeInTiles, true);
+        adjacentTiles.add(centerTile);
 
-                        // add terrain protection
-                        tohit *= unit.getUnitTerrainProtection();
+        List<Unit> hitUnits = new ArrayList<Unit>();
 
-                        if (unit.getCurrentAction() == Action.HIDING || unit.getCurrentAction() == Action.RELOADING) {
-                            // target is hiding : tohit depends on target's
-                            // experience
-                            tohit -= 5 * (unit.getExperience().ordinal() + 1);
-                        }
+        for (Tile t : adjacentTiles) {
+            if (t.getContent() != null) {
+                Unit unit = (Unit) t.getContent();
 
-                        resolveDamageDiceRoll(tohit, shooter, unit);
+                // units can be hit only once
+                if (hitUnits.contains(unit)) {
+                    continue;
+                }
+
+                hitUnits.add(unit);
+
+                int distanceToImpact = MapLogic.getDistance(t, centerTile);// in
+                                                                           // tiles
+
+                // increase panic
+                unit.getShots(shooter, battle.getMap());
+                if (distanceToImpact < explosionSizeInTiles * EXPLOSION_EPICENTER_SIZE_FACTOR) {
+                    // great damage in the explosion's epicenter
+                    resolveDamageDiceRoll(CHANCE_TO_HIT_IN_EPICENTER, shooter, unit);
+                } else {
+                    // minor damage further
+                    int tohit = CHANCE_TO_HIT_AROUND_EPICENTER;
+
+                    // add terrain protection
+                    tohit *= unit.getUnitTerrainProtection();
+
+                    if (unit.getCurrentAction() == Action.HIDING || unit.getCurrentAction() == Action.RELOADING) {
+                        // target is hiding : tohit depends on target's
+                        // experience
+                        tohit -= 5 * (unit.getExperience().ordinal() + 1);
                     }
+
+                    resolveDamageDiceRoll(tohit, shooter, unit);
                 }
             }
         }
@@ -95,7 +112,7 @@ public abstract class DeflectionWeapon extends Weapon {
         }
     }
 
-    public int getExplosionSize() {
+    public float getExplosionSize() {
         return explosionSize;
     }
 

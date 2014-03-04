@@ -55,6 +55,7 @@ public class GraphicsFactory {
         loadGfxFromAssets(128, 128, "protection.png");
         loadTiledTextureGfxFromAssets(256, 256, 4, 4, "explosion.png");
         loadTiledTextureGfxFromAssets(512, 256, 4, 2, "smoke.png");
+        loadTiledTextureGfxFromAssets(512, 256, 4, 2, "tank_move_smoke.png");
         loadTiledTextureGfxFromAssets(312, 50, 6, 1, "blood.png");
     }
 

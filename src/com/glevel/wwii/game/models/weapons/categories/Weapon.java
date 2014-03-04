@@ -37,6 +37,7 @@ public abstract class Weapon implements Serializable {
     private int ammoAmount;
     private int reloadCounter;// while > 0 there are ammo left, while < 0
                               // reloading
+    private int aimCounter = 0;
 
     // price
     private static final int WEAPON_BASE_PRICE = 2;
@@ -217,7 +218,6 @@ public abstract class Weapon implements Serializable {
                 // sides
                 sidesBonus = 1;
             }
-
             int damage = (int) (Math.random() * (sidesBonus + atPower - vehicle.getArmor()));
             target.applyDamage(damage);
         }
@@ -264,6 +264,14 @@ public abstract class Weapon implements Serializable {
         } else {
             return atPower;
         }
+    }
+
+    public int getAimCounter() {
+        return aimCounter;
+    }
+
+    public void setAimCounter(int aimCounter) {
+        this.aimCounter = aimCounter;
     }
 
 }

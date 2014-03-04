@@ -43,10 +43,9 @@ public abstract class Unit extends GameElement implements MovingElement {
     private InjuryState health;
     private int frags;
     private boolean isAvailable;
-    protected Order order = new HideOrder();
+    private Order order;
     protected Action currentAction;
     private int panic;
-    protected int aimCounter = 0;
 
     protected static enum RotationStatus {
         NONE, ROTATING, REVERSE
@@ -100,6 +99,7 @@ public abstract class Unit extends GameElement implements MovingElement {
         this.frags = 0;
         this.spriteName = spriteName;
         this.spriteScale = spriteScale;
+        this.order = new HideOrder();
     }
 
     protected abstract float getUnitSpeed();
@@ -141,6 +141,9 @@ public abstract class Unit extends GameElement implements MovingElement {
     }
 
     public void setOrder(Order order) {
+        if (!canMove() && order instanceof MoveOrder) {
+            return;
+        }
         this.order = order;
     }
 
@@ -162,10 +165,6 @@ public abstract class Unit extends GameElement implements MovingElement {
 
     public int getFrags() {
         return frags;
-    }
-
-    public void setFrags(int frags) {
-        this.frags = frags;
     }
 
     public int getImage() {
@@ -205,7 +204,7 @@ public abstract class Unit extends GameElement implements MovingElement {
     public void updateMovementPath(Map map) {
     }
 
-    public void move() {
+    public void move(Battle battle) {
         this.currentAction = Action.MOVING;
         MoveOrder moveOrder = (MoveOrder) order;
 
@@ -224,7 +223,18 @@ public abstract class Unit extends GameElement implements MovingElement {
         }
 
         float[] newPosition = MapLogic.getCoordinatesAfterTranslation(sprite.getX(), sprite.getY(), dd, angle, dx > 0);
+
+        Tile nextTile = MapLogic.getTileAtCoordinates(battle.getMap(), newPosition[0], newPosition[1]);
+
+        if (!canMoveIn(nextTile)) {
+            return;
+        }
+
         sprite.setPosition(newPosition[0], newPosition[1]);
+
+        if (nextTile.getTileX() != getTilePosition().getTileX() || nextTile.getTileY() != getTilePosition().getTileY()) {
+            setTilePosition(battle, nextTile);
+        }
 
         if (hasArrived) {
             order = null;
@@ -277,27 +287,27 @@ public abstract class Unit extends GameElement implements MovingElement {
         }
 
         if (weapon.getReloadCounter() > 0) {
-            if (aimCounter == 0) {
-                aimCounter = -10;
+            if (weapon.getAimCounter() == 0) {
+                weapon.setAimCounter(-10);
                 // aiming
                 this.currentAction = Action.AIMING;
-            } else if (aimCounter < 0) {
-                aimCounter++;
-                if (aimCounter == 0) {
-                    aimCounter = weapon.getCadence();
+            } else if (weapon.getAimCounter() < 0) {
+                weapon.setAimCounter(weapon.getAimCounter() + 1);
+                if (weapon.getAimCounter() == 0) {
+                    weapon.setAimCounter(weapon.getCadence());
                 }
                 // aiming
                 this.currentAction = Action.AIMING;
             } else if (GameActivity.gameCounter % (11 - weapon.getShootSpeed()) == 0) {
                 // firing !!!
+                currentAction = Action.FIRING;
 
                 // add muzzle flash sprite
                 sprite.startFireAnimation(weapon);
 
                 weapon.setAmmoAmount(weapon.getAmmoAmount() - 1);
                 weapon.setReloadCounter(weapon.getReloadCounter() - 1);
-                aimCounter--;
-                currentAction = Action.FIRING;
+                weapon.setAimCounter(weapon.getAimCounter() - 1);
 
                 // if not a lot of ammo, more aiming !
                 if (weapon.getAmmoAmount() == weapon.getMagazineSize() * 2) {
@@ -313,7 +323,7 @@ public abstract class Unit extends GameElement implements MovingElement {
 
                     if (target.isDead()) {
                         target.died(battle);
-                        killedSomeone();
+                        killedSomeone(target);
                     }
                 }
             }
@@ -402,6 +412,7 @@ public abstract class Unit extends GameElement implements MovingElement {
                         }
                     }
                 }
+                ((Turret) getWeapons().get(0)).rotateTurretTo(sprite, sprite.getRotation());
             }
             updateMovementPath(battle.getMap());
         } else if (order instanceof DefendOrder) {
@@ -425,14 +436,6 @@ public abstract class Unit extends GameElement implements MovingElement {
         order = new DefendOrder();
     }
 
-    public int getAimCounter() {
-        return aimCounter;
-    }
-
-    public void setAimCounter(int aimCounter) {
-        this.aimCounter = aimCounter;
-    }
-
     public boolean isDead() {
         return health == InjuryState.DEAD;
     }
@@ -451,34 +454,62 @@ public abstract class Unit extends GameElement implements MovingElement {
         }
     }
 
-    public void killedSomeone() {
+    public void killedSomeone(Unit unitKilled) {
         // add frags
-        frags++;
+        if (unitKilled instanceof Tank) {
+            frags += 5;
+        } else if (unitKilled instanceof Vehicle) {
+            frags += 2;
+        } else if (unitKilled instanceof Soldier) {
+            if (unitKilled.getWeapons().get(0) instanceof Turret) {
+                frags += 2;
+            } else {
+                frags += 1;
+            }
+        }
     }
 
     public void died(Battle battle) {
+        if (this instanceof Soldier) {
+            setTilePosition(battle, null);
+        }
+
+        if (!sprite.isVisible()) {
+            sprite.setVisible(true);
+        }
+        sprite.setZIndex(10);
         sprite.setCanBeDragged(false);
         order = null;
         // draw sprite
         if (this instanceof Tank || weapons.size() > 0 && weapons.get(0) instanceof Turret) {
             // smoke
             battle.getOnNewSprite().drawAnimatedSprite(getSprite().getX(), getSprite().getY() - 70, "smoke.png", 120,
-                    2.0f, 100, true);
+                    2.0f, -1, false, 60);
         } else if (this instanceof Soldier) {
             // blood
             battle.getOnNewSprite().drawAnimatedSprite(getSprite().getX(), getSprite().getY(), "blood.png", 120, 0.6f,
-                    0, false);
+                    0, false, 15);
         }
 
     }
 
     public boolean canMove() {
-        return moveSpeed > 0;
+        return getMoveSpeed() > 0;
     }
 
     @Override
     public boolean canMoveIn(Node node) {
-        return ((Tile) node).getContent() == null;
+        return ((Tile) node).getContent() == null || ((Tile) node).getContent() == this;
+    }
+
+    public void instantlyKilledSomeone(Battle battle, Unit target) {
+        target.setHealth(InjuryState.DEAD);
+        target.died(battle);
+        killedSomeone(target);
+    }
+
+    public boolean canBeDeployedThere(Battle battle, Tile tile) {
+        return canMoveIn(tile);
     }
 
 }
