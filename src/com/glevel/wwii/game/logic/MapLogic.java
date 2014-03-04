@@ -3,6 +3,7 @@ package com.glevel.wwii.game.logic;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.andengine.entity.sprite.Sprite;
 import org.andengine.extension.tmx.TMXTile;
 
 import com.glevel.wwii.game.GameUtils;
@@ -20,7 +21,7 @@ public class MapLogic {
                                                                             // meters
 
     public static float getDistanceBetween(float x1, float y1, float x2, float y2) {
-        return (float) Math.sqrt((Math.pow(Math.abs(x1 - x2), 2) + Math.pow(Math.abs(y1 - y2), 2)));
+        return (float) Math.sqrt((Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2)));
     }
 
     public static float getDistanceBetween(GameElement g1, GameElement g2) {
@@ -37,7 +38,7 @@ public class MapLogic {
         // hiding units are more difficult to see
         if (!g2.isVisible() && getDistanceBetween(g1, g2) > 20 * GameUtils.PIXEL_BY_METER && g2 instanceof Unit) {
             Unit unit = (Unit) g2;
-            if (unit.getCurrentAction() == Action.hiding && unit.getTilePosition().getTerrain() != null
+            if (unit.getCurrentAction() == Action.HIDING && unit.getTilePosition().getTerrain() != null
                     && Math.random() < 0.9f) {
                 return false;
             }
@@ -117,6 +118,18 @@ public class MapLogic {
             return new float[] { (float) (xPosition - distance * Math.cos(angle)),
                     (float) (yPosition + distance * Math.sin(angle + Math.PI)) };
         }
+    }
+
+    public static float getAngle(Sprite sprite, float xDestination, float yDestination) {
+        float dx = xDestination - sprite.getX();
+        float dy = yDestination - sprite.getY();
+        float finalAngle = (float) (Math.atan(dy / dx) * 180 / Math.PI);
+        if (dx > 0) {
+            finalAngle += 90;
+        } else {
+            finalAngle -= 90;
+        }
+        return finalAngle - sprite.getRotation();
     }
 
 }

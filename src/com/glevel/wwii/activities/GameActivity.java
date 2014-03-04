@@ -47,18 +47,22 @@ import com.glevel.wwii.game.graphics.Crosshair;
 import com.glevel.wwii.game.graphics.DeploymentZone;
 import com.glevel.wwii.game.graphics.Protection;
 import com.glevel.wwii.game.graphics.SelectionCircle;
+import com.glevel.wwii.game.graphics.SoldierSprite;
+import com.glevel.wwii.game.graphics.TankSprite;
+import com.glevel.wwii.game.graphics.UnitSprite;
 import com.glevel.wwii.game.interfaces.OnNewSpriteToDraw;
 import com.glevel.wwii.game.logic.MapLogic;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.Battle.Phase;
 import com.glevel.wwii.game.models.GameElement;
 import com.glevel.wwii.game.models.GameElement.Rank;
-import com.glevel.wwii.game.models.GameSprite;
 import com.glevel.wwii.game.models.Player;
 import com.glevel.wwii.game.models.map.Tile;
 import com.glevel.wwii.game.models.orders.FireOrder;
 import com.glevel.wwii.game.models.orders.MoveOrder;
 import com.glevel.wwii.game.models.orders.Order;
+import com.glevel.wwii.game.models.units.Soldier;
+import com.glevel.wwii.game.models.units.Tank;
 import com.glevel.wwii.game.models.units.categories.Unit;
 
 public class GameActivity extends CustomLayoutGameActivity implements OnNewSpriteToDraw {
@@ -68,7 +72,7 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
     private InputManager mInputManager;
     private GameGUI mGameGUI;
 
-    public Battle battle;
+    public Battle battle = null;
     protected boolean mMustSaveGame = true;
 
     public Scene mScene;
@@ -104,13 +108,15 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
         mDbHelper = new DatabaseHelper(getApplicationContext());
 
         Bundle extras = getIntent().getExtras();
-        if (extras == null) {
-            // load last saved battle
-            battle = GameConverterHelper.getUnfinishedBattles(mDbHelper).get(0);
-        } else {
+        if (extras != null) {
             // load game or new game
             long gameId = extras.getLong("game_id", 0);
             battle = mDbHelper.getBattleDao().getById(gameId);
+        }
+
+        if (battle == null) {
+            // load last saved battle
+            battle = GameConverterHelper.getUnfinishedBattles(mDbHelper).get(0);
         }
 
         battle.setOnNewSprite(this);
@@ -463,8 +469,15 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
 
     public void addElementToScene(GameElement gameElement, boolean isMySquad) {
         // create sprite
-        final GameSprite sprite = new GameSprite(gameElement, mInputManager, 0, 0,
-                GraphicsFactory.mGfxMap.get(gameElement.getSpriteName()), getVertexBufferObjectManager());
+        UnitSprite sprite = null;
+        if (gameElement instanceof Soldier) {
+            sprite = new SoldierSprite(gameElement, mInputManager, 0, 0, GraphicsFactory.mGfxMap.get(gameElement
+                    .getSpriteName()), getVertexBufferObjectManager());
+        } else if (gameElement instanceof Tank) {
+            sprite = new TankSprite(gameElement, mInputManager, 0, 0, GraphicsFactory.mGfxMap.get(gameElement
+                    .getSpriteName()), getVertexBufferObjectManager());
+        }
+
         if (gameElement.getTilePosition() != null) {
             sprite.setPosition(gameElement.getTilePosition().getTileX(), gameElement.getTilePosition().getTileY());
         }

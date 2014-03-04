@@ -1,6 +1,7 @@
 package com.glevel.wwii.game.models.weapons;
 
-import com.glevel.wwii.game.models.GameSprite;
+import com.glevel.wwii.game.graphics.TankSprite;
+import com.glevel.wwii.game.graphics.UnitSprite;
 import com.glevel.wwii.game.models.weapons.categories.DeflectionWeapon;
 
 public class Turret extends DeflectionWeapon {
@@ -26,7 +27,8 @@ public class Turret extends DeflectionWeapon {
         this.turretRotationSpeed = turretRotationSpeed;
     }
 
-    public boolean rotateTurret(GameSprite sprite, float xDestination, float yDestination) {
+    public boolean rotateTurret(UnitSprite sprite, float xDestination, float yDestination) {
+        // calculate final rotation and rotation step direction
         float dx = xDestination - sprite.getX();
         float dy = yDestination - sprite.getY();
         double finalAngle = Math.atan(dy / dx) * 180 / Math.PI;
@@ -35,10 +37,29 @@ public class Turret extends DeflectionWeapon {
         } else {
             finalAngle -= 90;
         }
-        double rotationStep = Math.min(finalAngle - sprite.getRotation(), turretRotationSpeed);
-        sprite.setRotation((float) (sprite.getRotation() + rotationStep));
+        double rotationStep = 0.0;
 
-        return rotationStep < turretRotationSpeed;
+        // rotate turret
+        if (sprite instanceof TankSprite) {
+            TankSprite tankSprite = (TankSprite) sprite;
+            double dTau = finalAngle - tankSprite.getTurretSpriteRotation() - tankSprite.getRotation();
+            if (dTau > 0) {
+                rotationStep = Math.min(dTau, turretRotationSpeed);
+            } else if (dTau < 0) {
+                rotationStep = Math.max(dTau, -turretRotationSpeed);
+            }
+            tankSprite.setTurretSpriteRotation((float) (tankSprite.getTurretSpriteRotation() + rotationStep));
+        } else {
+            double dTau = finalAngle - sprite.getRotation();
+            if (dTau > 0) {
+                rotationStep = Math.min(dTau, turretRotationSpeed);
+            } else if (dTau < 0) {
+                rotationStep = Math.max(dTau, -turretRotationSpeed);
+            }
+            sprite.setRotation((float) (sprite.getRotation() + rotationStep));
+        }
+
+        return Math.abs(rotationStep) < turretRotationSpeed;
     }
 
 }

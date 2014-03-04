@@ -65,7 +65,7 @@ public class WeaponsData {
     }
 
     public static DeflectionWeapon buildPak43() {
-        return new Turret(R.string.pak43, R.drawable.ic_cannon, 3, 5, 800, 30, 1, 1, 3, 1, 4, 20);
+        return new Turret(R.string.pak43, R.drawable.ic_cannon, 3, 5, 800, 30, 1, 1, 3, 1, 4, 12);
     }
 
     public static DeflectionWeapon buildHandGrenades(ArmiesData army) {

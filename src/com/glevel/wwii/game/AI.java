@@ -9,7 +9,10 @@ import com.glevel.wwii.game.logic.MapLogic;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.Player;
 import com.glevel.wwii.game.models.map.Tile;
+import com.glevel.wwii.game.models.orders.DefendOrder;
 import com.glevel.wwii.game.models.orders.FireOrder;
+import com.glevel.wwii.game.models.orders.HideOrder;
+import com.glevel.wwii.game.models.orders.MoveOrder;
 import com.glevel.wwii.game.models.units.Soldier;
 import com.glevel.wwii.game.models.units.Tank;
 import com.glevel.wwii.game.models.units.categories.Unit;
@@ -33,13 +36,10 @@ public class AI {
             }
         }
 
-        // if (unit.getOrder() == null || unit.getOrder() instanceof DefendOrder
-        // || unit.getOrder() instanceof HideOrder) {
-        // unit.setOrder(new MoveOrder((float) Math.random() *
-        // battle.getMap().getWidth() * GameUtils.PIXEL_BY_TILE,
-        // (float) Math.random() * battle.getMap().getHeight() *
-        // GameUtils.PIXEL_BY_TILE));
-        // }
+        if (unit.getOrder() == null || unit.getOrder() instanceof DefendOrder || unit.getOrder() instanceof HideOrder) {
+            unit.setOrder(new MoveOrder((float) Math.random() * battle.getMap().getWidth() * GameUtils.PIXEL_BY_TILE,
+                    (float) Math.random() * battle.getMap().getHeight() * GameUtils.PIXEL_BY_TILE));
+        }
 
     }
 

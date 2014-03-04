@@ -20,7 +20,7 @@ import com.glevel.wwii.activities.HomeActivity;
 import com.glevel.wwii.analytics.GoogleAnalyticsHelper;
 import com.glevel.wwii.analytics.GoogleAnalyticsHelper.EventAction;
 import com.glevel.wwii.analytics.GoogleAnalyticsHelper.EventCategory;
-import com.glevel.wwii.game.models.GameSprite;
+import com.glevel.wwii.game.graphics.UnitSprite;
 import com.glevel.wwii.game.models.units.Soldier;
 import com.glevel.wwii.game.models.units.categories.Unit;
 import com.glevel.wwii.game.models.units.categories.Unit.Experience;
@@ -182,7 +182,7 @@ public class GameGUI {
         mLoadingScreen.show();
     }
 
-    public void updateSelectedElementLayout(final GameSprite selectedElement) {
+    public void updateSelectedElementLayout(final UnitSprite selectedElement) {
         mGameActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -209,7 +209,7 @@ public class GameGUI {
                         .getColor(unit.getHealth().getColor()));
 
                 // experience
-                if (unit.getExperience() != Experience.recruit) {
+                if (unit.getExperience() != Experience.RECRUIT) {
                     ((ImageView) mSelectedUnitLayout.findViewById(R.id.unitExperience)).setImageResource(unit
                             .getExperience().getImage());
                     ((ImageView) mSelectedUnitLayout.findViewById(R.id.unitExperience)).setVisibility(View.VISIBLE);

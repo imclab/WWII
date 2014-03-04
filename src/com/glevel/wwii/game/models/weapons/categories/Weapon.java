@@ -15,6 +15,7 @@ import com.glevel.wwii.game.models.units.categories.Unit;
 import com.glevel.wwii.game.models.units.categories.Unit.Action;
 import com.glevel.wwii.game.models.units.categories.Unit.InjuryState;
 import com.glevel.wwii.game.models.units.categories.Vehicle;
+import com.glevel.wwii.game.models.weapons.Mortar;
 
 public abstract class Weapon implements Serializable {
 
@@ -98,14 +99,6 @@ public abstract class Weapon implements Serializable {
         this.cadence = cadence;
     }
 
-    public int getApPower() {
-        return apPower;
-    }
-
-    public int getAtPower() {
-        return atPower;
-    }
-
     public int getRange() {
         return range;
     }
@@ -145,7 +138,7 @@ public abstract class Weapon implements Serializable {
 
     public void resolveFireShot(Battle battle, Unit shooter, Unit target) {
         // does it touch the target ? Calculate the chance to hit
-        resolveDamageDiceRoll(getToHit(shooter, target), target);
+        resolveDamageDiceRoll(getToHit(shooter, target), shooter, target);
     }
 
     private int getToHit(Unit shooter, Unit target) {
@@ -157,7 +150,7 @@ public abstract class Weapon implements Serializable {
         tohit *= target.getUnitTerrainProtection();
 
         // target is hiding : tohit depends on target's experience
-        if (target.getCurrentAction() == Action.hiding || target.getCurrentAction() == Action.reloading) {
+        if (target.getCurrentAction() == Action.HIDING || target.getCurrentAction() == Action.RELOADING) {
             tohit -= 5 * (target.getExperience().ordinal() + 1);
         }
 
@@ -186,25 +179,49 @@ public abstract class Weapon implements Serializable {
         }
     }
 
-    protected void resolveDamageDiceRoll(int tohit, Unit target) {
-        int diceRoll = (int) (Math.random() * 100);
-        if (diceRoll < tohit) {
-            // hit !
-            if (diceRoll < tohit / 4) {
-                // critical !
-                target.setHealth(InjuryState.dead);
-            } else if (diceRoll < tohit / 2) {
-                // heavy !
-                target.applyDamage(2);
-            } else {
-                if (Math.random() < 0.5) {
-                    // light injured
-                    target.applyDamage(1);
+    protected void resolveDamageDiceRoll(int tohit, Unit shooter, Unit target) {
+
+        if (target instanceof Soldier) {
+            int diceRoll = (int) (Math.random() * 100);
+            if (diceRoll < tohit) {
+                // hit !
+                if (diceRoll < tohit / 4) {
+                    // critical !
+                    target.setHealth(InjuryState.DEAD);
+                } else if (diceRoll < tohit / 2) {
+                    // heavy !
+                    target.applyDamage(2);
                 } else {
-                    // nothing
+                    if (Math.random() < 0.5) {
+                        // light injured
+                        target.applyDamage(1);
+                    } else {
+                        // nothing
+                    }
                 }
             }
+        } else if (target instanceof Vehicle) {
+            Vehicle vehicle = (Vehicle) target;
+            if (atPower < vehicle.getArmor()) {
+                return;
+            }
+
+            // back and sides of tanks are more vulnerable
+            int sidesBonus = 0;
+            float absoluteAngle = Math.abs(MapLogic.getAngle(target.getSprite(), shooter.getSprite().getX(), shooter
+                    .getSprite().getY()));
+            if (absoluteAngle > 135.0f) {
+                // back
+                sidesBonus = 2;
+            } else if (absoluteAngle > 45.0f) {
+                // sides
+                sidesBonus = 1;
+            }
+
+            int damage = (int) (Math.random() * (sidesBonus + atPower - vehicle.getArmor()));
+            target.applyDamage(damage);
         }
+
     }
 
     protected static int distanceToRangeCategory(float distance) {
@@ -219,21 +236,21 @@ public abstract class Weapon implements Serializable {
         }
     }
 
-    public boolean canUseWeapon(Unit shooter, Unit target, float distance, boolean canSeeTarget) {
-        if (target instanceof Vehicle && atPower == 0 || target instanceof Soldier && apPower == 0) {
+    public boolean canUseWeapon(Unit shooter, Unit target, boolean canSeeTarget) {
+        if (target instanceof Vehicle && atPower < ((Vehicle) target).getArmor() || target instanceof Soldier
+                && apPower == 0) {
             // weapon is useless against target
             return false;
         } else if (ammoAmount <= 0) {
             // out of ammo
             return false;
-        } else if (distance > range * GameUtils.PIXEL_BY_METER) {
+        } else if (MapLogic.getDistanceBetween(shooter, target) > range * GameUtils.PIXEL_BY_METER) {
             // out of range
             return false;
         } else if (!canSeeTarget && !(this instanceof IndirectWeapon)) {
             // needs to see target
             return false;
-        } else if (this instanceof IndirectWeapon && range > 200
-                && shooter.getTilePosition().getTerrain() == TerrainType.house) {
+        } else if (this instanceof Mortar && shooter.getTilePosition().getTerrain() == TerrainType.house) {
             // mortar cannot shoot from inside a house
             return false;
         }

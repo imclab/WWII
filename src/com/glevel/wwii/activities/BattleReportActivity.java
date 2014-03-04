@@ -102,13 +102,13 @@ public class BattleReportActivity extends MyActivity {
     }
 
     private void leaveReport() {
-        if (battle.isSingleBattle()) {
+//        if (battle.isSingleBattle()) {
             // go to home screen
             startActivity(new Intent(BattleReportActivity.this, HomeActivity.class));
-        } else {
-            // go to campaign screen
-            // TODO
-        }
+//        } else {
+//            // go to campaign screen
+//            // TODO
+//        }
         finish();
     }
 

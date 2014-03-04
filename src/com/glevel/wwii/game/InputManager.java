@@ -15,9 +15,9 @@ import org.andengine.util.color.Color;
 import android.view.MotionEvent;
 
 import com.glevel.wwii.activities.GameActivity;
+import com.glevel.wwii.game.graphics.UnitSprite;
 import com.glevel.wwii.game.logic.MapLogic;
 import com.glevel.wwii.game.models.Battle.Phase;
-import com.glevel.wwii.game.models.GameSprite;
 import com.glevel.wwii.game.models.Player;
 import com.glevel.wwii.game.models.map.Tile;
 import com.glevel.wwii.game.models.orders.DefendOrder;
@@ -25,6 +25,7 @@ import com.glevel.wwii.game.models.orders.FireOrder;
 import com.glevel.wwii.game.models.orders.HideOrder;
 import com.glevel.wwii.game.models.orders.MoveOrder;
 import com.glevel.wwii.game.models.units.categories.Unit;
+import com.glevel.wwii.game.models.units.categories.Vehicle;
 import com.glevel.wwii.game.models.weapons.categories.IndirectWeapon;
 
 public class InputManager implements IOnSceneTouchListener, IScrollDetectorListener, IPinchZoomDetectorListener {
@@ -40,7 +41,7 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
     public boolean isLongPressTriggered = false;
     private boolean isDragged = false;
 
-    public GameSprite selectedElement = null;
+    public UnitSprite selectedElement = null;
     private GameActivity mGameActivity;
     private float lastX;
     private float lastY;
@@ -141,27 +142,30 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
         }
     }
 
-    public void onSelectGameElement(GameSprite gameSprite) {
+    public void onSelectGameElement(UnitSprite unitSprite) {
         if (selectedElement != null) {
             selectedElement.detachChild(mGameActivity.selectionCircle);
         }
-        if (gameSprite.isVisible()) {
-            selectedElement = gameSprite;
+        if (unitSprite.isVisible()) {
+            selectedElement = unitSprite;
             mGameActivity.selectionCircle.setColor(selectedElement.getGameElement().getSelectionColor());
-            gameSprite.setZIndex(10);
-            mGameActivity.selectionCircle.setZIndex(1);
             mGameActivity.selectionCircle.setPosition(
-                    0,
-                    - (selectedElement.getHeightScaled() - mGameActivity.selectionCircle.getHeight()));
-            gameSprite.attachChild(mGameActivity.selectionCircle);
+                    (selectedElement.getWidth() - mGameActivity.selectionCircle.getWidth()) / 2,
+                    (selectedElement.getHeight() - mGameActivity.selectionCircle.getHeight()) / 2);
+            if (selectedElement.getGameElement() instanceof Vehicle) {
+                mGameActivity.selectionCircle.setScale(1.5f);
+            } else {
+                mGameActivity.selectionCircle.setScale(1.0f);
+            }
+            unitSprite.attachChild(mGameActivity.selectionCircle);
         }
     }
 
-    public void giveHideOrder(GameSprite gameSprite) {
+    public void giveHideOrder(UnitSprite gameSprite) {
         if (gameSprite == selectedElement) {
             Unit unit = (Unit) selectedElement.getGameElement();
             // switch between hide and defend orders
-            if (unit.getOrder() instanceof HideOrder) {
+            if (unit instanceof Vehicle || unit.getOrder() instanceof HideOrder) {
                 unit.setOrder(new DefendOrder());
             } else {
                 unit.setOrder(new HideOrder());
@@ -173,7 +177,7 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
         if (mGameActivity.battle.getPhase() == Phase.combat && selectedElement != null) {
             if (selectedElement.getGameElement() instanceof Unit) {
                 Unit unit = (Unit) selectedElement.getGameElement();
-                GameSprite g = getElementAtCoordinates(x, y);
+                UnitSprite g = getElementAtCoordinates(x, y);
                 if (!unit.isDead() && g != null && g.getGameElement() instanceof Unit && g != selectedElement
                         && !((Unit) g.getGameElement()).isDead()
                         && ((Unit) g.getGameElement()).getArmy() != ((Unit) selectedElement.getGameElement()).getArmy()) {
@@ -185,7 +189,7 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
         }
     }
 
-    public void updateOrderLine(GameSprite gameSprite, float x, float y) {
+    public void updateOrderLine(UnitSprite gameSprite, float x, float y) {
         if (mGameActivity.battle.getPhase() == Phase.deployment) {
             // during deployment phase
             TMXTile tmxtile = mGameActivity.tmxLayer.getTMXTileAt(x, y);
@@ -204,7 +208,7 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
 
             // during combat phase
             mGameActivity.orderLine.setPosition(gameSprite.getX(), gameSprite.getY(), x, y);
-            GameSprite g = getElementAtCoordinates(x, y);
+            UnitSprite g = getElementAtCoordinates(x, y);
             if (g != null && g.isVisible() && g != gameSprite && g.getGameElement() instanceof Unit
                     && !((Unit) g.getGameElement()).isDead() && g.isVisible()
                     && ((Unit) g.getGameElement()).getArmy() != ((Unit) selectedElement.getGameElement()).getArmy()) {
@@ -264,7 +268,7 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
         mGameActivity.protection.setVisible(false);
     }
 
-    private GameSprite getElementAtCoordinates(float x, float y) {
+    private UnitSprite getElementAtCoordinates(float x, float y) {
         for (Player p : mGameActivity.battle.getPlayers()) {
             for (Unit g : p.getUnits()) {
                 if (Math.abs(g.getSprite().getX() - x) < HOVER_UNIT_RADIUS_THRESHOLD

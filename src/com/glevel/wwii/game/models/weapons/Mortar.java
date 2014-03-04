@@ -18,13 +18,13 @@ public class Mortar extends IndirectWeapon {
     }
 
     @Override
-    protected void resolveDamageDiceRoll(int tohit, Unit target) {
+    protected void resolveDamageDiceRoll(int tohit, Unit shooter, Unit target) {
         // mortars are useless on targets in houses
         if (range > 200 && target.getTilePosition().getTerrain() == TerrainType.house) {
             return;
         }
 
-        super.resolveDamageDiceRoll(tohit, target);
+        super.resolveDamageDiceRoll(tohit, shooter, target);
     }
 
 }

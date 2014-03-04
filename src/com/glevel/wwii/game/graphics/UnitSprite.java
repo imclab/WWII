@@ -1,15 +1,14 @@
-package com.glevel.wwii.game.models;
+package com.glevel.wwii.game.graphics;
 
-import org.andengine.entity.sprite.Sprite;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
-import com.glevel.wwii.game.GraphicsFactory;
 import com.glevel.wwii.game.InputManager;
-import com.glevel.wwii.game.graphics.CenteredSprite;
+import com.glevel.wwii.game.models.GameElement;
+import com.glevel.wwii.game.models.weapons.categories.Weapon;
 
-public class GameSprite extends CenteredSprite {
+public abstract class UnitSprite extends CenteredSprite {
 
     private transient static final int ACTION_MOVE_THRESHOLD = 80;
     private transient static final int VALID_ORDER_THRESHOLD = 80;
@@ -19,18 +18,14 @@ public class GameSprite extends CenteredSprite {
     private transient boolean mIsGrabbed = false;
     private transient boolean mIsSelected = false;
     private transient boolean wasSelected = false;
+    private transient boolean canBeDragged = false;
 
-    private transient Sprite specialSprite;
-    public transient boolean isFiring;
-    private transient boolean canBeDragged;
-
-    public GameSprite(GameElement gameElement, InputManager inputManager, float pX, float pY,
+    public UnitSprite(GameElement gameElement, InputManager inputManager, float pX, float pY,
             ITextureRegion pTextureRegion, VertexBufferObjectManager mVertexBufferObjectManager) {
         super(pX, pY, pTextureRegion, mVertexBufferObjectManager);
         mGameElement = gameElement;
         mInputManager = inputManager;
-        this.setScale(mGameElement.getSpriteScale());
-        addMuzzleFlashSprite();
+        setScale(mGameElement.getSpriteScale());
     }
 
     @Override
@@ -83,26 +78,8 @@ public class GameSprite extends CenteredSprite {
         return mGameElement;
     }
 
-    public void addMuzzleFlashSprite() {
-        specialSprite = new Sprite(42, -60, GraphicsFactory.mGfxMap.get("muzzle_flash.png"),
-                getVertexBufferObjectManager());
-        specialSprite.setVisible(false);
-        attachChild(specialSprite);
-    }
-
     public void setCanBeDragged(boolean canBeDragged) {
         this.canBeDragged = canBeDragged;
-    }
-
-    @Override
-    protected void onManagedUpdate(float pSecondsElapsed) {
-        super.onManagedUpdate(pSecondsElapsed);
-        if (isFiring) {
-            specialSprite.setVisible(true);
-            isFiring = false;
-        } else if (specialSprite.isVisible()) {
-            specialSprite.setVisible(false);
-        }
     }
 
     @Override
@@ -117,5 +94,7 @@ public class GameSprite extends CenteredSprite {
         mGameElement.setCurrentRotation(pRotation);
         super.setRotation(pRotation);
     }
+
+    public abstract void startFireAnimation(Weapon weapon);
 
 }

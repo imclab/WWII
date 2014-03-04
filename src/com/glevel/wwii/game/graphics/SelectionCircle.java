@@ -1,9 +1,10 @@
 package com.glevel.wwii.game.graphics;
 
+import org.andengine.entity.sprite.Sprite;
 import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
-public class SelectionCircle extends CenteredSprite {
+public class SelectionCircle extends Sprite {
 
     public SelectionCircle(final TextureRegion pTextureRegion,
             final VertexBufferObjectManager pVertexBufferObjectManager) {
