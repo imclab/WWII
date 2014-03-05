@@ -22,6 +22,7 @@ import com.glevel.wwii.game.models.units.Soldier;
 import com.glevel.wwii.game.models.units.Tank;
 import com.glevel.wwii.game.models.weapons.Knife;
 import com.glevel.wwii.game.models.weapons.Turret;
+import com.glevel.wwii.game.models.weapons.categories.IndirectWeapon;
 import com.glevel.wwii.game.models.weapons.categories.Weapon;
 
 public abstract class Unit extends GameElement implements MovingElement {
@@ -271,7 +272,8 @@ public abstract class Unit extends GameElement implements MovingElement {
             return;
         }
 
-        if (target.isDead() || !MapLogic.canSee(battle.getMap(), this, target)) {
+        if (target.isDead() || !(getWeapons().get(0) instanceof IndirectWeapon)
+                && !MapLogic.canSee(battle.getMap(), this, target)) {
             // if target is dead or is not visible anymore, stop to shoot
             setOrder(new DefendOrder());
             return;
@@ -295,7 +297,7 @@ public abstract class Unit extends GameElement implements MovingElement {
             if (!isRotatingOver) {
                 return;
             }
-        } else {
+        } else if (canMove()) {
             RotationStatus rotationStatus = updateUnitRotation(target.getSprite().getX(), target.getSprite().getY());
             if (rotationStatus == RotationStatus.ROTATING) {
                 return;
@@ -333,7 +335,7 @@ public abstract class Unit extends GameElement implements MovingElement {
                 }
 
                 // increase target panic
-                target.getShots(this, battle.getMap());
+                target.getShots(battle, this);
 
                 if (!target.isDead()) {// prevent the multiple frags bug
 
@@ -445,7 +447,7 @@ public abstract class Unit extends GameElement implements MovingElement {
         } else if (order instanceof DefendOrder) {
             // search for enemies
             for (Unit u : battle.getEnemies(this)) {
-                if (!u.isDead() && MapLogic.canSee(battle.getMap(), this, u)) {
+                if (!u.isDead() && MapLogic.canSee(battle.getMap(), this, u) && getBestWeapon(battle, u) != null) {
                     order = new FireOrder(u);
                     return;
                 }
@@ -467,7 +469,7 @@ public abstract class Unit extends GameElement implements MovingElement {
         return health == InjuryState.DEAD;
     }
 
-    public void getShots(Unit shooter, Map map) {
+    public void getShots(Battle battle, Unit shooter) {
         // increase panic
         if (panic < 10) {
             panic++;
@@ -475,7 +477,7 @@ public abstract class Unit extends GameElement implements MovingElement {
 
         // fight back
         if (order == null || order instanceof DefendOrder || order instanceof MoveOrder && Math.random() < 0.3) {
-            if (MapLogic.canSee(map, this, shooter)) {
+            if (MapLogic.canSee(battle.getMap(), this, shooter) && getBestWeapon(battle, shooter) != null) {
                 setOrder(new FireOrder(shooter));
             }
         }
@@ -499,12 +501,12 @@ public abstract class Unit extends GameElement implements MovingElement {
     public void died(Battle battle) {
         if (this instanceof Soldier) {
             setTilePosition(battle, null);
+            sprite.setZIndex(10);
         }
 
         if (!sprite.isVisible()) {
             sprite.setVisible(true);
         }
-        sprite.setZIndex(10);
         sprite.setCanBeDragged(false);
         order = null;
         // draw sprite

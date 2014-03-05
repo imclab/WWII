@@ -15,6 +15,7 @@ import com.glevel.wwii.game.models.map.Map;
 import com.glevel.wwii.game.models.map.Tile;
 import com.glevel.wwii.game.models.map.Tile.TerrainType;
 import com.glevel.wwii.game.models.orders.DefendOrder;
+import com.glevel.wwii.game.models.orders.FireOrder;
 import com.glevel.wwii.game.models.orders.MoveOrder;
 import com.glevel.wwii.game.models.orders.Order;
 import com.glevel.wwii.game.models.units.Soldier;
@@ -302,6 +303,24 @@ public abstract class Vehicle extends Unit {
 
     @Override
     public void fire(Battle battle, Unit target) {
+        // indirect shoot
+        if (target == null) {
+            FireOrder fireOrder = (FireOrder) getOrder();
+
+            // only rotate
+            if (getWeapons().get(0) instanceof Turret) {
+                // turrets take time to rotate
+                Turret turret = (Turret) getWeapons().get(0);
+                boolean isRotatingOver = turret.rotateTurret(sprite, fireOrder.getXDestination(),
+                        fireOrder.getYDestination());
+                if (!isRotatingOver) {
+                    return;
+                }
+            }
+
+            setOrder(new DefendOrder());
+            return;
+        }
 
         if (target.isDead() || !MapLogic.canSee(battle.getMap(), this, target)) {
             // if target is dead or is not visible anymore, stop to shoot
@@ -372,7 +391,7 @@ public abstract class Vehicle extends Unit {
                     }
 
                     // increase target panic
-                    target.getShots(this, battle.getMap());
+                    target.getShots(battle, this);
 
                     if (!target.isDead()) {// prevent the multiple frags bug
 

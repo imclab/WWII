@@ -74,7 +74,7 @@ public abstract class DeflectionWeapon extends Weapon {
                                                                                // tiles
 
                     // increase panic
-                    unit.getShots(shooter, battle.getMap());
+                    unit.getShots(battle, shooter);
                     if (distanceToImpact < explosionSizeInTiles * EXPLOSION_EPICENTER_SIZE_FACTOR) {
                         // great damage in the explosion's epicenter
                         resolveDamageDiceRoll(CHANCE_TO_HIT_IN_EPICENTER, shooter, unit);
