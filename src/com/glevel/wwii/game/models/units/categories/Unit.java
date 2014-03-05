@@ -31,7 +31,7 @@ public abstract class Unit extends GameElement implements MovingElement {
      */
     private static final long serialVersionUID = -1514358997270651189L;
 
-    private static final float CLOSE_COMBAT_MAX_DISTANCE = 3.0f;// in meters
+    private static final float CLOSE_COMBAT_MAX_DISTANCE = 4.0f;// in meters
 
     protected final ArmiesData army;
     private final int image;
