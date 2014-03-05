@@ -203,10 +203,12 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
         // add selection circle
         selectionCircle = new SelectionCircle(GraphicsFactory.mGfxMap.get("selection.png"),
                 getVertexBufferObjectManager());
+        selectionCircle.setZIndex(5);
 
         // add crosshairs, icons and order line
         crosshair = new Crosshair(GraphicsFactory.mGfxMap.get("crosshair.png"), getVertexBufferObjectManager());
         crosshair.setVisible(false);
+        crosshair.setZIndex(101);
         mScene.attachChild(crosshair);
 
         Text distanceText = new Text(0, 0, mFont, "", 5, getVertexBufferObjectManager());
@@ -215,15 +217,18 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
         crossHairLine = new Crosshair(GraphicsFactory.mGfxMap.get("crosshair.png"), getVertexBufferObjectManager(),
                 distanceText);
         crossHairLine.setVisible(false);
+        crossHairLine.setZIndex(101);
         mScene.attachChild(crossHairLine);
 
         protection = new Protection(GraphicsFactory.mGfxMap.get("protection.png"), getVertexBufferObjectManager());
         protection.setVisible(false);
+        protection.setZIndex(101);
         mScene.attachChild(protection);
 
         orderLine = new Line(0, 0, 0, 0, getVertexBufferObjectManager());
         orderLine.setColor(0.5f, 1f, 0.3f);
         orderLine.setLineWidth(50.0f);
+        orderLine.setZIndex(100);
         mScene.attachChild(orderLine);
 
         // init battle's map tiles
@@ -249,8 +254,6 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
             for (Unit unit : player.getUnits()) {
                 // add element to scene / create sprite
                 addElementToScene(unit, player.getArmyIndex() == 0);
-                // init units rotation
-                unit.getSprite().setRotation(deploymentBoundaries[0] == 0 ? 90 : -90);
 
                 if (battle.isStarted()) {
                     // load position and rotation
@@ -258,10 +261,16 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
                     float currentY = unit.getCurrentY();
                     float currentRotation = unit.getCurrentRotation();
                     Tile t = MapLogic.getTileAtCoordinates(battle.getMap(), currentX, currentY);
-                    unit.setTilePosition(battle, battle.getMap().getTiles()[t.getTileRow()][t.getTileColumn()]);
+                    unit.setTilePosition(battle, t);
                     unit.getSprite().setX(currentX);
-                    unit.getSprite().setY(currentX);
+                    unit.getSprite().setY(currentY);
                     unit.getSprite().setRotation(currentRotation);
+                    if (unit.isDead()) {
+                        unit.died(battle);
+                    }
+                } else {
+                    // init units rotation
+                    unit.getSprite().setRotation(deploymentBoundaries[0] == 0 ? 90 : -90);
                 }
             }
 
@@ -420,7 +429,7 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
                 if (o instanceof FireOrder) {
                     FireOrder f = (FireOrder) o;
                     crosshair.setColor(Color.RED);
-                    crosshair.setPosition(f.getTarget().getSprite().getX(), f.getTarget().getSprite().getY());
+                    crosshair.setPosition(f.getXDestination(), f.getYDestination());
                     crosshair.setVisible(true);
                 } else if (o instanceof MoveOrder) {
                     MoveOrder f = (MoveOrder) o;

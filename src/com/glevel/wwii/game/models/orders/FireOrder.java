@@ -8,32 +8,32 @@ public class FireOrder extends Order {
      * 
      */
     private static final long serialVersionUID = -5452279368421461793L;
-    private int xDestination;
-    private int yDestination;
+    private float xDestination;
+    private float yDestination;
     private Unit target;
 
     public FireOrder(Unit target) {
         this.target = target;
     }
 
-    public FireOrder(int xDestination, int yDestination) {
+    public FireOrder(float xDestination, float yDestination) {
         this.xDestination = xDestination;
         this.yDestination = yDestination;
     }
 
-    public int getxDestination() {
-        return xDestination;
+    public float getXDestination() {
+        return target != null ? target.getSprite().getX() : xDestination;
     }
 
-    public void setxDestination(int xDestination) {
+    public void setXDestination(float xDestination) {
         this.xDestination = xDestination;
     }
 
-    public int getyDestination() {
-        return yDestination;
+    public float getYDestination() {
+        return target != null ? target.getSprite().getY() : yDestination;
     }
 
-    public void setyDestination(int yDestination) {
+    public void setYDestination(float yDestination) {
         this.yDestination = yDestination;
     }
 

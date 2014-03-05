@@ -26,6 +26,7 @@ import com.glevel.wwii.game.models.orders.HideOrder;
 import com.glevel.wwii.game.models.orders.MoveOrder;
 import com.glevel.wwii.game.models.units.categories.Unit;
 import com.glevel.wwii.game.models.units.categories.Vehicle;
+import com.glevel.wwii.game.models.weapons.Turret;
 import com.glevel.wwii.game.models.weapons.categories.IndirectWeapon;
 
 public class InputManager implements IOnSceneTouchListener, IScrollDetectorListener, IPinchZoomDetectorListener {
@@ -184,6 +185,8 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
                     unit.setOrder(new FireOrder((Unit) g.getGameElement()));
                 } else if (!unit.isDead() && unit.canMove()) {
                     unit.setOrder(new MoveOrder(x, y));
+                } else if (!unit.canMove() && unit.getWeapons().get(0) instanceof Turret) {
+                    unit.setOrder(new FireOrder(x, y));
                 }
             }
         }
@@ -245,7 +248,7 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
             } else {
                 // move
                 Tile tile = MapLogic.getTileAtCoordinates(mGameActivity.battle.getMap(), x, y);
-                if (tile.getTerrain() != null) {
+                if (tile != null && tile.getTerrain() != null) {
                     // grants protection
                     mGameActivity.protection.setPosition(x, y);
                     mGameActivity.protection.setVisible(true);

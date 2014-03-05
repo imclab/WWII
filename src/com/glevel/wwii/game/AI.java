@@ -5,14 +5,9 @@ import java.util.List;
 
 import com.glevel.wwii.game.data.BattlesData;
 import com.glevel.wwii.game.data.UnitsData;
-import com.glevel.wwii.game.logic.MapLogic;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.Player;
 import com.glevel.wwii.game.models.map.Tile;
-import com.glevel.wwii.game.models.orders.DefendOrder;
-import com.glevel.wwii.game.models.orders.FireOrder;
-import com.glevel.wwii.game.models.orders.HideOrder;
-import com.glevel.wwii.game.models.orders.MoveOrder;
 import com.glevel.wwii.game.models.units.Soldier;
 import com.glevel.wwii.game.models.units.Tank;
 import com.glevel.wwii.game.models.units.categories.Unit;
@@ -28,18 +23,22 @@ public class AI {
 
     public static void updateUnitOrder(Battle battle, Unit unit) {
         // TODO
-        for (Unit u : battle.getEnemies(unit)) {
-            if (!u.isDead() && MapLogic.getDistanceBetween(unit, u) < 30 * GameUtils.PIXEL_BY_METER
-                    && MapLogic.canSee(battle.getMap(), unit, u)) {
-                unit.setOrder(new FireOrder(u));
-                return;
-            }
-        }
-
-        if (unit.getOrder() == null || unit.getOrder() instanceof DefendOrder || unit.getOrder() instanceof HideOrder) {
-            unit.setOrder(new MoveOrder((float) Math.random() * battle.getMap().getWidth() * GameUtils.PIXEL_BY_TILE,
-                    (float) Math.random() * battle.getMap().getHeight() * GameUtils.PIXEL_BY_TILE));
-        }
+        // for (Unit u : battle.getEnemies(unit)) {
+        // if (!u.isDead() && MapLogic.getDistanceBetween(unit, u) < 30 *
+        // GameUtils.PIXEL_BY_METER
+        // && MapLogic.canSee(battle.getMap(), unit, u)) {
+        // unit.setOrder(new FireOrder(u));
+        // return;
+        // }
+        // }
+        //
+        // if (unit.getOrder() == null || unit.getOrder() instanceof DefendOrder
+        // || unit.getOrder() instanceof HideOrder) {
+        // unit.setOrder(new MoveOrder((float) Math.random() *
+        // battle.getMap().getWidth() * GameUtils.PIXEL_BY_TILE,
+        // (float) Math.random() * battle.getMap().getHeight() *
+        // GameUtils.PIXEL_BY_TILE));
+        // }
 
     }
 
@@ -78,10 +77,10 @@ public class AI {
             break;
         case balanced:
             // buy tank
-            buyUnitsRandomly(player, Tank.class, Turret.class, 5, 5, 0.5f);
+            buyUnitsRandomly(player, Tank.class, Turret.class, 1, 1, 0.5f);
 
             // buy AT cannon
-            buyUnitsRandomly(player, Soldier.class, Turret.class, 1, 1, 0.5f);
+            buyUnitsRandomly(player, Soldier.class, Turret.class, 0, 1, 0.5f);
 
             // buy HMG
             buyUnitsRandomly(player, Soldier.class, HMG.class, 1, 2, 1.0f);

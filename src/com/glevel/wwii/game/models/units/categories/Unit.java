@@ -20,6 +20,7 @@ import com.glevel.wwii.game.models.orders.MoveOrder;
 import com.glevel.wwii.game.models.orders.Order;
 import com.glevel.wwii.game.models.units.Soldier;
 import com.glevel.wwii.game.models.units.Tank;
+import com.glevel.wwii.game.models.weapons.Knife;
 import com.glevel.wwii.game.models.weapons.Turret;
 import com.glevel.wwii.game.models.weapons.categories.Weapon;
 
@@ -30,7 +31,7 @@ public abstract class Unit extends GameElement implements MovingElement {
      */
     private static final long serialVersionUID = -1514358997270651189L;
 
-    // private static final float DEFEND_ORDER_AMBUSH_DISTANCE = 300;
+    private static final float CLOSE_COMBAT_MAX_DISTANCE = 3.0f;// in meters
 
     protected final ArmiesData army;
     private final int image;
@@ -82,7 +83,7 @@ public abstract class Unit extends GameElement implements MovingElement {
     }
 
     public static enum Action {
-        WAITING, MOVING, RUNNING, FIRING, HIDING, RELOADING, AIMING, DEFENDING
+        WAITING, MOVING, RUNNING, FIRING, HIDING, RELOADING, AIMING, DEFENDING, FIGHTING
     }
 
     public Unit(ArmiesData army, int name, int image, Experience experience, List<Weapon> weapons, int moveSpeed,
@@ -116,10 +117,6 @@ public abstract class Unit extends GameElement implements MovingElement {
         this.health = health;
     }
 
-    public int getMoveSpeed() {
-        return moveSpeed;
-    }
-
     public List<Weapon> getWeapons() {
         return weapons;
     }
@@ -142,6 +139,7 @@ public abstract class Unit extends GameElement implements MovingElement {
 
     public void setOrder(Order order) {
         if (!canMove() && order instanceof MoveOrder) {
+            this.order = new DefendOrder();
             return;
         }
         this.order = order;
@@ -226,7 +224,7 @@ public abstract class Unit extends GameElement implements MovingElement {
 
         Tile nextTile = MapLogic.getTileAtCoordinates(battle.getMap(), newPosition[0], newPosition[1]);
 
-        if (!canMoveIn(nextTile)) {
+        if (nextTile == null || !canMoveIn(nextTile)) {
             return;
         }
 
@@ -254,10 +252,28 @@ public abstract class Unit extends GameElement implements MovingElement {
     }
 
     public void fire(Battle battle, Unit target) {
+        // indirect shoot
+        if (target == null) {
+            FireOrder fireOrder = (FireOrder) order;
+
+            // only rotate
+            if (getWeapons().get(0) instanceof Turret) {
+                // turrets take time to rotate
+                Turret turret = (Turret) getWeapons().get(0);
+                boolean isRotatingOver = turret.rotateTurret(sprite, fireOrder.getXDestination(),
+                        fireOrder.getYDestination());
+                if (!isRotatingOver) {
+                    return;
+                }
+            }
+
+            setOrder(new DefendOrder());
+            return;
+        }
 
         if (target.isDead() || !MapLogic.canSee(battle.getMap(), this, target)) {
             // if target is dead or is not visible anymore, stop to shoot
-            order = new DefendOrder();
+            setOrder(new DefendOrder());
             return;
         }
 
@@ -267,7 +283,7 @@ public abstract class Unit extends GameElement implements MovingElement {
             fireWithWeapon(battle, weapon, target);
         } else {
             // no weapon available for this fire order
-            this.order = new DefendOrder();
+            setOrder(new DefendOrder());
         }
     }
 
@@ -302,8 +318,10 @@ public abstract class Unit extends GameElement implements MovingElement {
                 // firing !!!
                 currentAction = Action.FIRING;
 
-                // add muzzle flash sprite
-                sprite.startFireAnimation(weapon);
+                if (!(weapon instanceof Knife)) {
+                    // add muzzle flash sprite
+                    sprite.startFireAnimation(weapon);
+                }
 
                 weapon.setAmmoAmount(weapon.getAmmoAmount() - 1);
                 weapon.setReloadCounter(weapon.getReloadCounter() - 1);
@@ -341,11 +359,20 @@ public abstract class Unit extends GameElement implements MovingElement {
                     weapon.setReloadCounter(weapon.getMagazineSize());
                 }
             }
+        }
 
+        if (weapon instanceof Knife) {
+            currentAction = Action.FIGHTING;
         }
     }
 
     public Weapon getBestWeapon(Battle battle, Unit target) {
+        if (this instanceof Soldier && target instanceof Soldier
+                && MapLogic.getDistanceBetween(this, target) < CLOSE_COMBAT_MAX_DISTANCE * GameUtils.PIXEL_BY_METER) {
+            // close combat !
+            return new Knife();
+        }
+
         boolean canSeeTarget = MapLogic.canSee(battle.getMap(), this, target);
         Weapon bestWeapon = null;
         for (Weapon weapon : weapons) {
@@ -447,9 +474,9 @@ public abstract class Unit extends GameElement implements MovingElement {
         }
 
         // fight back
-        if (order == null || order instanceof DefendOrder || order instanceof MoveOrder && Math.random() < 0.5) {
+        if (order == null || order instanceof DefendOrder || order instanceof MoveOrder && Math.random() < 0.3) {
             if (MapLogic.canSee(map, this, shooter)) {
-                order = new FireOrder(shooter);
+                setOrder(new FireOrder(shooter));
             }
         }
     }
@@ -494,7 +521,7 @@ public abstract class Unit extends GameElement implements MovingElement {
     }
 
     public boolean canMove() {
-        return getMoveSpeed() > 0;
+        return moveSpeed > 0;
     }
 
     @Override

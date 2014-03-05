@@ -19,9 +19,9 @@ public abstract class DeflectionWeapon extends Weapon {
      * 
      */
     private static final long serialVersionUID = -3068800131021401992L;
-    private static final float EXPLOSION_EPICENTER_SIZE_FACTOR = 0.4f;
-    private static final int CHANCE_TO_HIT_IN_EPICENTER = 100;
-    private static final int CHANCE_TO_HIT_AROUND_EPICENTER = 50;
+    private static final float EXPLOSION_EPICENTER_SIZE_FACTOR = 0.3f;
+    private static final int CHANCE_TO_HIT_IN_EPICENTER = 80;
+    private static final int CHANCE_TO_HIT_AROUND_EPICENTER = 30;
     private static final int BASIC_MAXIMAL_DEFLECTION = 7;// in meters
 
     private final float explosionSize;// in meters
@@ -50,45 +50,49 @@ public abstract class DeflectionWeapon extends Weapon {
 
         // get all the units in the explosion
         Tile centerTile = MapLogic.getTileAtCoordinates(battle.getMap(), impactPosition[0], impactPosition[1]);
-        int explosionSizeInTiles = (int) Math.ceil(explosionSize * GameUtils.PIXEL_BY_METER / GameUtils.PIXEL_BY_TILE);
-        List<Tile> adjacentTiles = MapLogic.getAdjacentTiles(battle.getMap(), centerTile, explosionSizeInTiles, true);
-        adjacentTiles.add(centerTile);
+        if (centerTile != null) {
+            int explosionSizeInTiles = (int) Math.ceil(explosionSize * GameUtils.PIXEL_BY_METER
+                    / GameUtils.PIXEL_BY_TILE);
+            List<Tile> adjacentTiles = MapLogic.getAdjacentTiles(battle.getMap(), centerTile, explosionSizeInTiles,
+                    true);
+            adjacentTiles.add(centerTile);
 
-        List<Unit> hitUnits = new ArrayList<Unit>();
+            List<Unit> hitUnits = new ArrayList<Unit>();
 
-        for (Tile t : adjacentTiles) {
-            if (t.getContent() != null) {
-                Unit unit = (Unit) t.getContent();
+            for (Tile t : adjacentTiles) {
+                if (t.getContent() != null) {
+                    Unit unit = (Unit) t.getContent();
 
-                // units can be hit only once
-                if (hitUnits.contains(unit)) {
-                    continue;
-                }
-
-                hitUnits.add(unit);
-
-                int distanceToImpact = MapLogic.getDistance(t, centerTile);// in
-                                                                           // tiles
-
-                // increase panic
-                unit.getShots(shooter, battle.getMap());
-                if (distanceToImpact < explosionSizeInTiles * EXPLOSION_EPICENTER_SIZE_FACTOR) {
-                    // great damage in the explosion's epicenter
-                    resolveDamageDiceRoll(CHANCE_TO_HIT_IN_EPICENTER, shooter, unit);
-                } else {
-                    // minor damage further
-                    int tohit = CHANCE_TO_HIT_AROUND_EPICENTER;
-
-                    // add terrain protection
-                    tohit *= unit.getUnitTerrainProtection();
-
-                    if (unit.getCurrentAction() == Action.HIDING || unit.getCurrentAction() == Action.RELOADING) {
-                        // target is hiding : tohit depends on target's
-                        // experience
-                        tohit -= 5 * (unit.getExperience().ordinal() + 1);
+                    // units can be hit only once
+                    if (hitUnits.contains(unit)) {
+                        continue;
                     }
 
-                    resolveDamageDiceRoll(tohit, shooter, unit);
+                    hitUnits.add(unit);
+
+                    int distanceToImpact = MapLogic.getDistance(t, centerTile);// in
+                                                                               // tiles
+
+                    // increase panic
+                    unit.getShots(shooter, battle.getMap());
+                    if (distanceToImpact < explosionSizeInTiles * EXPLOSION_EPICENTER_SIZE_FACTOR) {
+                        // great damage in the explosion's epicenter
+                        resolveDamageDiceRoll(CHANCE_TO_HIT_IN_EPICENTER, shooter, unit);
+                    } else {
+                        // minor damage further
+                        int tohit = CHANCE_TO_HIT_AROUND_EPICENTER;
+
+                        // add terrain protection
+                        tohit *= unit.getUnitTerrainProtection();
+
+                        if (unit.getCurrentAction() == Action.HIDING || unit.getCurrentAction() == Action.RELOADING) {
+                            // target is hiding : tohit depends on target's
+                            // experience
+                            tohit -= 5 * (unit.getExperience().ordinal() + 1);
+                        }
+
+                        resolveDamageDiceRoll(tohit, shooter, unit);
+                    }
                 }
             }
         }

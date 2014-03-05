@@ -71,16 +71,19 @@ public class Soldier extends Unit {
         // depends on health
         float healthFactor = 1 - getHealth().ordinal() * MOVE_INJURY_FACTOR;
         // depends on terrain
-        switch (getTilePosition().getGround()) {
-        case concrete:
-            return MOVE_SPEED_ON_CONCRETE_FACTOR * healthFactor;
-        case grass:
-            return MOVE_SPEED_ON_GRASS_FACTOR * healthFactor;
-        case mud:
-            return MOVE_SPEED_ON_MUD_FACTOR * healthFactor;
-        case water:
-            return MOVE_SPEED_ON_WATER_FACTOR * healthFactor;
+        if (getTilePosition() != null) {
+            switch (getTilePosition().getGround()) {
+            case concrete:
+                return MOVE_SPEED_ON_CONCRETE_FACTOR * healthFactor;
+            case grass:
+                return MOVE_SPEED_ON_GRASS_FACTOR * healthFactor;
+            case mud:
+                return MOVE_SPEED_ON_MUD_FACTOR * healthFactor;
+            case water:
+                return MOVE_SPEED_ON_WATER_FACTOR * healthFactor;
+            }
         }
+
         return 0;
     }
 
@@ -106,12 +109,12 @@ public class Soldier extends Unit {
     @Override
     public int getPrice() {
         int price = SOLDIER_BASE_PRICE;
-        
+
         // add weapons price
         for (Weapon weapon : getWeapons()) {
             price += weapon.getPrice();
         }
-        
+
         // experience modifier
         switch (getExperience()) {
         case RECRUIT:
@@ -126,5 +129,5 @@ public class Soldier extends Unit {
         }
         return price;
     }
-    
+
 }

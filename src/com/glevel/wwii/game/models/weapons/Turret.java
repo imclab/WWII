@@ -37,51 +37,33 @@ public class Turret extends DeflectionWeapon {
         } else {
             finalAngle -= 90;
         }
-        double rotationStep = 0.0;
-
-        // rotate turret
-        if (sprite instanceof TankSprite) {
-            TankSprite tankSprite = (TankSprite) sprite;
-            double dTau = finalAngle - tankSprite.getTurretSpriteRotation() - tankSprite.getRotation();
-            if (dTau > 0) {
-                rotationStep = Math.min(dTau, turretRotationSpeed);
-            } else if (dTau < 0) {
-                rotationStep = Math.max(dTau, -turretRotationSpeed);
-            }
-            tankSprite.setTurretSpriteRotation((float) (tankSprite.getTurretSpriteRotation() + rotationStep));
-        } else {
-            double dTau = finalAngle - sprite.getRotation();
-            if (dTau > 0) {
-                rotationStep = Math.min(dTau, turretRotationSpeed);
-            } else if (dTau < 0) {
-                rotationStep = Math.max(dTau, -turretRotationSpeed);
-            }
-            sprite.setRotation((float) (sprite.getRotation() + rotationStep));
-        }
-
-        return Math.abs(rotationStep) < turretRotationSpeed;
+        return rotateTurretTo(sprite, (float) finalAngle);
     }
 
     public boolean rotateTurretTo(UnitSprite sprite, float finalAngle) {
-        double rotationStep = 0.0;
+        double dTau = finalAngle - sprite.getRotation();
 
-        // rotate turret
         if (sprite instanceof TankSprite) {
-            TankSprite tankSprite = (TankSprite) sprite;
-            double dTau = finalAngle - tankSprite.getTurretSpriteRotation() - tankSprite.getRotation();
-            if (dTau > 0) {
-                rotationStep = Math.min(dTau, turretRotationSpeed);
-            } else if (dTau < 0) {
-                rotationStep = Math.max(dTau, -turretRotationSpeed);
-            }
-            tankSprite.setTurretSpriteRotation((float) (tankSprite.getTurretSpriteRotation() + rotationStep));
+            dTau -= ((TankSprite) sprite).getTurretSpriteRotation();
+        }
+
+        if (dTau > 180) {
+            dTau -= 360;
+        } else if (dTau < -180) {
+            dTau += 360;
+        }
+
+        double rotationStep = 0.0;
+        if (dTau > 0) {
+            rotationStep = Math.min(dTau, turretRotationSpeed);
+        } else if (dTau < 0) {
+            rotationStep = Math.max(dTau, -turretRotationSpeed);
+        }
+
+        if (sprite instanceof TankSprite) {
+            ((TankSprite) sprite)
+                    .setTurretSpriteRotation((float) (((TankSprite) sprite).getTurretSpriteRotation() + rotationStep));
         } else {
-            double dTau = finalAngle - sprite.getRotation();
-            if (dTau > 0) {
-                rotationStep = Math.min(dTau, turretRotationSpeed);
-            } else if (dTau < 0) {
-                rotationStep = Math.max(dTau, -turretRotationSpeed);
-            }
             sprite.setRotation((float) (sprite.getRotation() + rotationStep));
         }
 

@@ -8,7 +8,6 @@ import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.graphics.TankSprite;
 import com.glevel.wwii.game.logic.MapLogic;
-import com.glevel.wwii.game.logic.pathfinding.AStar;
 import com.glevel.wwii.game.logic.pathfinding.Node;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.Battle.Phase;
@@ -46,8 +45,7 @@ public abstract class Vehicle extends Unit {
     // fire
     private static final float MG_MAX_FIRE_ANGLE = 30.0f;
 
-    @SuppressWarnings("unused")
-    private float nextX = -1.0f, nextY = -1.0f;
+    // private float nextX = -1.0f, nextY = -1.0f;
 
     protected static enum VehicleType {
         LIGHT, TANK
@@ -147,6 +145,14 @@ public abstract class Vehicle extends Unit {
     }
 
     @Override
+    public boolean canMove() {
+        if (getHealth() == InjuryState.BADLYINJURED) {
+            return false;
+        }
+        return super.canMove();
+    }
+
+    @Override
     public boolean canMoveIn(Node node) {
         Tile tile = (Tile) node;
         if (tile.getTerrain() != null && tile.getTerrain() != TerrainType.field
@@ -159,17 +165,20 @@ public abstract class Vehicle extends Unit {
 
     @Override
     public void updateMovementPath(Map map) {
-        MoveOrder moveOrder = (MoveOrder) getOrder();
-
-        Tile destinationTile = MapLogic.getTileAtCoordinates(map, moveOrder.getXDestination(),
-                moveOrder.getYDestination());
-        Tile originTile = MapLogic.getTileAtCoordinates(map, sprite.getX(), sprite.getY());
-        List<Tile> path = new AStar<Tile>().search(map.getTiles(), originTile, destinationTile, true, this, 5);
-
-        if (path != null && path.size() > 1) {
-            nextX = path.get(path.size() - 1).getX() * GameUtils.PIXEL_BY_TILE;
-            nextY = path.get(path.size() - 1).getY() * GameUtils.PIXEL_BY_TILE;
-        }
+        // MoveOrder moveOrder = (MoveOrder) getOrder();
+        //
+        // Tile destinationTile = MapLogic.getTileAtCoordinates(map,
+        // moveOrder.getXDestination(),
+        // moveOrder.getYDestination());
+        // Tile originTile = MapLogic.getTileAtCoordinates(map, sprite.getX(),
+        // sprite.getY());
+        // List<Tile> path = new AStar<Tile>().search(map.getTiles(),
+        // originTile, destinationTile, true, this, 20);
+        //
+        // if (path != null && path.size() > 1) {
+        // nextX = path.get(path.size() - 1).getX() * GameUtils.PIXEL_BY_TILE;
+        // nextY = path.get(path.size() - 1).getY() * GameUtils.PIXEL_BY_TILE;
+        // }
     }
 
     @Override
@@ -192,58 +201,59 @@ public abstract class Vehicle extends Unit {
         }
 
         currentAction = Action.MOVING;
+
         MoveOrder moveOrder = (MoveOrder) getOrder();
+        float x = moveOrder.getXDestination();
+        float y = moveOrder.getYDestination();
 
-        if (nextX >= 0) {
+        // cannot rotate and move at the same time
+        RotationStatus rotationStatus = updateUnitRotation(x, y);
+        if (rotationStatus == RotationStatus.ROTATING) {
+            ((TankSprite) getSprite()).updateMovingAnimation(false);
+            return;
+        }
 
-            // cannot rotate and move at the same time
-            RotationStatus rotationStatus = updateUnitRotation(moveOrder.getXDestination(), moveOrder.getYDestination());
-            if (rotationStatus == RotationStatus.ROTATING) {
-                ((TankSprite) getSprite()).updateMovingAnimation(false);
+        ((TankSprite) getSprite()).updateMovingAnimation(true);
+
+        float dx = x - sprite.getX();
+        float dy = y - sprite.getY();
+        double angle = Math.atan(dy / dx);
+        float dd = moveSpeed * 10 * 0.04f * getUnitSpeed()
+                * (rotationStatus == RotationStatus.REVERSE ? REVERSE_SPEED : 1.0f);
+
+        boolean hasArrived = false;
+        float distanceLeft = MapLogic.getDistanceBetween(x, y, sprite.getX(), sprite.getY());
+        if (distanceLeft < dd) {
+            hasArrived = true;
+            dd = distanceLeft;
+        }
+
+        float[] newPosition = MapLogic.getCoordinatesAfterTranslation(sprite.getX(), sprite.getY(), dd, angle, dx > 0);
+
+        Tile nextTile = MapLogic.getTileAtCoordinates(battle.getMap(), newPosition[0], newPosition[1]);
+        if (nextTile == null) {
+            return;
+        }
+
+        if (!canMoveIn(nextTile)) {
+            // run over soldiers
+            if (nextTile.getContent() instanceof Soldier) {
+                Soldier soldier = (Soldier) nextTile.getContent();
+                instantlyKilledSomeone(battle, soldier);
+            } else {
                 return;
             }
+        }
 
-            ((TankSprite) getSprite()).updateMovingAnimation(true);
+        sprite.setPosition(newPosition[0], newPosition[1]);
 
-            float dx = moveOrder.getXDestination() - sprite.getX();
-            float dy = moveOrder.getYDestination() - sprite.getY();
-            double angle = Math.atan(dy / dx);
-            float dd = moveSpeed * 10 * 0.04f * getUnitSpeed()
-                    * (rotationStatus == RotationStatus.REVERSE ? REVERSE_SPEED : 1.0f);
+        if (nextTile.getTileX() != getTilePosition().getTileX() || nextTile.getTileY() != getTilePosition().getTileY()) {
+            setTilePosition(battle, nextTile);
+        }
 
-            boolean hasArrived = false;
-            float distanceLeft = MapLogic.getDistanceBetween(moveOrder.getXDestination(), moveOrder.getYDestination(),
-                    sprite.getX(), sprite.getY());
-            if (distanceLeft < dd) {
-                hasArrived = true;
-                dd = distanceLeft;
-            }
-
-            float[] newPosition = MapLogic.getCoordinatesAfterTranslation(sprite.getX(), sprite.getY(), dd, angle,
-                    dx > 0);
-
-            Tile nextTile = MapLogic.getTileAtCoordinates(battle.getMap(), newPosition[0], newPosition[1]);
-
-            if (!canMoveIn(nextTile)) {
-                // run over soldiers
-                if (nextTile.getContent() instanceof Soldier) {
-                    Soldier soldier = (Soldier) nextTile.getContent();
-                    instantlyKilledSomeone(battle, soldier);
-                } else {
-                    return;
-                }
-            }
-
-            sprite.setPosition(newPosition[0], newPosition[1]);
-
-            if (nextTile.getTileX() != getTilePosition().getTileX()
-                    || nextTile.getTileY() != getTilePosition().getTileY()) {
-                setTilePosition(battle, nextTile);
-            }
-
-            if (hasArrived) {
-                setOrder(null);
-            }
+        if (hasArrived) {
+            updateMovementPath(battle.getMap());
+            setOrder(new DefendOrder());
         }
     }
 
@@ -273,19 +283,21 @@ public abstract class Vehicle extends Unit {
             rotationStatus = RotationStatus.REVERSE;
         }
 
+        if (dTau > 180) {
+            dTau -= 360;
+        } else if (dTau < -180) {
+            dTau += 360;
+        }
+
         double rotationStep = 0;
         if (dTau > 0) {
             rotationStep = Math.min(dTau, ROTATION_SPEED);
         } else if (dTau < 0) {
-            if (dx > 0) {
-                rotationStep = Math.min(dTau, ROTATION_SPEED);
-            } else {
-                rotationStep = Math.max(dTau, -ROTATION_SPEED);
-            }
+            rotationStep = Math.max(dTau, -ROTATION_SPEED);
         }
         sprite.setRotation((float) (sprite.getRotation() + rotationStep));
 
-        return Math.abs(finalAngle - sprite.getRotation()) < ROTATION_SPEED ? rotationStatus : RotationStatus.ROTATING;
+        return Math.abs(rotationStep) < ROTATION_SPEED ? rotationStatus : RotationStatus.ROTATING;
     }
 
     @Override
