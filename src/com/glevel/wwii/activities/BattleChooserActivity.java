@@ -81,7 +81,7 @@ public class BattleChooserActivity extends MyActivity implements OnPageChangeLis
 		for (int n = 0; n < pagerAdapter.getCount() - 1; n++) {
 			ImageView dot = new ImageView(this);
 			dot.setImageResource(R.drawable.ic_pagination_dot);
-			dot.setPadding(30, 0, 0, 0);
+			dot.setPadding(ApplicationUtils.convertDpToPixels(getApplicationContext(), 15), 0, 0, 0);
 			if (n == 0) {
 				dot.setAlpha(ALPHA_ACTIVE_DOT);
 
