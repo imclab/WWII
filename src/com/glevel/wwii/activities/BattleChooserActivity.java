@@ -5,12 +5,14 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
@@ -20,16 +22,19 @@ import com.glevel.wwii.activities.adapters.MapPagerAdapter;
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.utils.ApplicationUtils;
 
-public class BattleChooserActivity extends MyActivity {
+public class BattleChooserActivity extends MyActivity implements OnPageChangeListener {
 
+    private static final float ALPHA_ACTIVE_DOT = 1.0f;
+    private static final float ALPHA_PASSIVE_DOT = 0.2f;
+
+    private ImageView mAllyPovBackground;
     private RadioGroup mRadioGroupArmy;
     private ViewPager mMapsCarousel;
-    private ImageView mAllyPovBackground;
+    private ImageView[] paginationDots;
 
     private Runnable mStormEffect;
 
-    private boolean isMapClicked;// avoid view pager's multiple
-    // selection
+    private boolean isMapClicked;// avoid view pager's multiple selection
 
     /**
      * Callbacks
@@ -69,6 +74,24 @@ public class BattleChooserActivity extends MyActivity {
         mMapsCarousel = (ViewPager) findViewById(R.id.lstMaps);
         PagerAdapter pagerAdapter = new MapPagerAdapter(onMapSelectedListener);
         mMapsCarousel.setAdapter(pagerAdapter);
+        mMapsCarousel.setOnPageChangeListener(this);
+
+        // setup pagination
+        LinearLayout pagination = (LinearLayout) findViewById(R.id.pagination);
+        paginationDots = new ImageView[pagerAdapter.getCount() - 1];
+        for (int n = 0; n < pagerAdapter.getCount() - 1; n++) {
+            ImageView dot = new ImageView(this);
+            dot.setImageResource(R.drawable.ic_pagination_dot);
+            dot.setPadding(30, 0, 0, 0);
+            if (n == 0) {
+                dot.setAlpha(ALPHA_ACTIVE_DOT);
+
+            } else {
+                dot.setAlpha(ALPHA_PASSIVE_DOT);
+            }
+            paginationDots[n] = dot;
+            pagination.addView(dot);
+        }
 
         // prepare background animations
         fadeInAnimation = AnimationUtils.loadAnimation(BattleChooserActivity.this, R.anim.fade_in);
@@ -160,6 +183,33 @@ public class BattleChooserActivity extends MyActivity {
     public void onBackPressed() {
         startActivity(new Intent(this, HomeActivity.class));
         finish();
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int arg0) {
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        int direction = position + (positionOffsetPixels > 0 ? 1 : -1);
+        if (direction >= 0 && direction < mMapsCarousel.getAdapter().getCount()) {
+            paginationDots[position].setAlpha(ALPHA_ACTIVE_DOT - positionOffset
+                    * (ALPHA_ACTIVE_DOT - ALPHA_PASSIVE_DOT));
+            paginationDots[direction].setAlpha(ALPHA_PASSIVE_DOT + positionOffset
+                    * (ALPHA_ACTIVE_DOT - ALPHA_PASSIVE_DOT));
+        }
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        position = (int) Math.ceil((double) position / 2);
+        for (int n = 0; n < paginationDots.length; n++) {
+            if (position == n || position >= paginationDots.length && n == paginationDots.length - 1) {
+                paginationDots[n].setAlpha(ALPHA_ACTIVE_DOT);
+            } else {
+                paginationDots[n].setAlpha(ALPHA_PASSIVE_DOT);
+            }
+        }
     }
 
 }
