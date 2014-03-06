@@ -11,6 +11,7 @@ import com.glevel.wwii.game.logic.MapLogic;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.map.Tile;
 import com.glevel.wwii.game.models.units.categories.Unit;
+import com.glevel.wwii.game.models.units.categories.Vehicle;
 import com.glevel.wwii.game.models.units.categories.Unit.Action;
 
 public abstract class DeflectionWeapon extends Weapon {
@@ -27,8 +28,9 @@ public abstract class DeflectionWeapon extends Weapon {
     private final float explosionSize;// in meters
 
     public DeflectionWeapon(int name, int image, int apPower, int atPower, int range, int nbMagazines, int cadence,
-            int magazineSize, int reloadSpeed, int shootSpeed, float explosionSize) {
-        super(name, image, apPower, atPower, range, nbMagazines, cadence, magazineSize, reloadSpeed, shootSpeed, null);
+            int magazineSize, int reloadSpeed, int shootSpeed, float explosionSize, String sound) {
+        super(name, image, apPower, atPower, range, nbMagazines, cadence, magazineSize, reloadSpeed, shootSpeed, null,
+                sound);
         this.explosionSize = explosionSize;
     }
 
@@ -47,6 +49,7 @@ public abstract class DeflectionWeapon extends Weapon {
         // draw explosion sprite
         battle.getOnNewSprite().drawAnimatedSprite(impactPosition[0], impactPosition[1], "explosion.png", 40,
                 3 * explosionSize * GameUtils.PIXEL_BY_METER / 64.0f, 0, true, 100);
+        battle.getOnNewSoundToPlay().playSound("explosion", impactPosition[0], impactPosition[1]);
 
         // get all the units in the explosion
         Tile centerTile = MapLogic.getTileAtCoordinates(battle.getMap(), impactPosition[0], impactPosition[1]);
@@ -93,9 +96,15 @@ public abstract class DeflectionWeapon extends Weapon {
 
                         resolveDamageDiceRoll(tohit, shooter, unit);
                     }
+
+                    if (unit instanceof Vehicle && !unit.isDead()) {
+                        battle.getOnNewSoundToPlay().playSound("clonk", unit.getSprite().getX(),
+                                unit.getSprite().getY());
+                    }
                 }
             }
         }
+
     }
 
     private int getMaxDeflection(Unit shooter, float distance) {

@@ -52,6 +52,12 @@ public class GameUtils {
     public static final int PIXEL_BY_METER = 15;
     public static final int PIXEL_BY_TILE = 32;
 
+    /**
+     * Game sounds
+     */
+    public static final String[] ATMO_SOUNDS = { "cow", "bird" };
+    public static final int ATMO_SOUND_FREQUENCY = 50;
+
     public static Battle createTestData() {
         Battle battle = new Battle(BattlesData.OOSTERBEEK);
 

@@ -3,7 +3,6 @@ package com.glevel.wwii.game.models.units.categories;
 import java.util.List;
 
 import com.glevel.wwii.R;
-import com.glevel.wwii.activities.GameActivity;
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.logic.MapLogic;
@@ -318,9 +317,11 @@ public abstract class Unit extends GameElement implements MovingElement {
                 }
                 // aiming
                 this.currentAction = Action.AIMING;
-            } else if (GameActivity.gameCounter % (11 - weapon.getShootSpeed()) == 0) {
+            } else if (battle.getGameCounter() % (11 - weapon.getShootSpeed()) == 0) {
                 // firing !!!
                 currentAction = Action.FIRING;
+
+                battle.getOnNewSoundToPlay().playSound(weapon.getSound(), sprite.getX(), sprite.getY());
 
                 if (!(weapon instanceof Knife)) {
                     // add muzzle flash sprite
@@ -356,7 +357,7 @@ public abstract class Unit extends GameElement implements MovingElement {
         } else {
             // reloading
             this.currentAction = Action.RELOADING;
-            if (GameActivity.gameCounter % 12 == 0) {
+            if (battle.getGameCounter() % 12 == 0) {
                 weapon.setReloadCounter(weapon.getReloadCounter() + 1);
                 if (weapon.getReloadCounter() == 0) {
                     // reloading is over
@@ -394,20 +395,20 @@ public abstract class Unit extends GameElement implements MovingElement {
         health = InjuryState.values()[Math.min(InjuryState.DEAD.ordinal(), health.ordinal() + damage)];
     }
 
-    public void defendPosition() {
+    public void defendPosition(Battle battle) {
         this.currentAction = Action.DEFENDING;
 
-        if (GameActivity.gameCounter % 3 == 0) {
+        if (battle.getGameCounter() % 3 == 0) {
             if (this.panic > 0) {
                 this.panic--;
             }
         }
     }
 
-    public void hide() {
+    public void hide(Battle battle) {
         this.currentAction = Action.HIDING;
 
-        if (GameActivity.gameCounter % 3 == 0) {
+        if (battle.getGameCounter() % 3 == 0) {
             if (this.panic > 0) {
                 this.panic--;
             }
@@ -427,7 +428,10 @@ public abstract class Unit extends GameElement implements MovingElement {
             // test if the unit can react
             if (Math.random() * 10 + getExperience().ordinal() < panic) {
                 // the unit is under fire
-                hide();
+                if (Math.random() < 0.1) {
+                    battle.getOnNewSoundToPlay().playSound("need_support", sprite.getX(), sprite.getY());
+                }
+                hide(battle);
                 return;
             }
         }
@@ -455,7 +459,7 @@ public abstract class Unit extends GameElement implements MovingElement {
                 }
             }
             // stay ambush
-            defendPosition();
+            defendPosition(battle);
         } else if (order instanceof FireOrder) {
             fire(battle, ((FireOrder) order).getTarget());
         } else if (order instanceof HideOrder) {
@@ -467,7 +471,7 @@ public abstract class Unit extends GameElement implements MovingElement {
                     return;
                 }
             }
-            hide();
+            hide(battle);
         }
     }
 
@@ -489,6 +493,7 @@ public abstract class Unit extends GameElement implements MovingElement {
         if (order == null || order instanceof DefendOrder || order instanceof MoveOrder && Math.random() < 0.3) {
             if (MapLogic.canSee(battle.getMap(), this, shooter) && getBestWeapon(battle, shooter) != null) {
                 setOrder(new FireOrder(shooter));
+                battle.getOnNewSoundToPlay().playSound("incoming", sprite.getX(), sprite.getY());
             }
         }
     }
@@ -524,10 +529,12 @@ public abstract class Unit extends GameElement implements MovingElement {
             // smoke
             battle.getOnNewSprite().drawAnimatedSprite(getSprite().getX(), getSprite().getY() - 70, "smoke.png", 120,
                     2.0f, -1, false, 60);
+            battle.getOnNewSoundToPlay().playSound("explosion", sprite.getX(), sprite.getY());
         } else if (this instanceof Soldier) {
             // blood
             battle.getOnNewSprite().drawAnimatedSprite(getSprite().getX(), getSprite().getY(), "blood.png", 120, 0.6f,
                     0, false, 15);
+            battle.getOnNewSoundToPlay().playSound("death", sprite.getX(), sprite.getY());
         }
 
     }

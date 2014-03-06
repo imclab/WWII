@@ -15,7 +15,7 @@ public class Turret extends DeflectionWeapon {
     public Turret(int name, int image, int apPower, int atPower, int range, int nbMagazines, int cadence,
             int magazineSize, int reloadSpeed, int shootSpeed, int explosionSize, int turretRotationSpeed) {
         super(name, image, apPower, atPower, range, nbMagazines, cadence, magazineSize, reloadSpeed, shootSpeed,
-                explosionSize);
+                explosionSize, "cannon");
         this.setTurretRotationSpeed(turretRotationSpeed);
     }
 

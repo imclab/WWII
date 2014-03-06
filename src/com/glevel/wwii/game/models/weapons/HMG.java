@@ -11,7 +11,7 @@ public class HMG extends Weapon {
 
     public HMG(int name, int image, int apPower, int atPower, int range, int nbMagazines, int cadence,
             int magazineSize, int reloadSpeed, int shootSpeed, int[] accuracy) {
-        super(name, image, apPower, atPower, range, nbMagazines, cadence, magazineSize, reloadSpeed, shootSpeed, accuracy);
+        super(name, image, apPower, atPower, range, nbMagazines, cadence, magazineSize, reloadSpeed, shootSpeed, accuracy, "mg");
     }
 
 }

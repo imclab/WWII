@@ -28,8 +28,10 @@ import org.andengine.util.color.Color;
 import org.andengine.util.debug.Debug;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 
 import com.glevel.wwii.R;
 import com.glevel.wwii.analytics.GoogleAnalyticsHelper;
@@ -42,6 +44,7 @@ import com.glevel.wwii.game.GameGUI;
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.GraphicsFactory;
 import com.glevel.wwii.game.InputManager;
+import com.glevel.wwii.game.SoundEffectManager;
 import com.glevel.wwii.game.andengine.custom.CustomLayoutGameActivity;
 import com.glevel.wwii.game.andengine.custom.CustomZoomCamera;
 import com.glevel.wwii.game.graphics.CenteredSprite;
@@ -53,6 +56,7 @@ import com.glevel.wwii.game.graphics.SelectionCircle;
 import com.glevel.wwii.game.graphics.SoldierSprite;
 import com.glevel.wwii.game.graphics.TankSprite;
 import com.glevel.wwii.game.graphics.UnitSprite;
+import com.glevel.wwii.game.interfaces.OnNewSoundToPlay;
 import com.glevel.wwii.game.interfaces.OnNewSpriteToDraw;
 import com.glevel.wwii.game.logic.MapLogic;
 import com.glevel.wwii.game.models.Battle;
@@ -69,12 +73,14 @@ import com.glevel.wwii.game.models.units.Soldier;
 import com.glevel.wwii.game.models.units.Tank;
 import com.glevel.wwii.game.models.units.categories.Unit;
 
-public class GameActivity extends CustomLayoutGameActivity implements OnNewSpriteToDraw {
+public class GameActivity extends CustomLayoutGameActivity implements OnNewSpriteToDraw, OnNewSoundToPlay {
 
     private DatabaseHelper mDbHelper;
+    private SharedPreferences mSharedPrefs;
     private GraphicsFactory mGameElementFactory;
     private InputManager mInputManager;
     private GameGUI mGameGUI;
+    private SoundEffectManager mSoundEffectManager;
 
     public Battle battle = null;
     protected boolean mMustSaveGame = true;
@@ -91,19 +97,20 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
     public Protection protection;
     private DeploymentZone deploymentZone;
 
-    public static int gameCounter = 0;
-
     @Override
     public EngineOptions onCreateEngineOptions() {
         this.mCamera = new CustomZoomCamera(0, 0, GameUtils.CAMERA_WIDTH, GameUtils.CAMERA_HEIGHT);
         EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED,
                 new FillResolutionPolicy(), mCamera);
+        engineOptions.getAudioOptions().setNeedsSound(true);
         return engineOptions;
     }
 
     @Override
     protected void onCreate(Bundle pSavedInstanceState) {
         super.onCreate(pSavedInstanceState);
+
+        mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         initGameActivity();
     }
@@ -124,6 +131,7 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
         }
 
         battle.setOnNewSprite(this);
+        battle.setOnNewSoundToPlay(this);
 
         // init GUI
         mGameGUI = new GameGUI(this);
@@ -155,10 +163,18 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
         mGameElementFactory = new GraphicsFactory(this, getVertexBufferObjectManager(), getTextureManager());
         mGameElementFactory.initGraphics(battle);
 
+        // init sound manager
+        mSoundEffectManager = new SoundEffectManager(this, mSharedPrefs.getInt(GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME,
+                GameUtils.MusicState.off.ordinal()));
+        mSoundEffectManager.setCamera(mCamera);
+        mSoundEffectManager.init(battle, mEngine);
+
         // load font
         mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256,
                 Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32, Color.WHITE.hashCode());
         mFont.load();
+
+        // load sound effects
 
         pOnCreateResourcesCallback.onCreateResourcesFinished();
     }
@@ -168,6 +184,7 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
         if (GraphicsFactory.mTiledGfxMap.size() == 0 && mGameElementFactory != null) {
             mEngine.stop();
             mGameElementFactory.initGraphics(battle);
+            mSoundEffectManager.init(battle, mEngine);
             mEngine.start();
         }
 
@@ -436,6 +453,9 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
         if (mGameElementFactory != null) {
             mGameElementFactory.onPause();
         }
+        if (mSoundEffectManager != null) {
+            mSoundEffectManager.onPause();
+        }
         if (mMustSaveGame) {
             GameConverterHelper.saveGame(mDbHelper, battle);
         }
@@ -583,6 +603,11 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
             });
         }
         mScene.attachChild(sprite);
+    }
+
+    @Override
+    public void playSound(String soundName, float x, float y) {
+        mSoundEffectManager.playSound(soundName, x, y);
     }
 
     @Override

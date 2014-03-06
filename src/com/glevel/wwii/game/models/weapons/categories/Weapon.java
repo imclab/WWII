@@ -32,6 +32,7 @@ public abstract class Weapon implements Serializable {
     private final int reloadSpeed;
     private final int shootSpeed;
     private final int[] accuracy;
+    private final String sound;
 
     private int cadence;
     private int ammoAmount;
@@ -43,7 +44,7 @@ public abstract class Weapon implements Serializable {
     private static final int WEAPON_BASE_PRICE = 2;
 
     public Weapon(int name, int image, int apPower, int atPower, int range, int nbMagazines, int cadence,
-            int magazineSize, int reloadSpeed, int shootSpeed, int[] accuracy) {
+            int magazineSize, int reloadSpeed, int shootSpeed, int[] accuracy, String sound) {
         this.name = name;
         this.image = image;
         this.apPower = apPower;
@@ -56,6 +57,7 @@ public abstract class Weapon implements Serializable {
         this.reloadSpeed = reloadSpeed;
         this.shootSpeed = shootSpeed;
         this.accuracy = accuracy;
+        this.sound = sound;
     }
 
     public int getPrice() {
@@ -272,6 +274,10 @@ public abstract class Weapon implements Serializable {
 
     public void setAimCounter(int aimCounter) {
         this.aimCounter = aimCounter;
+    }
+
+    public String getSound() {
+        return sound;
     }
 
 }

@@ -8,6 +8,7 @@ import com.glevel.wwii.game.AI;
 import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.data.BattlesData;
+import com.glevel.wwii.game.interfaces.OnNewSoundToPlay;
 import com.glevel.wwii.game.interfaces.OnNewSpriteToDraw;
 import com.glevel.wwii.game.logic.MapLogic;
 import com.glevel.wwii.game.models.GameElement.Rank;
@@ -37,9 +38,12 @@ public class Battle implements Serializable {
     private int importance;
     private transient List<Player> players = new ArrayList<Player>();
     private transient Phase phase = Phase.deployment;
-    private transient OnNewSpriteToDraw onNewSprite;
     private boolean hasStarted = false;
     private transient List<ObjectivePoint> lstObjectives;
+
+    // Callbacks
+    private transient OnNewSpriteToDraw onNewSprite;
+    private transient OnNewSoundToPlay onNewSoundToPlay;
 
     // for campaign mode
     private boolean isDone = false;
@@ -295,6 +299,16 @@ public class Battle implements Serializable {
             }
         }
 
+        // play random atmoshpere sounds
+        if (gameCounter % GameUtils.ATMO_SOUND_FREQUENCY == 0) {
+            if (Math.random() < 0.2) {
+                String atmoSound = GameUtils.ATMO_SOUNDS[(int) (Math.random() * GameUtils.ATMO_SOUNDS.length)];
+                getOnNewSoundToPlay().playSound(atmoSound,
+                        (float) (Math.random() * map.getWidth() * GameUtils.PIXEL_BY_TILE),
+                        (float) (Math.random() * map.getHeight() * GameUtils.PIXEL_BY_TILE));
+            }
+        }
+
         return null;
     }
 
@@ -330,6 +344,14 @@ public class Battle implements Serializable {
                 }
             }
         }
+    }
+
+    public OnNewSoundToPlay getOnNewSoundToPlay() {
+        return onNewSoundToPlay;
+    }
+
+    public void setOnNewSoundToPlay(OnNewSoundToPlay onNewSoundToPlay) {
+        this.onNewSoundToPlay = onNewSoundToPlay;
     }
 
 }
