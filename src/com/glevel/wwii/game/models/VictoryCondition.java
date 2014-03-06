@@ -83,6 +83,18 @@ public class VictoryCondition implements Serializable {
             if (100 * nbKilled / enemies.size() >= percentageToKill) {
                 return true;
             }
+
+            // check map's objectives
+            int nbOwned = 0;
+            for (ObjectivePoint objective : battle.getLstObjectives()) {
+                if (objective.getOwner() == player.getArmy()) {
+                    nbOwned++;
+                }
+            }
+            if (nbOwned == battle.getLstObjectives().size()) {
+                return true;
+            }
+
             break;
         case takenadhold:
             if (isOneUnitOnObjective(player)) {

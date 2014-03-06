@@ -8,11 +8,10 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.util.List;
 
-import android.os.Message;
-
 import com.glevel.wwii.database.DatabaseHelper;
 import com.glevel.wwii.database.dao.BattleDao;
 import com.glevel.wwii.game.models.Battle;
+import com.glevel.wwii.game.models.ObjectivePoint;
 import com.glevel.wwii.game.models.Operation;
 import com.glevel.wwii.game.models.Player;
 
@@ -50,29 +49,6 @@ public class GameConverterHelper {
     }
 
     /**
-     * Gets a Battle object from a byte array.
-     * 
-     * @param blob
-     * @return
-     */
-    public static Battle getBattleFromLoadGame(byte[] blob) {
-        try {
-            ByteArrayInputStream bais = new ByteArrayInputStream(blob);
-            ObjectInputStream in = new ObjectInputStream(bais);
-            Battle battle = (Battle) in.readObject();
-            in.close();
-            return battle;
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
      * Gets a list of players object from a byte array.
      * 
      * @param blob
@@ -86,6 +62,30 @@ public class GameConverterHelper {
             List<Player> players = (List<Player>) in.readObject();
             in.close();
             return players;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Gets a list of objective points object from a byte array.
+     * 
+     * @param blob
+     * @return
+     */
+    public static List<ObjectivePoint> getObjectivesFromLoadGame(byte[] blob) {
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(blob);
+            ObjectInputStream in = new ObjectInputStream(bais);
+            @SuppressWarnings("unchecked")
+            List<ObjectivePoint> list = (List<ObjectivePoint>) in.readObject();
+            in.close();
+            return list;
         } catch (IOException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
@@ -133,29 +133,6 @@ public class GameConverterHelper {
             List<Operation> operations = (List<Operation>) in.readObject();
             in.close();
             return operations;
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * Gets a Message object from a byte array.
-     * 
-     * @param blob
-     * @return
-     */
-    public static Message getMessageFromByte(byte[] blob) {
-        try {
-            ByteArrayInputStream bais = new ByteArrayInputStream(blob);
-            ObjectInputStream in = new ObjectInputStream(bais);
-            Message msg = (Message) in.readObject();
-            in.close();
-            return msg;
         } catch (IOException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {

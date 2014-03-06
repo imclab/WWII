@@ -13,7 +13,7 @@ import com.glevel.wwii.database.dao.CampaignDao;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private final static int DATABASE_VERSION = 6;
+    private final static int DATABASE_VERSION = 7;
 
     public static final String DB_NAME = "wwii";
 

@@ -54,7 +54,7 @@ public abstract class GameElement implements Serializable {
         }
         this.tilePosition = tilePosition;
         if (tilePosition != null) {
-            this.tilePosition.setContent(this);
+            tilePosition.setContent(this);
         }
     }
 

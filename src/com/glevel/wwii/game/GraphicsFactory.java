@@ -53,6 +53,7 @@ public class GraphicsFactory {
         loadGfxFromAssets(128, 128, "crosshair.png");
         loadGfxFromAssets(64, 64, "muzzle_flash.png");
         loadGfxFromAssets(128, 128, "protection.png");
+        loadGfxFromAssets(256, 256, "objective.png");
         loadTiledTextureGfxFromAssets(256, 256, 4, 4, "explosion.png");
         loadTiledTextureGfxFromAssets(512, 256, 4, 2, "smoke.png");
         loadTiledTextureGfxFromAssets(512, 256, 4, 2, "tank_move_smoke.png");

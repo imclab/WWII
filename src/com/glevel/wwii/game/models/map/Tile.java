@@ -7,12 +7,14 @@ import org.andengine.extension.tmx.TMXTiledMap;
 
 import com.glevel.wwii.game.logic.pathfinding.Node;
 import com.glevel.wwii.game.models.GameElement;
+import com.glevel.wwii.game.models.ObjectivePoint;
 
 public class Tile extends TMXTile implements Node {
 
     private GameElement content = null;
     private GroundType ground = GroundType.grass;
     private TerrainType terrain = null;
+    private ObjectivePoint objective = null;
 
     public static enum GroundType {
         grass, concrete, water, mud
@@ -110,6 +112,14 @@ public class Tile extends TMXTile implements Node {
     @Override
     public int getY() {
         return getTileRow();
+    }
+
+    public ObjectivePoint getObjective() {
+        return objective;
+    }
+
+    public void setObjective(ObjectivePoint objective) {
+        this.objective = objective;
     }
 
 }

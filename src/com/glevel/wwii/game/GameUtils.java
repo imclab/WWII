@@ -46,6 +46,9 @@ public class GameUtils {
     public static final int AI_FREQUENCY = 10;
     public static final int CHECK_VICTORY_FREQUENCY = 10;
 
+    public static final int NUMBER_OBJECTIVES_PER_PLAYER = 2;
+    public static final int OBJECTIVE_RADIUS_IN_TILE = 2;
+
     public static final int PIXEL_BY_METER = 15;
     public static final int PIXEL_BY_TILE = 32;
 

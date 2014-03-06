@@ -4,10 +4,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.glevel.wwii.game.AI;
+import com.glevel.wwii.game.GameUtils;
 import com.glevel.wwii.game.data.ArmiesData;
 import com.glevel.wwii.game.data.BattlesData;
 import com.glevel.wwii.game.interfaces.OnNewSpriteToDraw;
+import com.glevel.wwii.game.logic.MapLogic;
+import com.glevel.wwii.game.models.GameElement.Rank;
 import com.glevel.wwii.game.models.map.Map;
+import com.glevel.wwii.game.models.orders.MoveOrder;
 import com.glevel.wwii.game.models.units.categories.Unit;
 
 public class Battle implements Serializable {
@@ -34,9 +39,11 @@ public class Battle implements Serializable {
     private transient Phase phase = Phase.deployment;
     private transient OnNewSpriteToDraw onNewSprite;
     private boolean hasStarted = false;
+    private transient List<ObjectivePoint> lstObjectives;
 
     // for campaign mode
     private boolean isDone = false;
+    private int gameCounter = 0;
 
     public static enum Phase {
         deployment, combat
@@ -60,6 +67,7 @@ public class Battle implements Serializable {
         this.alliesDeploymentZoneSize = data.getAlliesDeploymentZoneSize();
         this.axisDeploymentZoneSize = data.getAxisDeploymentZoneSize();
         this.isAllyLeftSide = data.getIsAllyLeftSide();
+        this.lstObjectives = new ArrayList<ObjectivePoint>();
     }
 
     /**
@@ -82,6 +90,7 @@ public class Battle implements Serializable {
         this.alliesDeploymentZoneSize = data.getAlliesDeploymentZoneSize();
         this.axisDeploymentZoneSize = data.getAxisDeploymentZoneSize();
         this.isAllyLeftSide = data.getIsAllyLeftSide();
+        this.lstObjectives = new ArrayList<ObjectivePoint>();
     }
 
     public int getName() {
@@ -237,6 +246,90 @@ public class Battle implements Serializable {
 
     public void setHasStarted(boolean hasStarted) {
         this.hasStarted = hasStarted;
+    }
+
+    public List<ObjectivePoint> getLstObjectives() {
+        return lstObjectives;
+    }
+
+    public void setLstObjectives(List<ObjectivePoint> lstObjectives) {
+        this.lstObjectives = lstObjectives;
+    }
+
+    public int getGameCounter() {
+        return gameCounter;
+    }
+
+    /**
+     * Updates Game Logic
+     * 
+     * @return winner if any
+     */
+    public Player update() {
+        gameCounter++;
+        if (gameCounter > 999) {
+            gameCounter = 0;
+        }
+        if (gameCounter % GameUtils.UPDATE_VISION_FREQUENCY == 0) {
+            updateVisibility();
+        }
+        for (Player player : players) {
+            for (Unit unit : player.getUnits()) {
+                if (!unit.isDead()) {
+                    if (player.isAI() && gameCounter % GameUtils.AI_FREQUENCY == 0) {
+                        // update AI orders
+                        AI.updateUnitOrder(this, unit);
+                    }
+                    if (unit.getOrder() != null) {
+                        // resolve unit action
+                        unit.resolveOrder(this);
+                    } else {
+                        // no order : take initiative
+                        unit.takeInitiative();
+                    }
+                }
+            }
+            // check victory conditions
+            if (gameCounter % GameUtils.CHECK_VICTORY_FREQUENCY == 0 && player.checkIfPlayerWon(this)) {
+                return player;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Updates player vision
+     */
+    public void updateVisibility() {
+        for (Unit unit : players.get(1).getUnits()) {
+            if (unit.getRank() == Rank.enemy && !unit.isDead()) {
+                unit.setVisible(false);
+            }
+        }
+        for (Unit u : getMe().getUnits()) {
+            if (!u.isDead()) {
+                for (Unit e : getEnemies(u)) {
+                    if (MapLogic.canSee(map, u, e)) {
+                        e.setVisible(true);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Updates units positions
+     */
+    public void updateMoves() {
+        for (Player player : players) {
+            for (Unit unit : player.getUnits()) {
+                if (unit.getOrder() != null && unit.getOrder() instanceof MoveOrder) {
+                    // move unit
+                    unit.move(this);
+                }
+            }
+        }
     }
 
 }

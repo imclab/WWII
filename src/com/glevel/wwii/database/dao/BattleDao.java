@@ -21,6 +21,7 @@ public class BattleDao extends Repository<Battle> {
     public static final String CAMPAIGN_ID = "campaign_id";
     public static final String PHASE = "phase";
     public static final String HAS_STARTED = "has_started";
+    public static final String OBJECTIVES = "objectives";
 
     public BattleDao(DatabaseHelper dataBaseHelper) {
         super(dataBaseHelper);
@@ -69,6 +70,7 @@ public class BattleDao extends Repository<Battle> {
         entity.setCampaignId(c.getInt(3));
         entity.setPhase(Phase.values()[c.getInt(4)]);
         entity.setHasStarted(c.getInt(5) == 1);
+        entity.setLstObjectives(GameConverterHelper.getObjectivesFromLoadGame(c.getBlob(6)));
         return entity;
     }
 
@@ -81,6 +83,7 @@ public class BattleDao extends Repository<Battle> {
         args.put(CAMPAIGN_ID, entity.getCampaignId());
         args.put(PHASE, entity.getPhase().ordinal());
         args.put(HAS_STARTED, entity.isStarted());
+        args.put(OBJECTIVES, GameConverterHelper.toByte(entity.getLstObjectives()).toByteArray());
         return args;
     }
 

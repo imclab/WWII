@@ -1,10 +1,12 @@
 package com.glevel.wwii.game.data;
 
+import android.graphics.Color;
+
 import com.glevel.wwii.R;
 
 public enum ArmiesData {
-    USA(R.string.usa_army, R.drawable.ic_army_usa, R.color.bg_btn_green), GERMANY(R.string.german_army,
-            R.drawable.ic_army_germany, R.color.bg_home);
+    USA(R.string.usa_army, R.drawable.ic_army_usa, Color.GREEN), GERMANY(R.string.german_army,
+            R.drawable.ic_army_germany, Color.BLACK);
 
     private final int name;
     private final int flagImage;
