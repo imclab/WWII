@@ -20,8 +20,8 @@ public class SoundEffectManager {
 
     public static HashMap<String, Sound> mMfxMap = new HashMap<String, Sound>();
 
-    private static final int EARS_DISTANCE = 150;// in pixels
-    private static final int SILENCE_DISTANCE = 600;// in pixels
+    private static final int EARS_DISTANCE = 100;// in pixels
+    private static final int SILENCE_DISTANCE = 3200;// in pixels
 
     private Context mContext;
 
