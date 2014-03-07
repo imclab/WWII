@@ -267,10 +267,10 @@ public abstract class Unit extends GameElement implements MovingElement {
                 if (!isRotatingOver) {
                     return;
                 }
+            } else {
+                setOrder(new DefendOrder());
+                return;
             }
-
-            setOrder(new DefendOrder());
-            return;
         }
 
         if (target.isDead() || !(getWeapons().get(0) instanceof IndirectWeapon)
@@ -321,7 +321,9 @@ public abstract class Unit extends GameElement implements MovingElement {
                 // firing !!!
                 currentAction = Action.FIRING;
 
-                battle.getOnNewSoundToPlay().playSound(weapon.getSound(), sprite.getX(), sprite.getY());
+                if (weapon.getAimCounter() == weapon.getCadence()) {
+                    battle.getOnNewSoundToPlay().playSound(weapon.getSound(), sprite.getX(), sprite.getY());
+                }
 
                 if (!(weapon instanceof Knife)) {
                     // add muzzle flash sprite
@@ -428,9 +430,10 @@ public abstract class Unit extends GameElement implements MovingElement {
             // test if the unit can react
             if (Math.random() * 10 + getExperience().ordinal() < panic) {
                 // the unit is under fire
-                if (Math.random() < 0.1) {
-                    battle.getOnNewSoundToPlay().playSound("need_support", sprite.getX(), sprite.getY());
-                }
+                // if (Math.random() < 0.1) {
+                // battle.getOnNewSoundToPlay().playSound("need_support",
+                // sprite.getX(), sprite.getY());
+                // }
                 hide(battle);
                 return;
             }
@@ -493,7 +496,8 @@ public abstract class Unit extends GameElement implements MovingElement {
         if (order == null || order instanceof DefendOrder || order instanceof MoveOrder && Math.random() < 0.3) {
             if (MapLogic.canSee(battle.getMap(), this, shooter) && getBestWeapon(battle, shooter) != null) {
                 setOrder(new FireOrder(shooter));
-                battle.getOnNewSoundToPlay().playSound("incoming", sprite.getX(), sprite.getY());
+                // battle.getOnNewSoundToPlay().playSound("incoming",
+                // sprite.getX(), sprite.getY());
             }
         }
     }

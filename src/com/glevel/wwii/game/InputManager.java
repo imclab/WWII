@@ -182,11 +182,7 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
                 if (!unit.isDead() && g != null && g.getGameElement() instanceof Unit && g != selectedElement
                         && !((Unit) g.getGameElement()).isDead()
                         && ((Unit) g.getGameElement()).getArmy() != ((Unit) selectedElement.getGameElement()).getArmy()) {
-                    if (unit.getWeapons().get(0) instanceof IndirectWeapon) {
-                        unit.setOrder(new FireOrder(x, y));
-                    } else {
-                        unit.setOrder(new FireOrder((Unit) g.getGameElement()));
-                    }
+                    unit.setOrder(new FireOrder((Unit) g.getGameElement()));
                 } else if (!unit.isDead() && unit.canMove()) {
                     unit.setOrder(new MoveOrder(x, y));
                 } else if (!unit.canMove() && unit.getWeapons().get(0) instanceof Turret) {

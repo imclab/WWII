@@ -420,6 +420,10 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
             deploymentZone.setVisible(false);
         }
         battle.setPhase(Phase.combat);
+
+        String atmoSound = GameUtils.ATMO_SOUNDS[(int) Math.round(Math.random() * (GameUtils.ATMO_SOUNDS.length - 1))];
+        playSound(atmoSound, (float) (Math.random() * battle.getMap().getWidth() * GameUtils.PIXEL_BY_TILE),
+                (float) (Math.random() * battle.getMap().getHeight() * GameUtils.PIXEL_BY_TILE));
     }
 
     private void startRenderLoop() {

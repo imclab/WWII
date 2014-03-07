@@ -57,9 +57,9 @@ public class SoundEffectManager {
         // load all other sound effects
         loadMfxFromAssets("explosion");
         loadMfxFromAssets("death");
-        loadMfxFromAssets("need_support");
         loadMfxFromAssets("clonk");
-        loadMfxFromAssets("incoming");
+        // loadMfxFromAssets("need_support");
+        // loadMfxFromAssets("incoming");
     }
 
     private void loadMfxFromAssets(String soundName) {
@@ -80,7 +80,7 @@ public class SoundEffectManager {
             if (sound != null) {
                 // modify volume based on the distance from the sound to the
                 // camera
-                sound.setVolume(getVolumeFromSoundPosition(x, y, true), getVolumeFromSoundPosition(x, y, false));
+                sound.setVolume(getVolumeFromSoundPosition(x, y, true));
                 sound.play();
             }
         }

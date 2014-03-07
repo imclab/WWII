@@ -301,8 +301,9 @@ public class Battle implements Serializable {
 
         // play random atmoshpere sounds
         if (gameCounter % GameUtils.ATMO_SOUND_FREQUENCY == 0) {
-            if (Math.random() < 0.4) {
-                String atmoSound = GameUtils.ATMO_SOUNDS[(int) (Math.random() * GameUtils.ATMO_SOUNDS.length)];
+            if (Math.random() < 0.2) {
+                String atmoSound = GameUtils.ATMO_SOUNDS[(int) Math.round(Math.random()
+                        * (GameUtils.ATMO_SOUNDS.length - 1))];
                 getOnNewSoundToPlay().playSound(atmoSound,
                         (float) (Math.random() * map.getWidth() * GameUtils.PIXEL_BY_TILE),
                         (float) (Math.random() * map.getHeight() * GameUtils.PIXEL_BY_TILE));
