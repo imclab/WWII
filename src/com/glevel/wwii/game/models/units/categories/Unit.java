@@ -267,10 +267,10 @@ public abstract class Unit extends GameElement implements MovingElement {
                 if (!isRotatingOver) {
                     return;
                 }
-            } else {
-                setOrder(new DefendOrder());
-                return;
             }
+
+            setOrder(new DefendOrder());
+            return;
         }
 
         if (target.isDead() || !(getWeapons().get(0) instanceof IndirectWeapon)

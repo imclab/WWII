@@ -79,7 +79,7 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
     private SharedPreferences mSharedPrefs;
     private GraphicsFactory mGameElementFactory;
     private InputManager mInputManager;
-    private GameGUI mGameGUI;
+    protected GameGUI mGameGUI;
     private SoundEffectManager mSoundEffectManager;
 
     public Battle battle = null;
@@ -173,8 +173,6 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
         mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256,
                 Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32, Color.WHITE.hashCode());
         mFont.load();
-
-        // load sound effects
 
         pOnCreateResourcesCallback.onCreateResourcesFinished();
     }
@@ -468,7 +466,9 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mDbHelper.close();
+        if (mDbHelper != null) {
+            mDbHelper.close();
+        }
     }
 
     private void pauseGame() {

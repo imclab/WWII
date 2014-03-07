@@ -36,6 +36,34 @@
         android:layout_alignParentTop="true"
         android:layout_margin="3dp"
         layout="@layout/in_game_unit_layout"
-        android:visibility="gone" />
+        android:visibility="visible" />
+
+    <LinearLayout
+        style="@style/ArmyBuilderColumn"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="3dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="3dp" >
+
+        <com.glevel.wwii.views.CustomTextView
+            android:id="@+id/tutorialInstructions"
+            style="@style/ArmyBuilderSubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/placeholder" />
+
+        <com.glevel.wwii.views.CustomButton
+            android:id="@+id/nextButton"
+            style="@style/ArmyBuilderSmallButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/next" />
+    </LinearLayout>
 
 </RelativeLayout>

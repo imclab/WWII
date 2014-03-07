@@ -122,8 +122,6 @@ public class ArmyBuilderActivity extends MyActivity {
         Player enemyPlayer = new Player("Enemy", mPlayerArmy.getEnemy(), mBattle.getPlayers().size(), true,
                 mBattle.getPlayerVictoryCondition(mPlayerArmy.getEnemy()));
         mBattle.getPlayers().add(enemyPlayer);
-
-        // create AI's player army
         AI.createArmy(enemyPlayer, mBattle);
 
         // get available units to hire
@@ -175,8 +173,7 @@ public class ArmyBuilderActivity extends MyActivity {
 
         // init available troops list
         mAvailableTroopsList = (ListView) findViewById(R.id.availableTroopsList);
-        mAvailableTroopsAdapter = new UnitsArrayAdapter(this, R.layout.army_list_item,
-                mAvailableUnits, false);
+        mAvailableTroopsAdapter = new UnitsArrayAdapter(this, R.layout.army_list_item, mAvailableUnits, false);
         mAvailableTroopsList.setOnItemClickListener(onAvailableUnitClicked);
     }
 

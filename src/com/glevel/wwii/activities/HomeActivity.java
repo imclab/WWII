@@ -159,6 +159,9 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
                             EventAction.button_press, "play_solo");
                 }
                 break;
+            case R.id.tutorialButton:
+                goToTutorial();
+                break;
             case R.id.settingsButton:
                 MusicManager.playSound(getApplicationContext(), R.raw.main_button);
                 showSettings();
@@ -432,11 +435,8 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == R.id.okButton) {
                             // go to tutorial
-                            // Intent intent = new Intent(HomeActivity.this,
-                            // TutorialActivity.class);
-                            // dialog.dismiss();
-                            // startActivity(intent);
-                            // finish();
+                            dialog.dismiss();
+                            goToTutorial();
                         } else {
                             // create new battle
                             dialog.dismiss();
@@ -446,6 +446,12 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
                 });
         dialog.show();
         mSharedPrefs.edit().putInt(GameUtils.TUTORIAL_DONE, 1).commit();
+    }
+
+    private void goToTutorial() {
+        Intent intent = new Intent(HomeActivity.this, TutorialActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override

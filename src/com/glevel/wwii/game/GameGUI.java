@@ -53,6 +53,7 @@ public class GameGUI {
     public void initGUI() {
         // setup selected unit layout
         mSelectedUnitLayout = (ViewGroup) mGameActivity.findViewById(R.id.selectedUnit);
+        mSelectedUnitLayout.setVisibility(View.GONE);
 
         // setup finish deployment button
         mFinishDeploymentButton = (Button) mGameActivity.findViewById(R.id.finishDeployment);
@@ -77,6 +78,7 @@ public class GameGUI {
 
     public void hideLoadingScreen() {
         mLoadingScreen.dismiss();
+        mGameActivity.findViewById(R.id.rootLayout).setVisibility(View.VISIBLE);
     }
 
     public void openGameMenu() {
