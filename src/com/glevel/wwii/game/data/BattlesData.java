@@ -3,9 +3,9 @@ package com.glevel.wwii.game.data;
 import com.glevel.wwii.R;
 
 public enum BattlesData {
-	OOSTERBEEK(R.string.battle_oosterbeek, R.drawable.oosterbeck, "oosterbeck.tmx", 100, 100, 10, 12, true), NIMEGUE(R.string.battle_nimegue,
-			R.drawable.nijmegen, "nijmegen.tmx", 120, 65, 8, 27, true), ARNHEM_STREETS(R.string.battle_arnhem_streets, R.drawable.arnhem_streets,
-			"arnhem_streets.tmx", 70, 120, 30, 8, true);
+	OOSTERBEEK(R.string.battle_oosterbeek, R.drawable.oosterbeck, "oosterbeck.tmx", 120, 120, 10, 12, true), NIMEGUE(R.string.battle_nimegue,
+			R.drawable.nijmegen, "nijmegen.tmx", 130, 90, 8, 27, true), ARNHEM_STREETS(R.string.battle_arnhem_streets, R.drawable.arnhem_streets,
+			"arnhem_streets.tmx", 80, 120, 30, 8, true);
 
 	private final int id;
 	private final int name;

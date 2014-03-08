@@ -376,6 +376,10 @@ public abstract class Vehicle extends Unit {
                 } else if (battle.getGameCounter() % (11 - weapon.getShootSpeed()) == 0) {
                     // firing !!!
                     currentAction = Action.FIRING;
+                    
+                    if (weapon.getAimCounter() == weapon.getCadence()) {
+                        battle.getOnNewSoundToPlay().playSound(weapon.getSound(), sprite.getX(), sprite.getY());
+                    }
 
                     // add muzzle flash sprite
                     sprite.startFireAnimation(weapon);

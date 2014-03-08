@@ -16,6 +16,7 @@ import com.glevel.wwii.game.models.orders.MoveOrder;
 import com.glevel.wwii.game.models.units.Soldier;
 import com.glevel.wwii.game.models.units.Tank;
 import com.glevel.wwii.game.models.units.categories.Unit;
+import com.glevel.wwii.game.models.units.categories.Vehicle;
 import com.glevel.wwii.game.models.weapons.Bazooka;
 import com.glevel.wwii.game.models.weapons.HMG;
 import com.glevel.wwii.game.models.weapons.Mortar;
@@ -173,16 +174,34 @@ public class AI {
 
 	public static void deployTroops(Battle battle, Player player) {
 		int[] deploymentBoundaries = battle.getDeploymentBoundaries(player);
+		// deploy vehicles first
 		for (Unit unit : player.getUnits()) {
-			// get a random position
-			Tile tile = null;
-			do {
-				tile = battle.getMap().getTiles()[(int) (Math.random() * (battle.getMap().getHeight() - 1))][(int) (1 + deploymentBoundaries[0] + Math.random()
-						* (deploymentBoundaries[1] - deploymentBoundaries[0] - 1))];
-			} while (!unit.canMoveIn(tile));
+			if (unit instanceof Vehicle) {
+				// get a random position
+				Tile tile = null;
+				do {
+					tile = battle.getMap().getTiles()[(int) (Math.random() * (battle.getMap().getHeight() - 1))][(int) (1 + deploymentBoundaries[0] + Math
+							.random() * (deploymentBoundaries[1] - deploymentBoundaries[0] - 1))];
+				} while (!unit.canMoveIn(tile));
 
-			// position the units
-			unit.setTilePosition(battle, tile);
+				// position the units
+				unit.setTilePosition(battle, tile);
+			}
+		}
+
+		// then other units
+		for (Unit unit : player.getUnits()) {
+			if (!(unit instanceof Vehicle)) {
+				// get a random position
+				Tile tile = null;
+				do {
+					tile = battle.getMap().getTiles()[(int) (Math.random() * (battle.getMap().getHeight() - 1))][(int) (1 + deploymentBoundaries[0] + Math
+							.random() * (deploymentBoundaries[1] - deploymentBoundaries[0] - 1))];
+				} while (!unit.canMoveIn(tile));
+
+				// position the units
+				unit.setTilePosition(battle, tile);
+			}
 		}
 	}
 }

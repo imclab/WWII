@@ -60,9 +60,10 @@
         <com.glevel.wwii.views.CustomButton
             android:id="@+id/nextButton"
             style="@style/ArmyBuilderSmallButton"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginTop="1dp"
             android:text="@string/next" />
     </LinearLayout>
 

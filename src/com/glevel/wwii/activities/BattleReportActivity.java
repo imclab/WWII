@@ -14,102 +14,103 @@ import com.glevel.wwii.activities.adapters.GameReportUnitsArrayAdapter;
 import com.glevel.wwii.database.DatabaseHelper;
 import com.glevel.wwii.game.GameConverterHelper;
 import com.glevel.wwii.game.models.Battle;
+import com.glevel.wwii.utils.MusicManager;
 
 public class BattleReportActivity extends MyActivity {
 
-    private DatabaseHelper mDbHelper;
-    private boolean mIsVictory = false;
-    private Battle battle;
+	private DatabaseHelper mDbHelper;
+	private boolean mIsVictory = false;
+	private Battle battle;
 
-    private Button mLeaveReportBtn;
-    private ListView mMyArmyList;
-    private ListView mEnemyArmyList;
+	private Button mLeaveReportBtn;
+	private ListView mMyArmyList;
+	private ListView mEnemyArmyList;
 
-    /**
-     * Callbacks
-     */
-    private OnClickListener onLeaveReportClicked = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            leaveReport();
-        }
-    };
+	/**
+	 * Callbacks
+	 */
+	private OnClickListener onLeaveReportClicked = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			MusicManager.playSound(getApplicationContext(), R.raw.main_button);
+			leaveReport();
+		}
+	};
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-        mDbHelper = new DatabaseHelper(getApplicationContext());
+		mDbHelper = new DatabaseHelper(getApplicationContext());
 
-        // get battle info
-        Bundle extras = getIntent().getExtras();
-        battle = mDbHelper.getBattleDao().getById(extras.getLong("game_id"));
-        if (battle == null) {
-            leaveReport();
-            return;
-        }
+		// get battle info
+		Bundle extras = getIntent().getExtras();
+		battle = mDbHelper.getBattleDao().getById(extras.getLong("game_id"));
+		if (battle == null) {
+			leaveReport();
+			return;
+		}
 
-        mIsVictory = extras.getBoolean("victory");
+		mIsVictory = extras.getBoolean("victory");
 
-        // erase saved game from database
-        GameConverterHelper.deleteSavedBattles(mDbHelper, battle.getCampaignId());
+		// erase saved game from database
+		GameConverterHelper.deleteSavedBattles(mDbHelper, battle.getCampaignId());
 
-        setContentView(R.layout.activity_battle_report);
-        setupUI();
-    }
+		setContentView(R.layout.activity_battle_report);
+		setupUI();
+	}
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mDbHelper.close();
-    }
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		mDbHelper.close();
+	}
 
-    @Override
-    public void onBackPressed() {
-        leaveReport();
-    }
+	@Override
+	public void onBackPressed() {
+		leaveReport();
+	}
 
-    private void setupUI() {
-        // setup background victory label
-        TextView victoryLabel = (TextView) findViewById(R.id.victoryLabel);
-        if (mIsVictory) {
-            victoryLabel.setText(R.string.victory);
-            victoryLabel.setTextColor(getResources().getColor(R.color.green));
-        } else {
-            victoryLabel.setText(R.string.defeat);
-            victoryLabel.setTextColor(getResources().getColor(R.color.red));
-        }
+	private void setupUI() {
+		// setup background victory label
+		TextView victoryLabel = (TextView) findViewById(R.id.victoryLabel);
+		if (mIsVictory) {
+			victoryLabel.setText(R.string.victory);
+			victoryLabel.setTextColor(getResources().getColor(R.color.green));
+		} else {
+			victoryLabel.setText(R.string.defeat);
+			victoryLabel.setTextColor(getResources().getColor(R.color.red));
+		}
 
-        // init army flag
-        TextView viewTitle = (TextView) findViewById(R.id.title);
-        viewTitle.setCompoundDrawablesWithIntrinsicBounds(battle.getMe().getArmy().getFlagImage(), 0, 0, 0);
+		// init army flag
+		TextView viewTitle = (TextView) findViewById(R.id.title);
+		viewTitle.setCompoundDrawablesWithIntrinsicBounds(battle.getMe().getArmy().getFlagImage(), 0, 0, 0);
 
-        // init leave report button
-        mLeaveReportBtn = (Button) findViewById(R.id.leaveReport);
-        mLeaveReportBtn.setOnClickListener(onLeaveReportClicked);
+		// init leave report button
+		mLeaveReportBtn = (Button) findViewById(R.id.leaveReport);
+		mLeaveReportBtn.setOnClickListener(onLeaveReportClicked);
 
-        // init my army list
-        mMyArmyList = (ListView) findViewById(R.id.myArmyList);
-        GameReportUnitsArrayAdapter mMyArmyAdapter = new GameReportUnitsArrayAdapter(this, R.layout.army_list_item,
-                battle.getMe().getUnits(), true);
-        mMyArmyList.setAdapter(mMyArmyAdapter);
+		// init my army list
+		mMyArmyList = (ListView) findViewById(R.id.myArmyList);
+		GameReportUnitsArrayAdapter mMyArmyAdapter = new GameReportUnitsArrayAdapter(this, R.layout.army_list_item, battle.getMe().getUnits(), true);
+		mMyArmyList.setAdapter(mMyArmyAdapter);
 
-        // init enemy's army list
-        mEnemyArmyList = (ListView) findViewById(R.id.enemyArmyList);
-        GameReportUnitsArrayAdapter mEnemyArmyAdapter = new GameReportUnitsArrayAdapter(this, R.layout.army_list_item,
-                battle.getEnemies(battle.getMe().getArmy()), true);
-        mEnemyArmyList.setAdapter(mEnemyArmyAdapter);
-    }
+		// init enemy's army list
+		mEnemyArmyList = (ListView) findViewById(R.id.enemyArmyList);
+		GameReportUnitsArrayAdapter mEnemyArmyAdapter = new GameReportUnitsArrayAdapter(this, R.layout.army_list_item, battle.getEnemies(battle.getMe()
+				.getArmy()), true);
+		mEnemyArmyList.setAdapter(mEnemyArmyAdapter);
+	}
 
-    private void leaveReport() {
-//        if (battle.isSingleBattle()) {
-            // go to home screen
-            startActivity(new Intent(BattleReportActivity.this, HomeActivity.class));
-//        } else {
-//            // go to campaign screen
-//            // TODO
-//        }
-        finish();
-    }
+	private void leaveReport() {
+		// if (battle.isSingleBattle()) {
+		// go to home screen
+		startActivity(new Intent(BattleReportActivity.this, HomeActivity.class));
+		// } else {
+		// // go to campaign screen
+		// // TODO
+		// }
+		finish();
+	}
 
 }
