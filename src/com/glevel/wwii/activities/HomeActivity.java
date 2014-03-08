@@ -39,6 +39,7 @@ import com.glevel.wwii.game.GameUtils.MusicState;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.utils.ApplicationUtils;
 import com.glevel.wwii.utils.MusicManager;
+import com.glevel.wwii.utils.MusicManager.Music;
 import com.glevel.wwii.views.CustomAlertDialog;
 
 public class HomeActivity extends MyActivity implements OnClickListener, OnBillingServiceConnectedListener {
@@ -287,10 +288,16 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
 					break;
 				case R.id.musicOn:
 					newMusicState = MusicState.on;
+
 					break;
 				}
 				editor.putInt(GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME, newMusicState.ordinal());
 				editor.commit();
+				if (newMusicState == MusicState.on) {
+					MusicManager.start(HomeActivity.this, Music.MUSIC_MENU);
+				} else {
+					MusicManager.release();
+				}
 				GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press, "music_" + newMusicState.name());
 			}
 		});
