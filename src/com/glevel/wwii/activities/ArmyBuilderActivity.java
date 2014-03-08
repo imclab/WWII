@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -140,6 +141,7 @@ public class ArmyBuilderActivity extends MyActivity {
 				updateRequisitionPointsLeft(mPlayer.getRequisition());
 				mMyArmyAdapter = new UnitsArrayAdapter(ArmyBuilderActivity.this, R.layout.army_list_item, mPlayer.getUnits(), true);
 				mMyArmyList.setAdapter(mMyArmyAdapter);
+				mMyArmyList.startAnimation(AnimationUtils.loadAnimation(ArmyBuilderActivity.this, R.anim.fade_in));
 				createAIArmy();
 			}
 

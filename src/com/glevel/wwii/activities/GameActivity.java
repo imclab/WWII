@@ -109,6 +109,8 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
     @Override
     protected void onCreate(Bundle pSavedInstanceState) {
         super.onCreate(pSavedInstanceState);
+        
+        mMusic = null;
 
         mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 

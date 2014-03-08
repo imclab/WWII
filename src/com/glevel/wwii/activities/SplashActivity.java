@@ -46,7 +46,7 @@ public class SplashActivity extends MyActivity {
 
 		prepareSplashScreenTitle();
 
-		mIsMusic = false;
+		mMusic = null;
 	}
 
 	@Override

@@ -15,6 +15,7 @@ import com.glevel.wwii.database.DatabaseHelper;
 import com.glevel.wwii.game.GameConverterHelper;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.utils.MusicManager;
+import com.glevel.wwii.utils.MusicManager.Music;
 
 public class BattleReportActivity extends MyActivity {
 
@@ -40,6 +41,8 @@ public class BattleReportActivity extends MyActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		mMusic = Music.MUSIC_CAMPAIGN;
 
 		mDbHelper = new DatabaseHelper(getApplicationContext());
 
@@ -103,13 +106,8 @@ public class BattleReportActivity extends MyActivity {
 	}
 
 	private void leaveReport() {
-		// if (battle.isSingleBattle()) {
 		// go to home screen
 		startActivity(new Intent(BattleReportActivity.this, HomeActivity.class));
-		// } else {
-		// // go to campaign screen
-		// // TODO
-		// }
 		finish();
 	}
 
