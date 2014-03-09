@@ -41,7 +41,7 @@ public class MusicManager {
 
 	public static void start(Context context, Music music) {
 		SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-		if (sharedPrefs.getInt(GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME, MusicState.off.ordinal()) == MusicState.on.ordinal()) {
+		if (sharedPrefs.getInt(GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME, MusicState.on.ordinal()) == MusicState.on.ordinal()) {
 			start(context, music, false);
 		}
 	}

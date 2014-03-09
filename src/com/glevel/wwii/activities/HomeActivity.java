@@ -274,7 +274,7 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
 
 		mRadioMusicvolume = (RadioGroup) findViewById(R.id.musicVolume);
 		// update radio buttons states according to the music preference
-		int musicVolume = mSharedPrefs.getInt(GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME, 0);
+		int musicVolume = mSharedPrefs.getInt(GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME, MusicState.on.ordinal());
 		((RadioButton) mRadioMusicvolume.getChildAt(musicVolume)).setChecked(true);
 		mRadioMusicvolume.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
