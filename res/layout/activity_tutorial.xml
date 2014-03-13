@@ -32,18 +32,18 @@
         android:id="@+id/selectedUnit"
         android:layout_width="235dp"
         android:layout_height="85dp"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
         android:layout_margin="3dp"
         layout="@layout/in_game_unit_layout"
         android:visibility="visible" />
 
     <LinearLayout
         style="@style/ArmyBuilderColumn"
-        android:layout_width="300dp"
+        android:layout_width="500dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:layout_margin="3dp"
         android:gravity="center"
         android:orientation="vertical"

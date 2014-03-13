@@ -215,6 +215,7 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
 		// make the camera not exceed the bounds of the TMXEntity
 		this.mCamera.setBounds(0, 0, tmxLayer.getHeight(), tmxLayer.getWidth());
 		this.mCamera.setBoundsEnabled(true);
+		this.mCamera.setZoomFactor(0.5f);
 
 		pOnCreateSceneCallback.onCreateSceneFinished(mScene);
 	}
@@ -274,7 +275,7 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
 
 				// add objectives for the first time
 				for (int n = 0; n < GameUtils.NUMBER_OBJECTIVES_PER_PLAYER; n++) {
-					Tile tile = battle.getMap().getTiles()[(int) ((1.0 * n + Math.random()) * (battle.getMap().getHeight() - 2) / GameUtils.NUMBER_OBJECTIVES_PER_PLAYER)][(int) (1 + deploymentBoundaries[0] + Math
+					Tile tile = battle.getMap().getTiles()[(int) ((1.0 * n + 0.2 + Math.random() * 0.6) * (battle.getMap().getHeight() - 2) / GameUtils.NUMBER_OBJECTIVES_PER_PLAYER)][(int) (1 + deploymentBoundaries[0] + Math
 							.random() * (deploymentBoundaries[1] - deploymentBoundaries[0] - 2))];
 					ObjectivePoint objective = new ObjectivePoint(tile.getTileColumn() * GameUtils.PIXEL_BY_TILE, tile.getTileRow() * GameUtils.PIXEL_BY_TILE,
 							player.getArmy(), getVertexBufferObjectManager());
@@ -301,6 +302,7 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
 			for (Unit unit : player.getUnits()) {
 				// add element to scene / create sprite
 				addElementToScene(unit, player.getArmyIndex() == 0);
+				unit.setOrder(unit.getOrder());
 
 				if (battle.isStarted()) {
 					// load position and rotation
