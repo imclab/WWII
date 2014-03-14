@@ -31,7 +31,7 @@
             android:value="@string/app_id" />
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="4132500" />
+            android:value="4242000" />
 
         <activity
             android:name=".activities.SplashActivity"

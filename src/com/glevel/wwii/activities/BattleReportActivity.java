@@ -8,16 +8,21 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.glevel.wwii.MyActivity;
 import com.glevel.wwii.R;
 import com.glevel.wwii.activities.adapters.GameReportUnitsArrayAdapter;
 import com.glevel.wwii.database.DatabaseHelper;
 import com.glevel.wwii.game.GameConverterHelper;
 import com.glevel.wwii.game.models.Battle;
+import com.glevel.wwii.game.models.ObjectivePoint;
+import com.glevel.wwii.game.models.units.Tank;
+import com.glevel.wwii.game.models.units.categories.Unit;
+import com.glevel.wwii.game.models.units.categories.Unit.InjuryState;
 import com.glevel.wwii.utils.MusicManager;
 import com.glevel.wwii.utils.MusicManager.Music;
+import com.google.android.gms.games.GamesClient;
+import com.google.example.games.basegameutils.BaseGameActivity;
 
-public class BattleReportActivity extends MyActivity {
+public class BattleReportActivity extends BaseGameActivity {
 
 	private DatabaseHelper mDbHelper;
 	private boolean mIsVictory = false;
@@ -57,7 +62,8 @@ public class BattleReportActivity extends MyActivity {
 		mIsVictory = extras.getBoolean("victory");
 
 		// erase saved game from database
-		GameConverterHelper.deleteSavedBattles(mDbHelper, battle.getCampaignId());
+		GameConverterHelper.deleteSavedBattles(mDbHelper,
+				battle.getCampaignId());
 
 		setContentView(R.layout.activity_battle_report);
 		setupUI();
@@ -87,7 +93,8 @@ public class BattleReportActivity extends MyActivity {
 
 		// init army flag
 		TextView viewTitle = (TextView) findViewById(R.id.title);
-		viewTitle.setCompoundDrawablesWithIntrinsicBounds(battle.getMe().getArmy().getFlagImage(), 0, 0, 0);
+		viewTitle.setCompoundDrawablesWithIntrinsicBounds(battle.getMe()
+				.getArmy().getFlagImage(), 0, 0, 0);
 
 		// init leave report button
 		mLeaveReportBtn = (Button) findViewById(R.id.leaveReport);
@@ -95,13 +102,15 @@ public class BattleReportActivity extends MyActivity {
 
 		// init my army list
 		mMyArmyList = (ListView) findViewById(R.id.myArmyList);
-		GameReportUnitsArrayAdapter mMyArmyAdapter = new GameReportUnitsArrayAdapter(this, R.layout.army_list_item, battle.getMe().getUnits(), true);
+		GameReportUnitsArrayAdapter mMyArmyAdapter = new GameReportUnitsArrayAdapter(
+				this, R.layout.army_list_item, battle.getMe().getUnits(), true);
 		mMyArmyList.setAdapter(mMyArmyAdapter);
 
 		// init enemy's army list
 		mEnemyArmyList = (ListView) findViewById(R.id.enemyArmyList);
-		GameReportUnitsArrayAdapter mEnemyArmyAdapter = new GameReportUnitsArrayAdapter(this, R.layout.army_list_item, battle.getEnemies(battle.getMe()
-				.getArmy()), true);
+		GameReportUnitsArrayAdapter mEnemyArmyAdapter = new GameReportUnitsArrayAdapter(
+				this, R.layout.army_list_item, battle.getEnemies(battle.getMe()
+						.getArmy()), true);
 		mEnemyArmyList.setAdapter(mEnemyArmyAdapter);
 	}
 
@@ -111,4 +120,62 @@ public class BattleReportActivity extends MyActivity {
 		finish();
 	}
 
+	@Override
+	public void onSignInFailed() {
+	}
+
+	@Override
+	public void onSignInSucceeded() {
+		GamesClient gameClient = getGamesClient();
+		// unlock achievements
+		if (mIsVictory) {
+			gameClient.incrementAchievement(
+					getString(R.string.achievement_skillful_general), 1);
+
+			int nbTanksDestroyed = 0;
+			// iterate through enemy units
+			for (Unit enemyUnit : battle.getEnemyPlayer(battle.getMe())
+					.getUnits()) {
+				if (enemyUnit instanceof Tank) {
+					nbTanksDestroyed++;
+				}
+			}
+
+			gameClient.incrementAchievement(
+					getString(R.string.achievement_tanks_terror),
+					nbTanksDestroyed);
+
+			// iterate through my units
+			boolean carefulTactician = true;
+			for (Unit unit : battle.getMe().getUnits()) {
+				if (unit.getHealth() == InjuryState.DEAD) {
+					carefulTactician = false;
+				}
+				if (unit.getFrags() >= 10) {
+					gameClient
+							.unlockAchievement(getString(R.string.achievement_careful_tactician));
+				}
+			}
+
+			if (carefulTactician) {
+				gameClient
+						.unlockAchievement(getString(R.string.achievement_careful_tactician));
+			}
+
+			// iterate through the objective points
+			boolean brilliantTactician = true;
+			for (ObjectivePoint objective : battle.getLstObjectives()) {
+				if (objective.getOwner() != battle.getMe().getArmy()) {
+					brilliantTactician = false;
+					return;
+				}
+			}
+
+			if (brilliantTactician) {
+				gameClient.incrementAchievement(
+						getString(R.string.achievement_brilliant_tactician), 1);
+			}
+
+		}
+	}
 }
