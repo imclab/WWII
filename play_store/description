@@ -1,18 +1,15 @@
-Winter is coming !
-
-Challenge your friends and players from all around the world in this highly tactical multiplayer turn-based strategy game ! Hire the right troops at the right time, conquer the strategic zones of the map to earn more gold and to get more bonuses, surround your enemies and victory is yours !
-
-Resource management, lands' conquests, random maps, consideration of units' morale and experience, armies' resupplying : Warlords gathers all the classical elements of strategy games (Warcraft, Dawn of War, Heroes of Might and Magic...), and board games (A Game of Thrones, Warhammer, 40k...).
-
+WWII : Market Garden is a highly tactical real-time strategy game which takes place during the World War 2.
+Join the Axis or the Allies forces; hire soldiers, cannons and tanks, and play different battles of the Market Garden Operation (1944).
+ 
 *** AWESOME FEATURES ***
-- up to 8 players on the same map !
-- 5 different armies = many gaming experiences !
-- an evil AI in solo mode
-- chat in multiplayer games
-- best generals ranking !
-- fully integrated with Google Game Services (find and play with friends easily, rankings, achievements, ...)
+- realistic soldiers behaviours : units can panic, reload weapons, save ammo, prepare ambushes,...
+- super tactical : win either by destroying opponents' army or by conquering the strategic points of the map !
+- real WW2 weapons and tank !
+- many weapons : rifles, hand grenades, MGs, mortars, bazookas...
+- every weapon has its own firing speed, reloading time, magazine size, and accuracy based upon real characteristics.
 
-This game has been developed for strategy games fans on my spare time. Do not hesitate to contact me about any issue/feedback or cool idea you may have !
+This game is a tribute to the Close Combat series and has been developed for RTS games fans, on my spare time. 
+Do not hesitate to contact me about any issue/feedback or if you want to join the project !
 
 
 
@@ -20,20 +17,15 @@ This game has been developed for strategy games fans on my spare time. Do not he
 /**
 *	FRENCH
 */
+WWII : Market Garden est un jeu de stratégie en temps réel hautement tactique se déroulant pendant la Seconde Guerre Mondiale.
+Rejoignez les forces de l'Axe ou les forces Alliées; recrutez soldats, canons et tanks, et reproduisez les différentes batailles de l'Opération Market Garden (1944).
+ 
+*** POURQUOI WWII EST INNOVANT ET COOL ***
+- comportements réalistes des soldats : les unités paniquent, rechargent leurs armes, font attention à leurs munitions, préparent des embuscades...
+- super tactique : vous pouvez gagner soit en détruisant l'armée adverse,soit en conquérant tous les points stratégiques de la carte !
+- les vraies armes et les vrais tanks de la deuxième Guerre Mondiale !
+- de nombreuses armes : fusils, grenades, mitrailleuses, mortiers, bazookas...
+- chaque arme a sa propre cadence de tir, temps de rechargement, taille de chargeurs, et précision basés sur les caractéristiques réelles.
 
-
-Winter is coming !
-
-Confrontez vos amis et des joueurs du monde entier dans ce jeu de stratégie au tour-par-tour multijoueur hautement tactique ! Recrutez les bonnes troupes au bon moment, capturez les zones stratégiques de la carte pour gagner plus d'or et de bonus, encerlez vos ennemis et la victoire est vôtre !
-
-Gestion des ressources, conquêtes de territoires, prise en considération du moral et de l'expérience des armées, ravitaillement des unités : Warlords rassemble tous les classiques des jeux de stratégie (Warcraft, Dawn of War, Heroes of Might and Magic...), et des jeux de plateaux (Le Trône de Fer, Warhammer, 40k...).
-
-*** CARACTÉRISTIQUES DU JEU ***
-- jusqu'à 8 joueurs dans la même partie !
-- 5 armées différentes = de nombreuses expériences de jeu !
-- une IA démoniaque en mode solo
-- chat integré dans le jeu en mode multijoueur
-- classement des meilleurs généraux !
-- complètement intégré au service de jeu Play Jeux (recherche simplifiée de vos amis, invitations à jouer, classements, trophées, ...)
-
-Ce jeu a été développé pour les fans de jeux de stratégie sur mon temps libre. N'hésitez pas à me contacter pour tout problème ou toute question relative au jeu !
+Ce jeu est un hommage à la série des Close Combat et a été développé pour les fans de jeux de stratégie sur mon temps libre. 
+N'hésitez pas à me contacter pour tout problème ou toute question relative au jeu, ou si vous voulez rejoindre le projet !
