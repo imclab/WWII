@@ -38,7 +38,7 @@ public class BattleReportActivity extends BaseGameActivity {
 	private OnClickListener onLeaveReportClicked = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			MusicManager.playSound(getApplicationContext(), R.raw.main_button);
+			MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
 			leaveReport();
 		}
 	};

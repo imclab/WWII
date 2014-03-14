@@ -155,7 +155,7 @@ public class HomeActivity extends BaseGameActivity implements OnClickListener,
 			switch (v.getId()) {
 			case R.id.playButton:
 				MusicManager.playSound(getApplicationContext(),
-						R.raw.main_button);
+						R.raw.button_sound);
 				if (mSharedPrefs.getInt(GameUtils.TUTORIAL_DONE, 0) == 0) {
 					showTutorialDialog();
 				} else {
@@ -173,12 +173,12 @@ public class HomeActivity extends BaseGameActivity implements OnClickListener,
 				break;
 			case R.id.tutorialButton:
 				MusicManager.playSound(getApplicationContext(),
-						R.raw.main_button);
+						R.raw.button_sound);
 				goToTutorial();
 				break;
 			case R.id.settingsButton:
 				MusicManager.playSound(getApplicationContext(),
-						R.raw.main_button);
+						R.raw.button_sound);
 				showSettings();
 				GoogleAnalyticsHelper.sendEvent(getApplicationContext(),
 						EventCategory.ui_action, EventAction.button_press,
@@ -186,7 +186,7 @@ public class HomeActivity extends BaseGameActivity implements OnClickListener,
 				break;
 			case R.id.backButton:
 				MusicManager.playSound(getApplicationContext(),
-						R.raw.main_button);
+						R.raw.button_sound);
 				onBackPressed();
 				GoogleAnalyticsHelper.sendEvent(getApplicationContext(),
 						EventCategory.ui_action, EventAction.button_press,
@@ -194,7 +194,7 @@ public class HomeActivity extends BaseGameActivity implements OnClickListener,
 				break;
 			case R.id.aboutButton:
 				MusicManager.playSound(getApplicationContext(),
-						R.raw.main_button);
+						R.raw.button_sound);
 				openAboutDialog();
 				GoogleAnalyticsHelper.sendEvent(getApplicationContext(),
 						EventCategory.ui_action, EventAction.button_press,
@@ -202,7 +202,7 @@ public class HomeActivity extends BaseGameActivity implements OnClickListener,
 				break;
 			case R.id.rateButton:
 				MusicManager.playSound(getApplicationContext(),
-						R.raw.main_button);
+						R.raw.button_sound);
 				ApplicationUtils.rateTheApp(this);
 				GoogleAnalyticsHelper.sendEvent(getApplicationContext(),
 						EventCategory.ui_action, EventAction.button_press,
@@ -210,7 +210,7 @@ public class HomeActivity extends BaseGameActivity implements OnClickListener,
 				break;
 			case R.id.donateButton:
 				MusicManager.playSound(getApplicationContext(),
-						R.raw.main_button);
+						R.raw.button_sound);
 				mInAppBillingHelper.purchaseItem("com.glevel.wwii.donate");
 				GoogleAnalyticsHelper.sendEvent(getApplicationContext(),
 						EventCategory.ui_action, EventAction.button_press,
@@ -218,7 +218,7 @@ public class HomeActivity extends BaseGameActivity implements OnClickListener,
 				break;
 			case R.id.shareButton:
 				MusicManager.playSound(getApplicationContext(),
-						R.raw.main_button);
+						R.raw.button_sound);
 				ApplicationUtils.startSharing(
 						this,
 						getString(R.string.share_subject,
@@ -230,18 +230,18 @@ public class HomeActivity extends BaseGameActivity implements OnClickListener,
 				break;
 			case R.id.sign_in_button:
 				MusicManager.playSound(getApplicationContext(),
-						R.raw.main_button);
+						R.raw.button_sound);
 				beginUserInitiatedSignIn();
 				break;
 			case R.id.sign_out_button:
 				MusicManager.playSound(getApplicationContext(),
-						R.raw.main_button);
+						R.raw.button_sound);
 				signOut();
 				showSignInButton();
 				break;
 			case R.id.achievementsButton:
 				MusicManager.playSound(getApplicationContext(),
-						R.raw.main_button);
+						R.raw.button_sound);
 				startActivityForResult(
 						getGamesClient().getAchievementsIntent(),
 						REQUEST_ACHIEVEMENTS);
@@ -317,7 +317,7 @@ public class HomeActivity extends BaseGameActivity implements OnClickListener,
 					@Override
 					public void onCheckedChanged(RadioGroup group, int checkedId) {
 						MusicManager.playSound(getApplicationContext(),
-								R.raw.main_button);
+								R.raw.button_sound);
 						// update game difficulty in preferences
 						DifficultyLevel newDifficultyLevel = null;
 						Editor editor = mSharedPrefs.edit();
@@ -500,7 +500,7 @@ public class HomeActivity extends BaseGameActivity implements OnClickListener,
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						MusicManager.playSound(getApplicationContext(),
-								R.raw.main_button);
+								R.raw.button_sound);
 						if (which == R.id.okButton) {
 							// load game
 							Intent i = new Intent(HomeActivity.this,
@@ -529,7 +529,7 @@ public class HomeActivity extends BaseGameActivity implements OnClickListener,
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						MusicManager.playSound(getApplicationContext(),
-								R.raw.main_button);
+								R.raw.button_sound);
 
 						if (which == R.id.okButton) {
 							// go to tutorial
