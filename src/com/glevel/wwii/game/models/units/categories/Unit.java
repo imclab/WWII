@@ -55,7 +55,8 @@ public abstract class Unit extends GameElement implements MovingElement {
 	}
 
 	public static enum InjuryState {
-		NONE(R.color.green), INJURED(R.color.yellow), BADLYINJURED(R.color.orange), DEAD(R.color.red);
+		NONE(R.color.green), INJURED(R.color.yellow), BADLYINJURED(
+				R.color.orange), DEAD(R.color.red);
 
 		private final int color;
 
@@ -88,7 +89,9 @@ public abstract class Unit extends GameElement implements MovingElement {
 		WAITING, MOVING, RUNNING, FIRING, HIDING, RELOADING, AIMING, DEFENDING, FIGHTING
 	}
 
-	public Unit(ArmiesData army, int name, int image, Experience experience, List<Weapon> weapons, int moveSpeed, String spriteName, float spriteScale) {
+	public Unit(ArmiesData army, int name, int image, Experience experience,
+			List<Weapon> weapons, int moveSpeed, String spriteName,
+			float spriteScale) {
 		super(name, spriteName, spriteScale);
 		this.army = army;
 		this.image = image;
@@ -191,10 +194,12 @@ public abstract class Unit extends GameElement implements MovingElement {
 	public Unit copy() {
 		Unit unit = null;
 		if (this instanceof Soldier) {
-			unit = new Soldier(army, name, image, experience, weapons, moveSpeed, spriteName, spriteScale);
+			unit = new Soldier(army, name, image, experience, weapons,
+					moveSpeed, spriteName, spriteScale);
 		} else if (this instanceof Tank) {
 			Vehicle vehicle = (Vehicle) this;
-			unit = new Tank(army, name, image, experience, weapons, moveSpeed, vehicle.getArmor(), spriteName, spriteScale);
+			unit = new Tank(army, name, image, experience, weapons, moveSpeed,
+					vehicle.getArmor(), spriteName, spriteScale);
 		}
 		return unit;
 	}
@@ -206,22 +211,27 @@ public abstract class Unit extends GameElement implements MovingElement {
 		this.currentAction = Action.MOVING;
 		MoveOrder moveOrder = (MoveOrder) order;
 
-		updateUnitRotation(moveOrder.getXDestination(), moveOrder.getYDestination());
+		updateUnitRotation(moveOrder.getXDestination(),
+				moveOrder.getYDestination());
 		float dx = moveOrder.getXDestination() - sprite.getX();
 		float dy = moveOrder.getYDestination() - sprite.getY();
 		double angle = Math.atan(dy / dx);
 		float dd = moveSpeed * 10 * 0.03f * getUnitSpeed();
 
 		boolean hasArrived = false;
-		float distanceLeft = MapLogic.getDistanceBetween(moveOrder.getXDestination(), moveOrder.getYDestination(), sprite.getX(), sprite.getY());
+		float distanceLeft = MapLogic.getDistanceBetween(
+				moveOrder.getXDestination(), moveOrder.getYDestination(),
+				sprite.getX(), sprite.getY());
 		if (distanceLeft < dd) {
 			hasArrived = true;
 			dd = distanceLeft;
 		}
 
-		float[] newPosition = MapLogic.getCoordinatesAfterTranslation(sprite.getX(), sprite.getY(), dd, angle, dx > 0);
+		float[] newPosition = MapLogic.getCoordinatesAfterTranslation(
+				sprite.getX(), sprite.getY(), dd, angle, dx > 0);
 
-		Tile nextTile = MapLogic.getTileAtCoordinates(battle.getMap(), newPosition[0], newPosition[1]);
+		Tile nextTile = MapLogic.getTileAtCoordinates(battle.getMap(),
+				newPosition[0], newPosition[1]);
 
 		if (nextTile == null || !canMoveIn(nextTile)) {
 			return;
@@ -229,7 +239,8 @@ public abstract class Unit extends GameElement implements MovingElement {
 
 		sprite.setPosition(newPosition[0], newPosition[1]);
 
-		if (nextTile.getTileX() != getTilePosition().getTileX() || nextTile.getTileY() != getTilePosition().getTileY()) {
+		if (nextTile.getTileX() != getTilePosition().getTileX()
+				|| nextTile.getTileY() != getTilePosition().getTileY()) {
 			setTilePosition(battle, nextTile);
 		}
 
@@ -238,7 +249,8 @@ public abstract class Unit extends GameElement implements MovingElement {
 		}
 	}
 
-	protected RotationStatus updateUnitRotation(float xDestination, float yDestination) {
+	protected RotationStatus updateUnitRotation(float xDestination,
+			float yDestination) {
 		float dx = xDestination - sprite.getX();
 		float dy = yDestination - sprite.getY();
 		double angle = Math.atan(dy / dx);
@@ -259,7 +271,9 @@ public abstract class Unit extends GameElement implements MovingElement {
 			if (getWeapons().get(0) instanceof Turret) {
 				// turrets take time to rotate
 				Turret turret = (Turret) getWeapons().get(0);
-				boolean isRotatingOver = turret.rotateTurret(sprite, fireOrder.getXDestination(), fireOrder.getYDestination());
+				boolean isRotatingOver = turret.rotateTurret(sprite,
+						fireOrder.getXDestination(),
+						fireOrder.getYDestination());
 				if (!isRotatingOver) {
 					return;
 				}
@@ -269,7 +283,8 @@ public abstract class Unit extends GameElement implements MovingElement {
 			return;
 		}
 
-		if (target.isDead() || !(getWeapons().get(0) instanceof IndirectWeapon) && !MapLogic.canSee(battle.getMap(), this, target)) {
+		if (target.isDead() || !(getWeapons().get(0) instanceof IndirectWeapon)
+				&& !MapLogic.canSee(battle.getMap(), this, target)) {
 			// if target is dead or is not visible anymore, stop to shoot
 			setOrder(new DefendOrder());
 			return;
@@ -289,12 +304,14 @@ public abstract class Unit extends GameElement implements MovingElement {
 		if (weapon instanceof Turret) {
 			// turrets take time to rotate
 			Turret turret = (Turret) weapon;
-			boolean isRotatingOver = turret.rotateTurret(sprite, target.getSprite().getX(), target.getSprite().getY());
+			boolean isRotatingOver = turret.rotateTurret(sprite, target
+					.getSprite().getX(), target.getSprite().getY());
 			if (!isRotatingOver) {
 				return;
 			}
 		} else if (canMove()) {
-			RotationStatus rotationStatus = updateUnitRotation(target.getSprite().getX(), target.getSprite().getY());
+			RotationStatus rotationStatus = updateUnitRotation(target
+					.getSprite().getX(), target.getSprite().getY());
 			if (rotationStatus == RotationStatus.ROTATING) {
 				return;
 			}
@@ -317,7 +334,8 @@ public abstract class Unit extends GameElement implements MovingElement {
 				currentAction = Action.FIRING;
 
 				if (weapon.getAimCounter() == weapon.getCadence()) {
-					battle.getOnNewSoundToPlay().playSound(weapon.getSound(), sprite.getX(), sprite.getY());
+					battle.getOnNewSoundToPlay().playSound(weapon.getSound(),
+							sprite.getX(), sprite.getY());
 				}
 
 				if (!(weapon instanceof Knife)) {
@@ -369,8 +387,10 @@ public abstract class Unit extends GameElement implements MovingElement {
 	}
 
 	public Weapon getBestWeapon(Battle battle, Unit target) {
-		if (this instanceof Soldier && target instanceof Soldier
-				&& MapLogic.getDistanceBetween(this, target) < CLOSE_COMBAT_MAX_DISTANCE * GameUtils.PIXEL_BY_METER) {
+		if (this instanceof Soldier
+				&& target instanceof Soldier
+				&& MapLogic.getDistanceBetween(this, target) < CLOSE_COMBAT_MAX_DISTANCE
+						* GameUtils.PIXEL_BY_METER) {
 			// close combat !
 			return new Knife();
 		}
@@ -379,7 +399,9 @@ public abstract class Unit extends GameElement implements MovingElement {
 		Weapon bestWeapon = null;
 		for (Weapon weapon : weapons) {
 			if (weapon.canUseWeapon(this, target, canSeeTarget)) {
-				if (bestWeapon == null || weapon.getEfficiencyAgainst(target) > bestWeapon.getEfficiencyAgainst(target)) {
+				if (bestWeapon == null
+						|| weapon.getEfficiencyAgainst(target) > bestWeapon
+								.getEfficiencyAgainst(target)) {
 					bestWeapon = weapon;
 				}
 			}
@@ -389,7 +411,8 @@ public abstract class Unit extends GameElement implements MovingElement {
 	}
 
 	public void applyDamage(int damage) {
-		health = InjuryState.values()[Math.min(InjuryState.DEAD.ordinal(), health.ordinal() + damage)];
+		health = InjuryState.values()[Math.min(InjuryState.DEAD.ordinal(),
+				health.ordinal() + damage)];
 	}
 
 	public void defendPosition(Battle battle) {
@@ -438,20 +461,24 @@ public abstract class Unit extends GameElement implements MovingElement {
 			if (this instanceof Vehicle) {
 				// vehicles can move and fire at the same time
 				for (Unit u : battle.getEnemies(this)) {
-					if (!u.isDead() && MapLogic.canSee(battle.getMap(), this, u)) {
-						boolean done = ((Vehicle) this).fireWhileMoving(battle, u);
+					if (!u.isDead()
+							&& MapLogic.canSee(battle.getMap(), this, u)) {
+						boolean done = ((Vehicle) this).fireWhileMoving(battle,
+								u);
 						if (done) {
 							return;
 						}
 					}
 				}
-				((Turret) getWeapons().get(0)).rotateTurretTo(sprite, sprite.getRotation());
+				((Turret) getWeapons().get(0)).rotateTurretTo(sprite,
+						sprite.getRotation());
 			}
 			updateMovementPath(battle.getMap());
 		} else if (order instanceof DefendOrder) {
 			// search for enemies
 			for (Unit u : battle.getEnemies(this)) {
-				if (!u.isDead() && MapLogic.canSee(battle.getMap(), this, u) && getBestWeapon(battle, u) != null) {
+				if (!u.isDead() && MapLogic.canSee(battle.getMap(), this, u)
+						&& getBestWeapon(battle, u) != null) {
 					order = new FireOrder(u);
 					return;
 				}
@@ -463,8 +490,11 @@ public abstract class Unit extends GameElement implements MovingElement {
 		} else if (order instanceof HideOrder) {
 			// ambush !
 			for (Unit u : battle.getEnemies(this)) {
-				if (!u.isDead() && MapLogic.canSee(battle.getMap(), this, u) && getBestWeapon(battle, u) != null
-						&& MapLogic.getDistanceBetween(this, u) < START_AMBUSH_DISTANCE * GameUtils.PIXEL_BY_METER) {
+				if (!u.isDead()
+						&& MapLogic.canSee(battle.getMap(), this, u)
+						&& getBestWeapon(battle, u) != null
+						&& MapLogic.getDistanceBetween(this, u) < START_AMBUSH_DISTANCE
+								* GameUtils.PIXEL_BY_METER) {
 					order = new FireOrder(u);
 					return;
 				}
@@ -488,8 +518,10 @@ public abstract class Unit extends GameElement implements MovingElement {
 		}
 
 		// fight back
-		if (order == null || order instanceof DefendOrder || order instanceof MoveOrder && Math.random() < 0.3) {
-			if (MapLogic.canSee(battle.getMap(), this, shooter) && getBestWeapon(battle, shooter) != null) {
+		if (order == null || order instanceof DefendOrder
+				|| order instanceof MoveOrder && Math.random() < 0.3) {
+			if (MapLogic.canSee(battle.getMap(), this, shooter)
+					&& getBestWeapon(battle, shooter) != null) {
 				setOrder(new FireOrder(shooter));
 				// battle.getOnNewSoundToPlay().playSound("incoming",
 				// sprite.getX(), sprite.getY());
@@ -524,16 +556,24 @@ public abstract class Unit extends GameElement implements MovingElement {
 			sprite.setVisible(true);
 		}
 		sprite.setCanBeDragged(false);
-		order = null;
+		setOrder(null);
+
 		// draw sprite
-		if (this instanceof Tank || weapons.size() > 0 && weapons.get(0) instanceof Turret) {
+		if (this instanceof Tank || weapons.size() > 0
+				&& weapons.get(0) instanceof Turret) {
 			// smoke
-			battle.getOnNewSprite().drawAnimatedSprite(getSprite().getX(), getSprite().getY() - 70, "smoke.png", 120, 2.0f, -1, false, sprite.getZIndex() + 1);
-			battle.getOnNewSoundToPlay().playSound("explosion", sprite.getX(), sprite.getY());
+			battle.getOnNewSprite().drawAnimatedSprite(getSprite().getX(),
+					getSprite().getY() - 70, "smoke.png", 120, 2.0f, -1, false,
+					sprite.getZIndex() + 1);
+			battle.getOnNewSoundToPlay().playSound("explosion", sprite.getX(),
+					sprite.getY());
 		} else if (this instanceof Soldier) {
 			// blood
-			battle.getOnNewSprite().drawAnimatedSprite(getSprite().getX(), getSprite().getY(), "blood.png", 120, 0.6f, 0, false, sprite.getZIndex() + 1);
-			battle.getOnNewSoundToPlay().playSound("death", sprite.getX(), sprite.getY());
+			battle.getOnNewSprite().drawAnimatedSprite(getSprite().getX(),
+					getSprite().getY(), "blood.png", 120, 0.6f, 0, false,
+					sprite.getZIndex() + 1);
+			battle.getOnNewSoundToPlay().playSound("death", sprite.getX(),
+					sprite.getY());
 		}
 
 	}
@@ -558,7 +598,8 @@ public abstract class Unit extends GameElement implements MovingElement {
 
 	@Override
 	public boolean canMoveIn(Node node) {
-		return ((Tile) node).getContent() == null || ((Tile) node).getContent() == this;
+		return ((Tile) node).getContent() == null
+				|| ((Tile) node).getContent() == this;
 	}
 
 	public void instantlyKilledSomeone(Battle battle, Unit target) {
