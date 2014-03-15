@@ -24,7 +24,6 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.VideoView;
 
-import com.glevel.wwii.MyActivity;
 import com.glevel.wwii.R;
 import com.glevel.wwii.analytics.GoogleAnalyticsHelper;
 import com.glevel.wwii.analytics.GoogleAnalyticsHelper.EventAction;
@@ -41,12 +40,15 @@ import com.glevel.wwii.utils.ApplicationUtils;
 import com.glevel.wwii.utils.MusicManager;
 import com.glevel.wwii.utils.MusicManager.Music;
 import com.glevel.wwii.views.CustomAlertDialog;
+import com.google.example.games.basegameutils.BaseGameActivity;
 
-public class HomeActivity extends MyActivity implements OnClickListener, OnBillingServiceConnectedListener {
+public class HomeActivity extends BaseGameActivity implements OnClickListener, OnBillingServiceConnectedListener {
 
 	private static enum ScreenState {
 		HOME, SOLO, SETTINGS
 	}
+
+	private static final int REQUEST_ACHIEVEMENTS = 0;
 
 	private SharedPreferences mSharedPrefs;
 	private ScreenState mScreenState = ScreenState.HOME;
@@ -85,6 +87,7 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
 			}
 		}
 	};
+	private ViewGroup mLoginLayout;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +147,7 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
 		if (v.isShown()) {
 			switch (v.getId()) {
 			case R.id.playButton:
-				MusicManager.playSound(getApplicationContext(), R.raw.main_button);
+				MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
 				if (mSharedPrefs.getInt(GameUtils.TUTORIAL_DONE, 0) == 0) {
 					showTutorialDialog();
 				} else {
@@ -158,39 +161,52 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
 				}
 				break;
 			case R.id.tutorialButton:
-				MusicManager.playSound(getApplicationContext(), R.raw.main_button);
+				MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
 				goToTutorial();
 				break;
 			case R.id.settingsButton:
-				MusicManager.playSound(getApplicationContext(), R.raw.main_button);
+				MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
 				showSettings();
 				GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press, "show_settings");
 				break;
 			case R.id.backButton:
-				MusicManager.playSound(getApplicationContext(), R.raw.main_button);
+				MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
 				onBackPressed();
 				GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press, "back_button_soft");
 				break;
 			case R.id.aboutButton:
-				MusicManager.playSound(getApplicationContext(), R.raw.main_button);
+				MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
 				openAboutDialog();
 				GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press, "show_about_dialog");
 				break;
 			case R.id.rateButton:
-				MusicManager.playSound(getApplicationContext(), R.raw.main_button);
+				MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
 				ApplicationUtils.rateTheApp(this);
 				GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press, "rate_app_button");
 				break;
 			case R.id.donateButton:
-				MusicManager.playSound(getApplicationContext(), R.raw.main_button);
+				MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
 				mInAppBillingHelper.purchaseItem("com.glevel.wwii.donate");
 				GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press, "donate_button");
 				break;
 			case R.id.shareButton:
-				MusicManager.playSound(getApplicationContext(), R.raw.main_button);
+				MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
 				ApplicationUtils.startSharing(this, getString(R.string.share_subject, getString(R.string.app_name)),
 						getString(R.string.share_message, getPackageName()), 0);
 				GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.ui_action, EventAction.button_press, "share_app_button");
+				break;
+			case R.id.sign_in_button:
+				MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
+				beginUserInitiatedSignIn();
+				break;
+			case R.id.sign_out_button:
+				MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
+				signOut();
+				showSignInButton();
+				break;
+			case R.id.achievementsButton:
+				MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
+				startActivityForResult(getGamesClient().getAchievementsIntent(), REQUEST_ACHIEVEMENTS);
 				break;
 			}
 		}
@@ -219,6 +235,8 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
 		mMainButtonAnimationLeftIn = AnimationUtils.loadAnimation(this, R.anim.main_btn_left_in);
 		mMainButtonAnimationRightOut = AnimationUtils.loadAnimation(this, R.anim.main_btn_right_out);
 		mMainButtonAnimationLeftOut = AnimationUtils.loadAnimation(this, R.anim.main_btn_left_out);
+
+		mLoginLayout = (ViewGroup) findViewById(R.id.loginLayout);
 
 		mFadeOutAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_out);
 		mFadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_in);
@@ -250,7 +268,7 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
 		mRadioDifficulty.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(RadioGroup group, int checkedId) {
-				MusicManager.playSound(getApplicationContext(), R.raw.main_button);
+				MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
 				// update game difficulty in preferences
 				DifficultyLevel newDifficultyLevel = null;
 				Editor editor = mSharedPrefs.edit();
@@ -313,6 +331,11 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
 
 		mRateAppButton = (Button) findViewById(R.id.rateButton);
 		mRateAppButton.setOnClickListener(this);
+
+		// login / logout buttons
+		findViewById(R.id.sign_in_button).setOnClickListener(this);
+		findViewById(R.id.sign_out_button).setOnClickListener(this);
+		findViewById(R.id.achievementsButton).setOnClickListener(this);
 	}
 
 	private void goToBattleChooserActivity() {
@@ -367,6 +390,8 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
 		mShareButton.setVisibility(View.VISIBLE);
 		mSupportButton.startAnimation(mFadeInAnimation);
 		mSupportButton.setVisibility(View.VISIBLE);
+		mLoginLayout.startAnimation(mFadeInAnimation);
+		mLoginLayout.setVisibility(View.VISIBLE);
 		showButton(mPlayButton, true);
 		showButton(mTutorialButton, false);
 		showButton(mSettingsButton, true);
@@ -379,6 +404,8 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
 		mShareButton.setVisibility(View.GONE);
 		mSupportButton.startAnimation(mFadeOutAnimation);
 		mSupportButton.setVisibility(View.GONE);
+		mLoginLayout.startAnimation(mFadeOutAnimation);
+		mLoginLayout.setVisibility(View.GONE);
 		mBackButton.setVisibility(View.VISIBLE);
 		mBackButton.startAnimation(mFadeInAnimation);
 		hideButton(mPlayButton, true);
@@ -404,7 +431,7 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						MusicManager.playSound(getApplicationContext(), R.raw.main_button);
+						MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
 						if (which == R.id.okButton) {
 							// load game
 							Intent i = new Intent(HomeActivity.this, GameActivity.class);
@@ -429,7 +456,7 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
 		Dialog dialog = new CustomAlertDialog(this, R.style.Dialog, getString(R.string.ask_tutorial), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				MusicManager.playSound(getApplicationContext(), R.raw.main_button);
+				MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
 
 				if (which == R.id.okButton) {
 					// go to tutorial
@@ -454,6 +481,27 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
 
 	@Override
 	public void onBillingServiceConnected() {
+		mSupportButton.setEnabled(true);
+	}
+
+	@Override
+	public void onSignInFailed() {
+		showSignInButton();
+	}
+
+	@Override
+	public void onSignInSucceeded() {
+		// show sign-out button, hide the sign-in button
+		findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+		findViewById(R.id.achievementsButton).setVisibility(View.VISIBLE);
+		findViewById(R.id.achievementsButton).startAnimation(mFadeInAnimation);
+		findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
+	}
+
+	private void showSignInButton() {
+		findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+		findViewById(R.id.achievementsButton).setVisibility(View.GONE);
+		findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
 	}
 
 }

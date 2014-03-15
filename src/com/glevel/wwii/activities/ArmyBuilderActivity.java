@@ -56,7 +56,7 @@ public class ArmyBuilderActivity extends MyActivity {
 	private OnClickListener onStartBattleClicked = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			MusicManager.playSound(getApplicationContext(), R.raw.main_button);
+			MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
 			if (mPlayer.getUnits().size() == 0) {
 				// the player has no units
 				ApplicationUtils.showToast(ArmyBuilderActivity.this, R.string.no_troops, Toast.LENGTH_SHORT);
@@ -67,7 +67,7 @@ public class ArmyBuilderActivity extends MyActivity {
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								MusicManager.playSound(getApplicationContext(), R.raw.main_button);
+								MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
 								if (which == R.id.okButton) {
 									startGame();
 								}

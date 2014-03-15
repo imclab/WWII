@@ -15,55 +15,58 @@ import com.glevel.wwii.game.data.BattlesData;
 
 public class MapPagerAdapter extends PagerAdapter {
 
-    private OnClickListener mMapClickedListener;
+	private OnClickListener mMapClickedListener;
 
-    public MapPagerAdapter(OnClickListener onMapSelectedListener) {
-        this.mMapClickedListener = onMapSelectedListener;
-    }
+	public MapPagerAdapter(OnClickListener onMapSelectedListener) {
+		this.mMapClickedListener = onMapSelectedListener;
+	}
 
-    @Override
-    public Object instantiateItem(ViewGroup container, final int position) {
-        final BattlesData map = BattlesData.values()[position];
+	@Override
+	public Object instantiateItem(ViewGroup container, int position) {
+		LayoutInflater inflater = (LayoutInflater) container.getContext()
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.map_chooser_item, null);
+		TextView mapName = (TextView) layout.findViewById(R.id.mapName);
+		ImageView mapImage = (ImageView) layout.findViewById(R.id.mapImage);
 
-        LayoutInflater inflater = (LayoutInflater) container.getContext().getSystemService(
-                Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.map_chooser_item, null);
+		if (position >= BattlesData.values().length) {
+			// more coming soon layout
+			mapName.setText(R.string.more_maps_coming_soon);
+			mapImage.setVisibility(View.GONE);
+		} else {
+			// maps layout
+			BattlesData map = BattlesData.values()[position];
+			mapName.setText(map.getName());
+			mapImage.setImageResource(map.getImage());
+			layout.setTag(R.string.id, map.ordinal());
+			layout.setOnClickListener(mMapClickedListener);
+		}
 
-        TextView mapName = (TextView) layout.findViewById(R.id.mapName);
-        mapName.setText(map.getName());
+		// remove default sound effect on click
+		layout.setSoundEffectsEnabled(false);
 
-        ImageView mapImage = (ImageView) layout.findViewById(R.id.mapImage);
-        mapImage.setImageResource(map.getImage());
-        
-        layout.setTag(R.string.id, map.ordinal());
+		((ViewPager) container).addView(layout);
+		return layout;
+	}
 
-        layout.setOnClickListener(mMapClickedListener);
+	@Override
+	public boolean isViewFromObject(View view, Object object) {
+		return view == object;
+	}
 
-        // remove default sound effect on click
-        layout.setSoundEffectsEnabled(false);
+	@Override
+	public int getCount() {
+		return BattlesData.values().length + 1;
+	}
 
-        ((ViewPager) container).addView(layout);
-        return layout;
-    }
+	@Override
+	public float getPageWidth(int position) {
+		return 0.5f;
+	}
 
-    @Override
-    public boolean isViewFromObject(View view, Object object) {
-        return view == object;
-    }
-
-    @Override
-    public int getCount() {
-        return BattlesData.values().length;
-    }
-
-    @Override
-    public float getPageWidth(int position) {
-        return 0.5f;
-    }
-
-    @Override
-    public void destroyItem(View collection, int position, Object view) {
-        ((ViewPager) collection).removeView((View) view);
-    }
+	@Override
+	public void destroyItem(View collection, int position, Object view) {
+		((ViewPager) collection).removeView((View) view);
+	}
 
 }

@@ -46,7 +46,7 @@ public class GameGUI {
 	private OnClickListener onFinishDeploymentClicked = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			MusicManager.playSound(mGameActivity.getApplicationContext(), R.raw.main_button);
+			MusicManager.playSound(mGameActivity.getApplicationContext(), R.raw.button_sound);
 			hideDeploymentButton();
 			mGameActivity.startGame();
 		}
@@ -93,12 +93,12 @@ public class GameGUI {
 		mGameMenuDialog.findViewById(R.id.surrenderButton).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				MusicManager.playSound(mGameActivity.getApplicationContext(), R.raw.main_button);
+				MusicManager.playSound(mGameActivity.getApplicationContext(), R.raw.button_sound);
 				Dialog confirmDialog = new CustomAlertDialog(mGameActivity, R.style.Dialog, mGameActivity.getString(R.string.confirm_surrender_message),
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								MusicManager.playSound(mGameActivity.getApplicationContext(), R.raw.main_button);
+								MusicManager.playSound(mGameActivity.getApplicationContext(), R.raw.button_sound);
 								if (which == R.id.okButton) {
 									mGameActivity.endGame(mGameActivity.battle.getEnemyPlayer(mGameActivity.battle.getMe()), true);
 									GoogleAnalyticsHelper.sendEvent(mGameActivity, EventCategory.ui_action, EventAction.button_press, "surrender_game");
@@ -114,7 +114,7 @@ public class GameGUI {
 		mGameMenuDialog.findViewById(R.id.resumeGameButton).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				MusicManager.playSound(mGameActivity.getApplicationContext(), R.raw.main_button);
+				MusicManager.playSound(mGameActivity.getApplicationContext(), R.raw.button_sound);
 				mGameMenuDialog.dismiss();
 			}
 		});
@@ -123,7 +123,7 @@ public class GameGUI {
 		mGameMenuDialog.findViewById(R.id.exitButton).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				MusicManager.playSound(mGameActivity.getApplicationContext(), R.raw.main_button);
+				MusicManager.playSound(mGameActivity.getApplicationContext(), R.raw.button_sound);
 				mGameActivity.startActivity(new Intent(mGameActivity, HomeActivity.class));
 				mGameActivity.finish();
 				GoogleAnalyticsHelper.sendEvent(mGameActivity, EventCategory.ui_action, EventAction.button_press, "exit_game");

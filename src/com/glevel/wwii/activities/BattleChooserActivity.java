@@ -44,7 +44,7 @@ public class BattleChooserActivity extends MyActivity implements OnPageChangeLis
         @Override
         public void onClick(View v) {
             if (!isMapClicked) {
-                MusicManager.playSound(getApplicationContext(), R.raw.main_button);
+                MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
                 isMapClicked = true;
                 Intent intent = new Intent(BattleChooserActivity.this, ArmyBuilderActivity.class);
                 intent.putExtra(ArmyBuilderActivity.EXTRA_ARMY,
@@ -147,7 +147,7 @@ public class BattleChooserActivity extends MyActivity implements OnPageChangeLis
         mRadioGroupArmy.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                MusicManager.playSound(getApplicationContext(), R.raw.main_button);
+                MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
                 if (checkedId == R.id.german_army) {
                     mGermanPovBackground.startAnimation(fadeInAnimation);
                     mGermanPovBackground.setVisibility(View.VISIBLE);
