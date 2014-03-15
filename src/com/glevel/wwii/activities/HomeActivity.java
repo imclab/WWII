@@ -304,7 +304,7 @@ public class HomeActivity extends MyActivity implements OnClickListener, OnBilli
 
 		// setup background video
 		mBackgroundVideoView = (VideoView) findViewById(R.id.backgroundVideo);
-		Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.video_bg_home);
+		Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.home_video);
 		mBackgroundVideoView.setVideoURI(videoUri);
 		mBackgroundVideoView.setOnPreparedListener(mPreparedListener);
 

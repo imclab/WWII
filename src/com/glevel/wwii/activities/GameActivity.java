@@ -72,6 +72,7 @@ import com.glevel.wwii.game.models.orders.Order;
 import com.glevel.wwii.game.models.units.Soldier;
 import com.glevel.wwii.game.models.units.Tank;
 import com.glevel.wwii.game.models.units.categories.Unit;
+import com.glevel.wwii.utils.MusicManager.Music;
 
 public class GameActivity extends CustomLayoutGameActivity implements OnNewSpriteToDraw, OnNewSoundToPlay {
 
@@ -109,7 +110,7 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
 	protected void onCreate(Bundle pSavedInstanceState) {
 		super.onCreate(pSavedInstanceState);
 
-		mMusic = null;
+		mMusic = Music.MUSIC_GAME;
 
 		mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
@@ -169,7 +170,6 @@ public class GameActivity extends CustomLayoutGameActivity implements OnNewSprit
 		mSoundEffectManager = new SoundEffectManager(this, mSharedPrefs.getInt(GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME, GameUtils.MusicState.on.ordinal()));
 		mSoundEffectManager.setCamera(mCamera);
 		mSoundEffectManager.init(battle, mEngine);
-		mSoundEffectManager.playBackgroundSound("bg_birds");
 
 		// load font
 		mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32,

@@ -58,7 +58,6 @@ public class SoundEffectManager {
 		loadMfxFromAssets("explosion");
 		loadMfxFromAssets("death");
 		loadMfxFromAssets("clonk");
-		loadMfxFromAssets("bg_birds");
 		// loadMfxFromAssets("need_support");
 		// loadMfxFromAssets("incoming");
 	}

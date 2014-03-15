@@ -134,7 +134,7 @@ public class Soldier extends Unit {
 
 	@Override
 	public void setOrder(Order order) {
-		((SoldierSprite) sprite).getHideSprite().setVisible(order instanceof HideOrder);
+		((SoldierSprite) sprite).getHideSprite().setVisible(getRank() == Rank.ally && order instanceof HideOrder);
 		super.setOrder(order);
 	}
 

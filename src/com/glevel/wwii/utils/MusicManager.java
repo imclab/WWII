@@ -20,7 +20,7 @@ public class MusicManager {
 	private static final String TAG = "MusicManager";
 
 	public static enum Music {
-		MUSIC_PREVIOUS(0), MUSIC_MENU(R.raw.menu_music), MUSIC_CAMPAIGN(R.raw.campaign_music);
+		MUSIC_PREVIOUS(0), MUSIC_MENU(R.raw.menu_music), MUSIC_CAMPAIGN(R.raw.campaign_music), MUSIC_GAME(R.raw.game_music);
 
 		private final int resource;
 
