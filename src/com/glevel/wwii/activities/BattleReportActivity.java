@@ -62,8 +62,7 @@ public class BattleReportActivity extends BaseGameActivity {
 		mIsVictory = extras.getBoolean("victory");
 
 		// erase saved game from database
-		GameConverterHelper.deleteSavedBattles(mDbHelper,
-				battle.getCampaignId());
+		GameConverterHelper.deleteSavedBattles(mDbHelper, battle.getCampaignId());
 
 		setContentView(R.layout.activity_battle_report);
 		setupUI();
@@ -93,8 +92,7 @@ public class BattleReportActivity extends BaseGameActivity {
 
 		// init army flag
 		TextView viewTitle = (TextView) findViewById(R.id.title);
-		viewTitle.setCompoundDrawablesWithIntrinsicBounds(battle.getMe()
-				.getArmy().getFlagImage(), 0, 0, 0);
+		viewTitle.setCompoundDrawablesWithIntrinsicBounds(battle.getMe().getArmy().getFlagImage(), 0, 0, 0);
 
 		// init leave report button
 		mLeaveReportBtn = (Button) findViewById(R.id.leaveReport);
@@ -102,15 +100,13 @@ public class BattleReportActivity extends BaseGameActivity {
 
 		// init my army list
 		mMyArmyList = (ListView) findViewById(R.id.myArmyList);
-		GameReportUnitsArrayAdapter mMyArmyAdapter = new GameReportUnitsArrayAdapter(
-				this, R.layout.army_list_item, battle.getMe().getUnits(), true);
+		GameReportUnitsArrayAdapter mMyArmyAdapter = new GameReportUnitsArrayAdapter(this, R.layout.army_list_item, battle.getMe().getUnits(), true);
 		mMyArmyList.setAdapter(mMyArmyAdapter);
 
 		// init enemy's army list
 		mEnemyArmyList = (ListView) findViewById(R.id.enemyArmyList);
-		GameReportUnitsArrayAdapter mEnemyArmyAdapter = new GameReportUnitsArrayAdapter(
-				this, R.layout.army_list_item, battle.getEnemies(battle.getMe()
-						.getArmy()), true);
+		GameReportUnitsArrayAdapter mEnemyArmyAdapter = new GameReportUnitsArrayAdapter(this, R.layout.army_list_item, battle.getEnemies(battle.getMe()
+				.getArmy()), true);
 		mEnemyArmyList.setAdapter(mEnemyArmyAdapter);
 	}
 
@@ -129,21 +125,19 @@ public class BattleReportActivity extends BaseGameActivity {
 		GamesClient gameClient = getGamesClient();
 		// unlock achievements
 		if (mIsVictory) {
-			gameClient.incrementAchievement(
-					getString(R.string.achievement_skillful_general), 1);
+			gameClient.incrementAchievement(getString(R.string.achievement_skillful_general), 1);
 
 			int nbTanksDestroyed = 0;
 			// iterate through enemy units
-			for (Unit enemyUnit : battle.getEnemyPlayer(battle.getMe())
-					.getUnits()) {
+			for (Unit enemyUnit : battle.getEnemyPlayer(battle.getMe()).getUnits()) {
 				if (enemyUnit instanceof Tank) {
 					nbTanksDestroyed++;
 				}
 			}
 
-			gameClient.incrementAchievement(
-					getString(R.string.achievement_tanks_terror),
-					nbTanksDestroyed);
+			if (nbTanksDestroyed > 0) {
+				gameClient.incrementAchievement(getString(R.string.achievement_tanks_terror), nbTanksDestroyed);
+			}
 
 			// iterate through my units
 			boolean carefulTactician = true;
@@ -152,14 +146,12 @@ public class BattleReportActivity extends BaseGameActivity {
 					carefulTactician = false;
 				}
 				if (unit.getFrags() >= 10) {
-					gameClient
-							.unlockAchievement(getString(R.string.achievement_careful_tactician));
+					gameClient.unlockAchievement(getString(R.string.achievement_careful_tactician));
 				}
 			}
 
 			if (carefulTactician) {
-				gameClient
-						.unlockAchievement(getString(R.string.achievement_careful_tactician));
+				gameClient.unlockAchievement(getString(R.string.achievement_careful_tactician));
 			}
 
 			// iterate through the objective points
@@ -172,8 +164,7 @@ public class BattleReportActivity extends BaseGameActivity {
 			}
 
 			if (brilliantTactician) {
-				gameClient.incrementAchievement(
-						getString(R.string.achievement_brilliant_tactician), 1);
+				gameClient.incrementAchievement(getString(R.string.achievement_brilliant_tactician), 1);
 			}
 
 		}

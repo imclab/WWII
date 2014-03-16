@@ -101,7 +101,7 @@
     <string name="loading_dots">. . .</string>
     <string name="game_paused">Pause</string>
     <string name="surrender">Abandonner</string>
-    <string name="confirm_surrender_message">Etes-vous sûr de vouloir abandonner ?</string>
+    <string name="confirm_surrender_message">Etes-vous sûr de vouloir abandonner la partie ?</string>
     <string name="resume_game">Retour au jeu</string>
     <string name="save_exit">Quitter</string>
     <string name="deployment_phase">Phase de déploiement</string>
