@@ -156,7 +156,7 @@ public class BattleReportActivity extends BaseGameActivity {
 
 			// iterate through the objective points
 			boolean brilliantTactician = true;
-			for (ObjectivePoint objective : battle.getLstObjectives()) {
+			for (ObjectivePoint objective : battle.getObjectives()) {
 				if (objective.getOwner() != battle.getMe().getArmy()) {
 					brilliantTactician = false;
 					return;

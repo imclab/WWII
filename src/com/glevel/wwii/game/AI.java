@@ -1,5 +1,6 @@
 package com.glevel.wwii.game;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import com.glevel.wwii.game.data.BattlesData;
 import com.glevel.wwii.game.data.UnitsData;
 import com.glevel.wwii.game.logic.MapLogic;
 import com.glevel.wwii.game.models.Battle;
+import com.glevel.wwii.game.models.ObjectivePoint;
 import com.glevel.wwii.game.models.Player;
 import com.glevel.wwii.game.models.map.Tile;
 import com.glevel.wwii.game.models.orders.DefendOrder;
@@ -27,18 +29,75 @@ import com.glevel.wwii.game.models.weapons.categories.Weapon;
 
 public class AI {
 
-	public static void updateUnitOrder(Battle battle, Unit unit) {
-		// TODO
-		for (Unit u : battle.getEnemies(unit)) {
-			if (!u.isDead() && MapLogic.getDistanceBetween(unit, u) < 30 * GameUtils.PIXEL_BY_METER && MapLogic.canSee(battle.getMap(), unit, u)) {
-				unit.setOrder(new FireOrder(u));
-				return;
+	public static void updateAI(Battle battle) {
+		for (Player player : battle.getPlayers()) {
+			if (player.isAI()) {
+				updateOrders(battle, player);
+			}
+		}
+	}
+
+	private static void updateOrders(Battle battle, Player aiPlayer) {
+		Player humanPlayer = battle.getEnemyPlayer(aiPlayer);
+
+		List<MoveOrder> moveOrdersPool = new ArrayList<MoveOrder>();
+
+		// defend strategic points
+		for (Unit unit : humanPlayer.getUnits()) {
+			for (ObjectivePoint objective : battle.getObjectives()) {
+				if (objective.getOwner() == aiPlayer.getArmy()
+						&& MapLogic.getDistanceBetween(unit, objective.getX(),
+								objective.getY()) < GameUtils.PIXEL_BY_METER * 20) {
+					// this strategic point is about to be lost
+					moveOrdersPool.add(0, new MoveOrder(objective.getX(),
+							objective.getY()));
+				} else if (objective.getOwner() != aiPlayer.getArmy()) {
+					// conquer this strategic point !
+					moveOrdersPool.add(new MoveOrder(objective.getX(),
+							objective.getY()));
+				}
 			}
 		}
 
-		if (unit.getOrder() == null || unit.getOrder() instanceof DefendOrder || unit.getOrder() instanceof HideOrder) {
-			unit.setOrder(new MoveOrder((float) Math.random() * battle.getMap().getWidth() * GameUtils.PIXEL_BY_TILE, (float) Math.random()
-					* battle.getMap().getHeight() * GameUtils.PIXEL_BY_TILE));
+		aiUnits: for (Unit aiUnit : aiPlayer.getUnits()) {
+			if (!aiUnit.isDead()) {
+				for (Unit playerUnit : humanPlayer.getUnits()) {
+					if (!playerUnit.isDead()
+							// give fire order if enemy unit is very close
+							&& MapLogic.getDistanceBetween(playerUnit, aiUnit) < 30 * GameUtils.PIXEL_BY_METER
+							&& MapLogic.canSee(battle.getMap(), aiUnit,
+									playerUnit)) {
+						aiUnit.setOrder(new FireOrder(playerUnit));
+						continue aiUnits;
+					}
+				}
+
+				if (aiUnit.getOrder() == null
+						|| (aiUnit.getOrder() instanceof DefendOrder || aiUnit
+								.getOrder() instanceof HideOrder)
+						&& Math.random() < 0.3) {
+					if (moveOrdersPool.size() > 0 && Math.random() < 0.5) {
+						// conquer strategic points
+						aiUnit.setOrder(moveOrdersPool.get(0));
+						moveOrdersPool.remove(0);
+					} else {
+						// random moves
+						aiUnit.setOrder(new MoveOrder((float) Math.random()
+								* battle.getMap().getWidth()
+								* GameUtils.PIXEL_BY_TILE, (float) Math
+								.random()
+								* battle.getMap().getHeight()
+								* GameUtils.PIXEL_BY_TILE));
+					}
+				} else if (!(aiUnit.getOrder() instanceof MoveOrder || Math
+						.random() < 0.3)) {
+					if (aiUnit.getTilePosition().getTerrain() != null) {
+						aiUnit.setOrder(new HideOrder());
+					} else {
+						aiUnit.setOrder(new DefendOrder());
+					}
+				}
+			}
 		}
 
 	}
@@ -56,7 +115,7 @@ public class AI {
 		switch (aggressivity) {
 		case defensive:
 			// buy tank
-			buyUnitsRandomly(player, Tank.class, Turret.class, 0, 1, 0.75f);
+			buyUnitsRandomly(player, Tank.class, Turret.class, 0, 1, 0.6f);
 
 			// buy AT cannon
 			buyUnitsRandomly(player, Soldier.class, Turret.class, 0, 1, 0.8f);
@@ -78,10 +137,10 @@ public class AI {
 			break;
 		case balanced:
 			// buy tank
-			buyUnitsRandomly(player, Tank.class, Turret.class, 0, 1, 0.75f);
+			buyUnitsRandomly(player, Tank.class, Turret.class, 0, 1, 0.7f);
 
 			// buy AT cannon
-			buyUnitsRandomly(player, Soldier.class, Turret.class, 0, 1, 0.75f);
+			buyUnitsRandomly(player, Soldier.class, Turret.class, 0, 1, 0.7f);
 
 			// buy HMG
 			buyUnitsRandomly(player, Soldier.class, HMG.class, 1, 2, 1.0f);
@@ -124,10 +183,12 @@ public class AI {
 
 	}
 
-	private static <U extends Unit, W extends Weapon> Player buyUnitsRandomly(Player player, Class<U> unitClass, Class<W> weaponClass, int nbFrom, int nbTo,
-			float factor) {
+	private static <U extends Unit, W extends Weapon> Player buyUnitsRandomly(
+			Player player, Class<U> unitClass, Class<W> weaponClass,
+			int nbFrom, int nbTo, float factor) {
 		// buy random number of units
-		int nbUnitsToBuy = (int) (nbFrom + Math.round((nbTo - nbFrom) * factor * Math.random()));
+		int nbUnitsToBuy = (int) (nbFrom + Math.round((nbTo - nbFrom) * factor
+				* Math.random()));
 		for (int n = 0; n < nbUnitsToBuy; n++) {
 
 			if (!canBuyMoreUnit(player)) {
@@ -138,10 +199,13 @@ public class AI {
 			Collections.shuffle(availableUnits);
 			for (Unit unit : availableUnits) {
 				// check if unit is of the type wanted and if it can be bought
-				if (unit.getClass() == unitClass && unit.getWeapons().get(0).getClass() == weaponClass && canBuyIt(player, unit)) {
+				if (unit.getClass() == unitClass
+						&& unit.getWeapons().get(0).getClass() == weaponClass
+						&& canBuyIt(player, unit)) {
 					// buy it
 					player.getUnits().add(unit);
-					player.setRequisition(player.getRequisition() - unit.getPrice());
+					player.setRequisition(player.getRequisition()
+							- unit.getPrice());
 					break;
 				}
 			}
@@ -152,21 +216,26 @@ public class AI {
 	}
 
 	private static boolean canBuyMoreUnit(Player player) {
-		return player.getUnits().size() < GameUtils.MAX_UNIT_PER_ARMY && player.getRequisition() >= UnitsData.getAllUnits(player.getArmy()).get(0).getPrice();
+		return player.getUnits().size() < GameUtils.MAX_UNIT_PER_ARMY
+				&& player.getRequisition() >= UnitsData
+						.getAllUnits(player.getArmy()).get(0).getPrice();
 	}
 
 	private static boolean canBuyIt(Player player, Unit unit) {
 		return player.getRequisition() >= unit.getPrice();
 	}
 
-	private static AI_AGGRESSIVITY getAIAggressivity(Battle battle, Player player) {
+	private static AI_AGGRESSIVITY getAIAggressivity(Battle battle,
+			Player player) {
 		switch (BattlesData.values()[battle.getBattleId()]) {
 		case OOSTERBEEK:
 			return AI_AGGRESSIVITY.balanced;
 		case NIMEGUE:
-			return player.isAlly() ? AI_AGGRESSIVITY.offensive : AI_AGGRESSIVITY.defensive;
+			return player.isAlly() ? AI_AGGRESSIVITY.offensive
+					: AI_AGGRESSIVITY.defensive;
 		case ARNHEM_STREETS:
-			return player.isAlly() ? AI_AGGRESSIVITY.defensive : AI_AGGRESSIVITY.offensive;
+			return player.isAlly() ? AI_AGGRESSIVITY.defensive
+					: AI_AGGRESSIVITY.offensive;
 		default:
 			return AI_AGGRESSIVITY.balanced;
 		}
@@ -180,8 +249,11 @@ public class AI {
 				// get a random position
 				Tile tile = null;
 				do {
-					tile = battle.getMap().getTiles()[(int) (Math.random() * (battle.getMap().getHeight() - 1))][(int) (1 + deploymentBoundaries[0] + Math
-							.random() * (deploymentBoundaries[1] - deploymentBoundaries[0] - 1))];
+					tile = battle.getMap().getTiles()[(int) (Math.random() * (battle
+							.getMap().getHeight() - 1))][(int) (1 + deploymentBoundaries[0] + Math
+							.random()
+							* (deploymentBoundaries[1]
+									- deploymentBoundaries[0] - 1))];
 				} while (!unit.canMoveIn(tile));
 
 				// position the units
@@ -195,8 +267,11 @@ public class AI {
 				// get a random position
 				Tile tile = null;
 				do {
-					tile = battle.getMap().getTiles()[(int) (Math.random() * (battle.getMap().getHeight() - 1))][(int) (1 + deploymentBoundaries[0] + Math
-							.random() * (deploymentBoundaries[1] - deploymentBoundaries[0] - 1))];
+					tile = battle.getMap().getTiles()[(int) (Math.random() * (battle
+							.getMap().getHeight() - 1))][(int) (1 + deploymentBoundaries[0] + Math
+							.random()
+							* (deploymentBoundaries[1]
+									- deploymentBoundaries[0] - 1))];
 				} while (!unit.canMoveIn(tile));
 
 				// position the units

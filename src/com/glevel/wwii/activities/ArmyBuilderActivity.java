@@ -59,15 +59,20 @@ public class ArmyBuilderActivity extends MyActivity {
 			MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
 			if (mPlayer.getUnits().size() == 0) {
 				// the player has no units
-				ApplicationUtils.showToast(ArmyBuilderActivity.this, R.string.no_troops, Toast.LENGTH_SHORT);
+				ApplicationUtils.showToast(ArmyBuilderActivity.this,
+						R.string.no_troops, Toast.LENGTH_SHORT);
 			} else if (mPlayer.getRequisition() > 20) {
 				// the player has some requisition points left, show confirm
 				// dialog
-				Dialog dialog = new CustomAlertDialog(ArmyBuilderActivity.this, R.style.Dialog, getString(R.string.confirm_battle_message),
+				Dialog dialog = new CustomAlertDialog(ArmyBuilderActivity.this,
+						R.style.Dialog,
+						getString(R.string.confirm_battle_message),
 						new DialogInterface.OnClickListener() {
 							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								MusicManager.playSound(getApplicationContext(), R.raw.button_sound);
+							public void onClick(DialogInterface dialog,
+									int which) {
+								MusicManager.playSound(getApplicationContext(),
+										R.raw.button_sound);
 								if (which == R.id.okButton) {
 									startGame();
 								}
@@ -82,23 +87,28 @@ public class ArmyBuilderActivity extends MyActivity {
 	};
 	private OnItemClickListener onMyUnitClicked = new OnItemClickListener() {
 		@Override
-		public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+		public void onItemClick(AdapterView<?> adapter, View view,
+				int position, long id) {
 			if (position < mPlayer.getUnits().size()) {
 				// if slot is not empty, ask to sell this unit
-				openConfirmTransactionDialog(mPlayer.getUnits().get(position), true);
+				openConfirmTransactionDialog(mPlayer.getUnits().get(position),
+						true);
 			}
 		}
 	};
 	private OnItemClickListener onAvailableUnitClicked = new OnItemClickListener() {
 		@Override
-		public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+		public void onItemClick(AdapterView<?> adapter, View view,
+				int position, long id) {
 			Unit unit = mAvailableUnits.get(position);
 			if (mPlayer.getUnits().size() == GameUtils.MAX_UNIT_PER_ARMY) {
 				// no more unit slot available
-				ApplicationUtils.showToast(ArmyBuilderActivity.this, R.string.no_slots_left, Toast.LENGTH_SHORT);
+				ApplicationUtils.showToast(ArmyBuilderActivity.this,
+						R.string.no_slots_left, Toast.LENGTH_SHORT);
 			} else if (mPlayer.getRequisition() < unit.getRealSellPrice(false)) {
 				// unit is too expensive
-				ApplicationUtils.showToast(ArmyBuilderActivity.this, R.string.not_enough_requisition, Toast.LENGTH_SHORT);
+				ApplicationUtils.showToast(ArmyBuilderActivity.this,
+						R.string.not_enough_requisition, Toast.LENGTH_SHORT);
 			} else {
 				// buy unit !
 				openConfirmTransactionDialog(unit, false);
@@ -111,14 +121,17 @@ public class ArmyBuilderActivity extends MyActivity {
 		super.onCreate(savedInstanceState);
 
 		Intent intent = getIntent();
-		mPlayerArmy = ArmiesData.values()[intent.getIntExtra(EXTRA_ARMY, ArmiesData.USA.ordinal())];
+		mPlayerArmy = ArmiesData.values()[intent.getIntExtra(EXTRA_ARMY,
+				ArmiesData.USA.ordinal())];
 
 		setContentView(R.layout.activity_army_builder);
 		setupUI();
 
 		// get available units to hire
 		mAvailableUnits = UnitsData.getAllUnits(mPlayerArmy);
-		mAvailableTroopsAdapter = new UnitsArrayAdapter(ArmyBuilderActivity.this, R.layout.army_list_item, mAvailableUnits, false);
+		mAvailableTroopsAdapter = new UnitsArrayAdapter(
+				ArmyBuilderActivity.this, R.layout.army_list_item,
+				mAvailableUnits, false);
 		mAvailableTroopsList.setAdapter(mAvailableTroopsAdapter);
 
 		new AsyncTask<Void, Void, Void>() {
@@ -126,10 +139,12 @@ public class ArmyBuilderActivity extends MyActivity {
 			@Override
 			protected Void doInBackground(Void... params) {
 				// build battle with intent extras
-				mBattle = new Battle(BattlesData.values()[getIntent().getIntExtra(EXTRA_MAP, 0)]);
+				mBattle = new Battle(BattlesData.values()[getIntent()
+						.getIntExtra(EXTRA_MAP, 0)]);
 
 				// init human player
-				mPlayer = new Player("Me", mPlayerArmy, 0, false, mBattle.getPlayerVictoryCondition(mPlayerArmy));
+				mPlayer = new Player("Me", mPlayerArmy, 0, false,
+						mBattle.getPlayerVictoryCondition(mPlayerArmy));
 				mBattle.getPlayers().add(mPlayer);
 				AI.createArmy(mPlayer, mBattle);
 				return null;
@@ -139,9 +154,12 @@ public class ArmyBuilderActivity extends MyActivity {
 			protected void onPostExecute(Void result) {
 				super.onPostExecute(result);
 				updateRequisitionPointsLeft(mPlayer.getRequisition());
-				mMyArmyAdapter = new UnitsArrayAdapter(ArmyBuilderActivity.this, R.layout.army_list_item, mPlayer.getUnits(), true);
+				mMyArmyAdapter = new UnitsArrayAdapter(
+						ArmyBuilderActivity.this, R.layout.army_list_item,
+						mPlayer.getUnits(), true);
 				mMyArmyList.setAdapter(mMyArmyAdapter);
-				mMyArmyList.startAnimation(AnimationUtils.loadAnimation(ArmyBuilderActivity.this, R.anim.fade_in));
+				mMyArmyList.startAnimation(AnimationUtils.loadAnimation(
+						ArmyBuilderActivity.this, R.anim.fade_in));
 				createAIArmy();
 			}
 
@@ -156,8 +174,10 @@ public class ArmyBuilderActivity extends MyActivity {
 			@Override
 			protected Void doInBackground(Void... params) {
 				// create AI's player
-				Player enemyPlayer = new Player("Enemy", mPlayerArmy.getEnemy(), mBattle.getPlayers().size(), true,
-						mBattle.getPlayerVictoryCondition(mPlayerArmy.getEnemy()));
+				Player enemyPlayer = new Player("Enemy",
+						mPlayerArmy.getEnemy(), mBattle.getPlayers().size(),
+						true, mBattle.getPlayerVictoryCondition(mPlayerArmy
+								.getEnemy()));
 				mBattle.getPlayers().add(enemyPlayer);
 				AI.createArmy(enemyPlayer, mBattle);
 				return null;
@@ -188,7 +208,8 @@ public class ArmyBuilderActivity extends MyActivity {
 
 		// init army flag
 		TextView viewTitle = (TextView) findViewById(R.id.title);
-		viewTitle.setCompoundDrawablesWithIntrinsicBounds(mPlayerArmy.getFlagImage(), 0, 0, 0);
+		viewTitle.setCompoundDrawablesWithIntrinsicBounds(
+				mPlayerArmy.getFlagImage(), 0, 0, 0);
 
 		// init start battle button
 		mStartBattleBtn = (Button) findViewById(R.id.startBattle);
@@ -214,15 +235,18 @@ public class ArmyBuilderActivity extends MyActivity {
 		mRequisitionPointsTV.setText("" + mPlayer.getRequisition());
 		// update text color if requisition pool is empty
 		if (mPlayer.getRequisition() == 0) {
-			mRequisitionPointsTV.setTextColor(getResources().getColor(R.color.bg_btn_green));
+			mRequisitionPointsTV.setTextColor(getResources().getColor(
+					R.color.bg_btn_green));
 		} else {
-			mRequisitionPointsTV.setTextColor(getResources().getColor(R.color.requisitionPoints));
+			mRequisitionPointsTV.setTextColor(getResources().getColor(
+					R.color.requisitionPoints));
 		}
 	}
 
 	private void buyUnit(Unit unit) {
 		// update requisition points
-		updateRequisitionPointsLeft((int) (mPlayer.getRequisition() - unit.getRealSellPrice(false)));
+		updateRequisitionPointsLeft((int) (mPlayer.getRequisition() - unit
+				.getRealSellPrice(false)));
 
 		// create bought unit
 		Unit newUnit = unit.copy();
@@ -234,28 +258,33 @@ public class ArmyBuilderActivity extends MyActivity {
 
 	private void sellUnit(Unit unit) {
 		// update requisition points
-		updateRequisitionPointsLeft((int) (mPlayer.getRequisition() + unit.getRealSellPrice(true)));
+		updateRequisitionPointsLeft((int) (mPlayer.getRequisition() + unit
+				.getRealSellPrice(true)));
 		// remove unit from slot
 		mPlayer.getUnits().remove(unit);
 		mMyArmyAdapter.notifyDataSetChanged();
 	}
 
-	private void openConfirmTransactionDialog(final Unit unit, final boolean isSelling) {
-		String message = getString(R.string.confirm_transaction, (isSelling ? getString(R.string.sell) : getString(R.string.buy)), getString(unit.getName()),
-				unit.getRealSellPrice(isSelling));
-		Dialog dialog = new CustomAlertDialog(this, R.style.Dialog, message, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				if (which == R.id.okButton) {
-					if (isSelling) {
-						sellUnit(unit);
-					} else {
-						buyUnit(unit);
+	private void openConfirmTransactionDialog(final Unit unit,
+			final boolean isSelling) {
+		String message = getString(
+				R.string.confirm_transaction,
+				(isSelling ? getString(R.string.sell) : getString(R.string.buy)),
+				getString(unit.getName()), unit.getRealSellPrice(isSelling));
+		Dialog dialog = new CustomAlertDialog(this, R.style.Dialog, message,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if (which == R.id.okButton) {
+							if (isSelling) {
+								sellUnit(unit);
+							} else {
+								buyUnit(unit);
+							}
+						}
+						dialog.dismiss();
 					}
-				}
-				dialog.dismiss();
-			}
-		});
+				});
 		dialog.show();
 	}
 

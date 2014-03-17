@@ -20,7 +20,8 @@ public class MusicManager {
 	private static final String TAG = "MusicManager";
 
 	public static enum Music {
-		MUSIC_PREVIOUS(0), MUSIC_MENU(R.raw.menu_music), MUSIC_CAMPAIGN(R.raw.campaign_music), MUSIC_GAME(R.raw.game_music);
+		MUSIC_PREVIOUS(0), MUSIC_MENU(R.raw.menu_music), MUSIC_CAMPAIGN(
+				R.raw.campaign_music), MUSIC_GAME(R.raw.game_music);
 
 		private final int resource;
 
@@ -31,7 +32,6 @@ public class MusicManager {
 		public int getResource() {
 			return resource;
 		}
-
 	}
 
 	@SuppressLint("UseSparseArrays")
@@ -40,8 +40,10 @@ public class MusicManager {
 	private static Music previousMusic = null;
 
 	public static void start(Context context, Music music) {
-		SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-		if (sharedPrefs.getInt(GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME, MusicState.on.ordinal()) == MusicState.on.ordinal()) {
+		SharedPreferences sharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		if (sharedPrefs.getInt(GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME,
+				MusicState.on.ordinal()) == MusicState.on.ordinal()) {
 			start(context, music, false);
 		}
 	}
@@ -121,8 +123,10 @@ public class MusicManager {
 	}
 
 	public static void playSound(Context context, int sound) {
-		SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-		if (sharedPrefs.getInt(GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME, MusicState.off.ordinal()) == MusicState.on.ordinal()) {
+		SharedPreferences sharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		if (sharedPrefs.getInt(GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME,
+				MusicState.off.ordinal()) == MusicState.on.ordinal()) {
 			MediaPlayer mp = MediaPlayer.create(context, sound);
 			mp.start();
 			mp.setOnCompletionListener(new OnCompletionListener() {

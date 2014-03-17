@@ -86,12 +86,12 @@ public class VictoryCondition implements Serializable {
 
             // check map's objectives
             int nbOwned = 0;
-            for (ObjectivePoint objective : battle.getLstObjectives()) {
+            for (ObjectivePoint objective : battle.getObjectives()) {
                 if (objective.getOwner() == player.getArmy()) {
                     nbOwned++;
                 }
             }
-            if (nbOwned == battle.getLstObjectives().size()) {
+            if (nbOwned == battle.getObjectives().size()) {
                 return true;
             }
 

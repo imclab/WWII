@@ -83,7 +83,7 @@ public class BattleDao extends Repository<Battle> {
         args.put(CAMPAIGN_ID, entity.getCampaignId());
         args.put(PHASE, entity.getPhase().ordinal());
         args.put(HAS_STARTED, entity.isStarted());
-        args.put(OBJECTIVES, GameConverterHelper.toByte(entity.getLstObjectives()).toByteArray());
+        args.put(OBJECTIVES, GameConverterHelper.toByte(entity.getObjectives()).toByteArray());
         return args;
     }
 
