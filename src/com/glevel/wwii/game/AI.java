@@ -44,17 +44,19 @@ public class AI {
 
 		// defend strategic points
 		for (Unit unit : humanPlayer.getUnits()) {
-			for (ObjectivePoint objective : battle.getObjectives()) {
-				if (objective.getOwner() == aiPlayer.getArmy()
-						&& MapLogic.getDistanceBetween(unit, objective.getX(),
-								objective.getY()) < GameUtils.PIXEL_BY_METER * 20) {
-					// this strategic point is about to be lost
-					moveOrdersPool.add(0, new MoveOrder(objective.getX(),
-							objective.getY()));
-				} else if (objective.getOwner() != aiPlayer.getArmy()) {
-					// conquer this strategic point !
-					moveOrdersPool.add(new MoveOrder(objective.getX(),
-							objective.getY()));
+			if (!unit.isDead()) {
+				for (ObjectivePoint objective : battle.getObjectives()) {
+					if (objective.getOwner() == aiPlayer.getArmy()
+							&& MapLogic.getDistanceBetween(unit,
+									objective.getX(), objective.getY()) < GameUtils.PIXEL_BY_METER * 30) {
+						// this strategic point is about to be lost
+						moveOrdersPool.add(0, new MoveOrder(objective.getX(),
+								objective.getY()));
+					} else if (objective.getOwner() != aiPlayer.getArmy()) {
+						// conquer this strategic point !
+						moveOrdersPool.add(new MoveOrder(objective.getX(),
+								objective.getY()));
+					}
 				}
 			}
 		}

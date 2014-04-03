@@ -42,12 +42,13 @@ import com.glevel.wwii.game.AI;
 import com.glevel.wwii.game.GameConverterHelper;
 import com.glevel.wwii.game.GameGUI;
 import com.glevel.wwii.game.GameUtils;
+import com.glevel.wwii.game.GameUtils.DifficultyLevel;
 import com.glevel.wwii.game.GraphicsFactory;
 import com.glevel.wwii.game.InputManager;
 import com.glevel.wwii.game.SoundEffectManager;
-import com.glevel.wwii.game.GameUtils.DifficultyLevel;
 import com.glevel.wwii.game.andengine.custom.CustomLayoutGameActivity;
 import com.glevel.wwii.game.andengine.custom.CustomZoomCamera;
+import com.glevel.wwii.game.graphics.CannonSprite;
 import com.glevel.wwii.game.graphics.CenteredSprite;
 import com.glevel.wwii.game.graphics.Crosshair;
 import com.glevel.wwii.game.graphics.DeploymentZone;
@@ -70,13 +71,13 @@ import com.glevel.wwii.game.models.map.Tile;
 import com.glevel.wwii.game.models.orders.FireOrder;
 import com.glevel.wwii.game.models.orders.MoveOrder;
 import com.glevel.wwii.game.models.orders.Order;
+import com.glevel.wwii.game.models.units.Cannon;
 import com.glevel.wwii.game.models.units.Soldier;
 import com.glevel.wwii.game.models.units.Tank;
 import com.glevel.wwii.game.models.units.categories.Unit;
 import com.glevel.wwii.utils.MusicManager.Music;
 
-public class GameActivity extends CustomLayoutGameActivity implements
-		OnNewSpriteToDraw, OnNewSoundToPlay {
+public class GameActivity extends CustomLayoutGameActivity implements OnNewSpriteToDraw, OnNewSoundToPlay {
 
 	private DatabaseHelper mDbHelper;
 	protected SharedPreferences mSharedPrefs;
@@ -102,11 +103,9 @@ public class GameActivity extends CustomLayoutGameActivity implements
 
 	@Override
 	public EngineOptions onCreateEngineOptions() {
-		this.mCamera = new CustomZoomCamera(0, 0, GameUtils.CAMERA_WIDTH,
-				GameUtils.CAMERA_HEIGHT);
-		EngineOptions engineOptions = new EngineOptions(true,
-				ScreenOrientation.LANDSCAPE_FIXED, new FillResolutionPolicy(),
-				mCamera);
+		this.mCamera = new CustomZoomCamera(0, 0, GameUtils.CAMERA_WIDTH, GameUtils.CAMERA_HEIGHT);
+		EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED,
+				new FillResolutionPolicy(), mCamera);
 		engineOptions.getAudioOptions().setNeedsSound(true);
 		return engineOptions;
 	}
@@ -117,8 +116,7 @@ public class GameActivity extends CustomLayoutGameActivity implements
 
 		mMusic = Music.MUSIC_GAME;
 
-		mSharedPrefs = PreferenceManager
-				.getDefaultSharedPreferences(getApplicationContext());
+		mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 		initGameActivity();
 	}
@@ -138,8 +136,7 @@ public class GameActivity extends CustomLayoutGameActivity implements
 			battle = GameConverterHelper.getUnfinishedBattles(mDbHelper).get(0);
 		}
 
-		battle.setDifficultyLevel(DifficultyLevel.values()[mSharedPrefs.getInt(
-				GameUtils.GAME_PREFS_KEY_DIFFICULTY,
+		battle.setDifficultyLevel(DifficultyLevel.values()[mSharedPrefs.getInt(GameUtils.GAME_PREFS_KEY_DIFFICULTY,
 				DifficultyLevel.medium.ordinal())]);
 		battle.setOnNewSprite(this);
 		battle.setOnNewSoundToPlay(this);
@@ -151,8 +148,7 @@ public class GameActivity extends CustomLayoutGameActivity implements
 
 		// used to keep only one saved battle for each game mode / campaign
 		battle.setId(0L);
-		GameConverterHelper.deleteSavedBattles(mDbHelper,
-				battle.getCampaignId());
+		GameConverterHelper.deleteSavedBattles(mDbHelper, battle.getCampaignId());
 
 		// logs FPS
 		// final FPSLogger fpsLogger = new FPSLogger();
@@ -171,26 +167,20 @@ public class GameActivity extends CustomLayoutGameActivity implements
 	}
 
 	@Override
-	public void onCreateResources(
-			OnCreateResourcesCallback pOnCreateResourcesCallback)
-			throws Exception {
+	public void onCreateResources(OnCreateResourcesCallback pOnCreateResourcesCallback) throws Exception {
 		// init game element factory
-		mGameElementFactory = new GraphicsFactory(this,
-				getVertexBufferObjectManager(), getTextureManager());
+		mGameElementFactory = new GraphicsFactory(this, getVertexBufferObjectManager(), getTextureManager());
 		mGameElementFactory.initGraphics(battle);
 
 		// init sound manager
-		mSoundEffectManager = new SoundEffectManager(this, mSharedPrefs.getInt(
-				GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME,
+		mSoundEffectManager = new SoundEffectManager(this, mSharedPrefs.getInt(GameUtils.GAME_PREFS_KEY_MUSIC_VOLUME,
 				GameUtils.MusicState.on.ordinal()));
 		mSoundEffectManager.setCamera(mCamera);
 		mSoundEffectManager.init(battle, mEngine);
 
 		// load font
-		mFont = FontFactory.create(this.getFontManager(),
-				this.getTextureManager(), 256, 256,
-				Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32,
-				Color.WHITE.hashCode());
+		mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), 256, 256,
+				Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32, Color.WHITE.hashCode());
 		mFont.load();
 
 		pOnCreateResourcesCallback.onCreateResourcesFinished();
@@ -198,8 +188,7 @@ public class GameActivity extends CustomLayoutGameActivity implements
 
 	@Override
 	protected synchronized void onResume() {
-		if (GraphicsFactory.mTiledGfxMap.size() == 0
-				&& mGameElementFactory != null) {
+		if (GraphicsFactory.mGfxMap.size() == 0 && mGameElementFactory != null) {
 			mEngine.stop();
 			mGameElementFactory.initGraphics(battle);
 			mSoundEffectManager.init(battle, mEngine);
@@ -210,8 +199,7 @@ public class GameActivity extends CustomLayoutGameActivity implements
 	}
 
 	@Override
-	public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback)
-			throws Exception {
+	public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) throws Exception {
 		// prepare scene
 		mScene = new Scene();
 		mScene.setOnAreaTouchTraversalFrontToBack();
@@ -222,12 +210,9 @@ public class GameActivity extends CustomLayoutGameActivity implements
 
 		// prepare tile map
 		try {
-			final TMXLoader tmxLoader = new TMXLoader(this.getAssets(),
-					this.mEngine.getTextureManager(),
-					TextureOptions.BILINEAR_PREMULTIPLYALPHA,
-					this.getVertexBufferObjectManager(), null);
-			this.mTMXTiledMap = tmxLoader.loadFromAsset("tmx/"
-					+ battle.getTileMapName());
+			final TMXLoader tmxLoader = new TMXLoader(this.getAssets(), this.mEngine.getTextureManager(),
+					TextureOptions.BILINEAR_PREMULTIPLYALPHA, this.getVertexBufferObjectManager(), null);
+			this.mTMXTiledMap = tmxLoader.loadFromAsset("tmx/" + battle.getTileMapName());
 		} catch (final TMXLoadException e) {
 			Debug.e(e);
 		}
@@ -243,37 +228,30 @@ public class GameActivity extends CustomLayoutGameActivity implements
 	}
 
 	@Override
-	public void onPopulateScene(Scene pScene,
-			OnPopulateSceneCallback pOnPopulateSceneCallback) throws Exception {
+	public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws Exception {
 		// add selection circle
-		selectionCircle = new SelectionCircle(
-				GraphicsFactory.mGfxMap.get("selection.png"),
+		selectionCircle = new SelectionCircle(GraphicsFactory.mGfxMap.get("selection.png"),
 				getVertexBufferObjectManager());
 		selectionCircle.setZIndex(5);
 
 		// add crosshairs, icons and order line
-		crosshair = new Crosshair(GraphicsFactory.mGfxMap.get("crosshair.png"),
-				getVertexBufferObjectManager());
+		crosshair = new Crosshair(GraphicsFactory.mGfxMap.get("crosshair.png"), getVertexBufferObjectManager());
 		crosshair.setVisible(false);
 		crosshair.setZIndex(101);
 		crosshair.setAlpha(0.7f);
 		mScene.attachChild(crosshair);
 
-		Text distanceText = new Text(0, 0, mFont, "", 5,
-				getVertexBufferObjectManager());
+		Text distanceText = new Text(0, 0, mFont, "", 5, getVertexBufferObjectManager());
 		mScene.attachChild(distanceText);
 
-		crossHairLine = new Crosshair(
-				GraphicsFactory.mGfxMap.get("crosshair.png"),
-				getVertexBufferObjectManager(), distanceText);
+		crossHairLine = new Crosshair(GraphicsFactory.mGfxMap.get("crosshair.png"), getVertexBufferObjectManager(),
+				distanceText);
 		crossHairLine.setVisible(false);
 		crossHairLine.setZIndex(101);
 		crossHairLine.setAlpha(0.7f);
 		mScene.attachChild(crossHairLine);
 
-		protection = new Protection(
-				GraphicsFactory.mGfxMap.get("protection.png"),
-				getVertexBufferObjectManager());
+		protection = new Protection(GraphicsFactory.mGfxMap.get("protection.png"), getVertexBufferObjectManager());
 		protection.setVisible(false);
 		protection.setZIndex(101);
 		mScene.attachChild(protection);
@@ -286,12 +264,10 @@ public class GameActivity extends CustomLayoutGameActivity implements
 		mScene.attachChild(orderLine);
 
 		// init battle's map tiles
-		Tile[][] lstTiles = new Tile[tmxLayer.getTileRows()][tmxLayer
-				.getTileColumns()];
+		Tile[][] lstTiles = new Tile[tmxLayer.getTileRows()][tmxLayer.getTileColumns()];
 		for (TMXTile[] tt : tmxLayer.getTMXTiles()) {
 			for (TMXTile t : tt) {
-				lstTiles[t.getTileRow()][t.getTileColumn()] = new Tile(t,
-						mTMXTiledMap);
+				lstTiles[t.getTileRow()][t.getTileColumn()] = new Tile(t, mTMXTiledMap);
 			}
 		}
 		battle.getMap().setTiles(lstTiles);
@@ -308,34 +284,27 @@ public class GameActivity extends CustomLayoutGameActivity implements
 
 				// add objectives for the first time
 				for (int n = 0; n < GameUtils.NUMBER_OBJECTIVES_PER_PLAYER; n++) {
-					Tile tile = battle.getMap().getTiles()[(int) ((1.0 * n + 0.2 + Math
-							.random() * 0.6)
+					Tile tile = battle.getMap().getTiles()[(int) ((1.0 * n + 0.2 + Math.random() * 0.6)
 							* (battle.getMap().getHeight() - 2) / GameUtils.NUMBER_OBJECTIVES_PER_PLAYER)][(int) (1 + deploymentBoundaries[0] + Math
-							.random()
-							* (deploymentBoundaries[1]
-									- deploymentBoundaries[0] - 2))];
-					ObjectivePoint objective = new ObjectivePoint(
-							tile.getTileColumn() * GameUtils.PIXEL_BY_TILE,
-							tile.getTileRow() * GameUtils.PIXEL_BY_TILE,
-							player.getArmy(), getVertexBufferObjectManager());
+							.random() * (deploymentBoundaries[1] - deploymentBoundaries[0] - 2))];
+					ObjectivePoint objective = new ObjectivePoint(tile.getTileColumn() * GameUtils.PIXEL_BY_TILE,
+							tile.getTileRow() * GameUtils.PIXEL_BY_TILE, player.getArmy(),
+							getVertexBufferObjectManager());
 					battle.getObjectives().add(objective);
 					mScene.attachChild(objective.getSprite());
 				}
 			} else {
 				// setup objectives sprites
 				for (ObjectivePoint objective : battle.getObjectives()) {
-					objective.setSprite(new ObjectiveSprite(objective.getX(),
-							objective.getY(), objective.getOwner(),
+					objective.setSprite(new ObjectiveSprite(objective.getX(), objective.getY(), objective.getOwner(),
 							getVertexBufferObjectManager()));
 					mScene.attachChild(objective.getSprite());
 				}
 			}
 			// setup objective tiles
 			for (ObjectivePoint objective : battle.getObjectives()) {
-				Tile centerTile = MapLogic.getTileAtCoordinates(
-						battle.getMap(), objective.getX(), objective.getY());
-				List<Tile> adjacentTiles = MapLogic.getAdjacentTiles(
-						battle.getMap(), centerTile,
+				Tile centerTile = MapLogic.getTileAtCoordinates(battle.getMap(), objective.getX(), objective.getY());
+				List<Tile> adjacentTiles = MapLogic.getAdjacentTiles(battle.getMap(), centerTile,
 						GameUtils.OBJECTIVE_RADIUS_IN_TILE, true);
 				for (Tile tile : adjacentTiles) {
 					tile.setObjective(objective);
@@ -353,8 +322,7 @@ public class GameActivity extends CustomLayoutGameActivity implements
 					float currentX = unit.getCurrentX();
 					float currentY = unit.getCurrentY();
 					float currentRotation = unit.getCurrentRotation();
-					Tile t = MapLogic.getTileAtCoordinates(battle.getMap(),
-							currentX, currentY);
+					Tile t = MapLogic.getTileAtCoordinates(battle.getMap(), currentX, currentY);
 					unit.setTilePosition(battle, t);
 					unit.getSprite().setX(currentX);
 					unit.getSprite().setY(currentY);
@@ -364,8 +332,7 @@ public class GameActivity extends CustomLayoutGameActivity implements
 					}
 				} else {
 					// init units rotation
-					unit.getSprite().setRotation(
-							deploymentBoundaries[0] == 0 ? 90 : -90);
+					unit.getSprite().setRotation(deploymentBoundaries[0] == 0 ? 90 : -90);
 				}
 			}
 
@@ -376,9 +343,8 @@ public class GameActivity extends CustomLayoutGameActivity implements
 		pOnPopulateSceneCallback.onPopulateSceneFinished();
 
 		// init camera position
-		this.mCamera.setCenter(
-				battle.getDeploymentBoundaries(battle.getMe())[0]
-						* GameUtils.PIXEL_BY_TILE, tmxLayer.getHeight() / 2);
+		this.mCamera.setCenter(battle.getDeploymentBoundaries(battle.getMe())[0] * GameUtils.PIXEL_BY_TILE,
+				tmxLayer.getHeight() / 2);
 
 		// hide loading screen
 		mGameGUI.hideLoadingScreen();
@@ -396,31 +362,25 @@ public class GameActivity extends CustomLayoutGameActivity implements
 
 	private void startDeploymentPhase() {
 		// add deployment fogs of war
-		int[] deploymentBoundaries = battle.getDeploymentBoundaries(battle
-				.getMe());
+		int[] deploymentBoundaries = battle.getDeploymentBoundaries(battle.getMe());
 		if (deploymentBoundaries[0] == 0) {
-			deploymentZone = new DeploymentZone(deploymentBoundaries[1]
-					* GameUtils.PIXEL_BY_TILE, 0.0f, battle.getMap().getWidth()
-					* GameUtils.PIXEL_BY_TILE, battle.getMap().getHeight()
+			deploymentZone = new DeploymentZone(deploymentBoundaries[1] * GameUtils.PIXEL_BY_TILE, 0.0f, battle
+					.getMap().getWidth() * GameUtils.PIXEL_BY_TILE, battle.getMap().getHeight()
 					* GameUtils.PIXEL_BY_TILE, getVertexBufferObjectManager());
 		} else {
-			deploymentZone = new DeploymentZone(0.0f, 0.0f,
-					deploymentBoundaries[0] * GameUtils.PIXEL_BY_TILE, battle
-							.getMap().getHeight() * GameUtils.PIXEL_BY_TILE,
-					getVertexBufferObjectManager());
+			deploymentZone = new DeploymentZone(0.0f, 0.0f, deploymentBoundaries[0] * GameUtils.PIXEL_BY_TILE, battle
+					.getMap().getHeight() * GameUtils.PIXEL_BY_TILE, getVertexBufferObjectManager());
 		}
 		mScene.attachChild(deploymentZone);
 
-		mGameGUI.displayBigLabel(getString(R.string.deployment_phase),
-				R.color.white);
+		mGameGUI.displayBigLabel(getString(R.string.deployment_phase), R.color.white);
 
 		startRenderLoop();
 	}
 
 	public void startGame() {
 		// register game logic loop
-		TimerHandler spriteTimerHandler = new TimerHandler(
-				1.0f / GameUtils.GAME_LOOP_FREQUENCY, true,
+		TimerHandler spriteTimerHandler = new TimerHandler(1.0f / GameUtils.GAME_LOOP_FREQUENCY, true,
 				new ITimerCallback() {
 					Player winner;
 
@@ -434,23 +394,19 @@ public class GameActivity extends CustomLayoutGameActivity implements
 						// update selected element order's crosshair
 						if (mInputManager.selectedElement == null) {
 							crosshair.setVisible(false);
-						} else if (mInputManager.selectedElement
-								.getGameElement() instanceof Unit) {
-							Unit unit = (Unit) mInputManager.selectedElement
-									.getGameElement();
+						} else if (mInputManager.selectedElement.getGameElement() instanceof Unit) {
+							Unit unit = (Unit) mInputManager.selectedElement.getGameElement();
 							Order o = unit.getOrder();
 							if (unit.getRank() == Rank.ally && o != null) {
 								if (o instanceof FireOrder) {
 									FireOrder f = (FireOrder) o;
 									crosshair.setColor(Color.RED);
-									crosshair.setPosition(f.getXDestination(),
-											f.getYDestination());
+									crosshair.setPosition(f.getXDestination(), f.getYDestination());
 									crosshair.setVisible(true);
 								} else if (o instanceof MoveOrder) {
 									MoveOrder f = (MoveOrder) o;
 									crosshair.setColor(Color.GREEN);
-									crosshair.setPosition(f.getXDestination(),
-											f.getYDestination());
+									crosshair.setPosition(f.getXDestination(), f.getYDestination());
 									crosshair.setVisible(true);
 								} else {
 									crosshair.setVisible(false);
@@ -474,11 +430,8 @@ public class GameActivity extends CustomLayoutGameActivity implements
 		}
 		battle.setPhase(Phase.combat);
 
-		String atmoSound = GameUtils.ATMO_SOUNDS[(int) Math.round(Math.random()
-				* (GameUtils.ATMO_SOUNDS.length - 1))];
-		playSound(
-				atmoSound,
-				(float) (Math.random() * battle.getMap().getWidth() * GameUtils.PIXEL_BY_TILE),
+		String atmoSound = GameUtils.ATMO_SOUNDS[(int) Math.round(Math.random() * (GameUtils.ATMO_SOUNDS.length - 1))];
+		playSound(atmoSound, (float) (Math.random() * battle.getMap().getWidth() * GameUtils.PIXEL_BY_TILE),
 				(float) (Math.random() * battle.getMap().getHeight() * GameUtils.PIXEL_BY_TILE));
 	}
 
@@ -542,18 +495,18 @@ public class GameActivity extends CustomLayoutGameActivity implements
 		// create sprite
 		UnitSprite sprite = null;
 		if (gameElement instanceof Soldier) {
-			sprite = new SoldierSprite(gameElement, mInputManager, 0, 0,
-					GraphicsFactory.mGfxMap.get(gameElement.getSpriteName()),
-					getVertexBufferObjectManager());
+			sprite = new SoldierSprite(gameElement, mInputManager, 0, 0, GraphicsFactory.mGfxMap.get(gameElement
+					.getSpriteName()), getVertexBufferObjectManager());
 		} else if (gameElement instanceof Tank) {
-			sprite = new TankSprite(gameElement, mInputManager, 0, 0,
-					GraphicsFactory.mGfxMap.get(gameElement.getSpriteName()),
-					getVertexBufferObjectManager());
+			sprite = new TankSprite(gameElement, mInputManager, 0, 0, GraphicsFactory.mGfxMap.get(gameElement
+					.getSpriteName()), getVertexBufferObjectManager());
+		} else if (gameElement instanceof Cannon) {
+			sprite = new CannonSprite(gameElement, mInputManager, 0, 0, GraphicsFactory.mGfxMap.get(gameElement
+					.getSpriteName()), getVertexBufferObjectManager());
 		}
 
 		if (gameElement.getTilePosition() != null) {
-			sprite.setPosition(gameElement.getTilePosition().getTileX(),
-					gameElement.getTilePosition().getTileY());
+			sprite.setPosition(gameElement.getTilePosition().getTileX(), gameElement.getTilePosition().getTileY());
 		}
 		gameElement.setSprite(sprite);
 		gameElement.setRank(isMySquad ? Rank.ally : Rank.enemy);
@@ -566,8 +519,7 @@ public class GameActivity extends CustomLayoutGameActivity implements
 		mEngine.stop();
 
 		if (winningPlayer != null) {
-			GoogleAnalyticsHelper.sendEvent(getApplicationContext(),
-					EventCategory.in_game, EventAction.end_game,
+			GoogleAnalyticsHelper.sendEvent(getApplicationContext(), EventCategory.in_game, EventAction.end_game,
 					winningPlayer == battle.getMe() ? "victory" : "defeat");
 		}
 
@@ -591,10 +543,8 @@ public class GameActivity extends CustomLayoutGameActivity implements
 	}
 
 	@Override
-	public void drawSprite(float x, float y, String spriteName,
-			final int duration, final int size) {
-		final Sprite sprite = new CenteredSprite(x, y,
-				GraphicsFactory.mGfxMap.get(spriteName),
+	public void drawSprite(float x, float y, String spriteName, final int duration, final int size) {
+		final Sprite sprite = new CenteredSprite(x, y, GraphicsFactory.mGfxMap.get(spriteName),
 				getVertexBufferObjectManager());
 		sprite.setScale(size);
 		mScene.attachChild(sprite);
@@ -625,18 +575,15 @@ public class GameActivity extends CustomLayoutGameActivity implements
 	}
 
 	@Override
-	public void drawAnimatedSprite(float x, float y, String spriteName,
-			int frameDuration, float scale, int loopCount,
+	public void drawAnimatedSprite(float x, float y, String spriteName, int frameDuration, float scale, int loopCount,
 			final boolean removeAfter, int zIndex) {
-		if (GraphicsFactory.mTiledGfxMap.get(spriteName) == null) {
+		if (GraphicsFactory.mGfxMap.get(spriteName) == null) {
 			return;
 		}
 
-		final AnimatedSprite sprite = new AnimatedSprite(0, 0,
-				GraphicsFactory.mTiledGfxMap.get(spriteName),
+		final AnimatedSprite sprite = new AnimatedSprite(0, 0, GraphicsFactory.mGfxMap.get(spriteName),
 				getVertexBufferObjectManager());
-		sprite.setPosition(x - sprite.getWidth() / 2.0f, y - sprite.getWidth()
-				/ 2.0f);
+		sprite.setPosition(x - sprite.getWidth() / 2.0f, y - sprite.getWidth() / 2.0f);
 		sprite.setZIndex(zIndex);
 		sprite.setScale(scale);
 		if (loopCount == -1) {
@@ -644,19 +591,16 @@ public class GameActivity extends CustomLayoutGameActivity implements
 		} else {
 			sprite.animate(frameDuration, loopCount, new IAnimationListener() {
 				@Override
-				public void onAnimationStarted(AnimatedSprite pAnimatedSprite,
+				public void onAnimationStarted(AnimatedSprite pAnimatedSprite, int pInitialLoopCount) {
+				}
+
+				@Override
+				public void onAnimationLoopFinished(AnimatedSprite pAnimatedSprite, int pRemainingLoopCount,
 						int pInitialLoopCount) {
 				}
 
 				@Override
-				public void onAnimationLoopFinished(
-						AnimatedSprite pAnimatedSprite,
-						int pRemainingLoopCount, int pInitialLoopCount) {
-				}
-
-				@Override
-				public void onAnimationFrameChanged(
-						AnimatedSprite pAnimatedSprite, int pOldFrameIndex,
+				public void onAnimationFrameChanged(AnimatedSprite pAnimatedSprite, int pOldFrameIndex,
 						int pNewFrameIndex) {
 				}
 

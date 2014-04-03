@@ -3,14 +3,12 @@ package com.glevel.wwii.game.models.units;
 import java.util.List;
 
 import com.glevel.wwii.game.data.ArmiesData;
-import com.glevel.wwii.game.data.NamesData;
-import com.glevel.wwii.game.graphics.SoldierSprite;
-import com.glevel.wwii.game.models.Battle;
+import com.glevel.wwii.game.graphics.CannonSprite;
 import com.glevel.wwii.game.models.orders.Order;
 import com.glevel.wwii.game.models.units.categories.Unit;
 import com.glevel.wwii.game.models.weapons.categories.Weapon;
 
-public class Soldier extends Unit {
+public class Cannon extends Unit {
 
 	/**
      * 
@@ -36,37 +34,9 @@ public class Soldier extends Unit {
 	private static final float VETERAN_PRICE_MODIFIER = 1.0f;
 	private static final float ELITE_PRICE_MODIFIER = 1.5f;
 
-	private final String realName;
-
-	public Soldier(ArmiesData army, int name, int image, Experience experience, List<Weapon> weapons, int moveSpeed,
+	public Cannon(ArmiesData army, int name, int image, Experience experience, List<Weapon> weapons, int moveSpeed,
 			String spriteName, float spriteScale) {
 		super(army, name, image, experience, weapons, moveSpeed, spriteName, spriteScale);
-		this.realName = createRandomRealName();
-	}
-
-	public String getRealName() {
-		return realName;
-	}
-
-	/**
-	 * Create a soldier's name with rank depending on nationality and
-	 * experience.
-	 * 
-	 * @return name
-	 */
-	private String createRandomRealName() {
-		String[][] names = null;
-		switch (army) {
-		case GERMANY:
-			names = NamesData.GERMAN_NAMES;
-			break;
-		case USA:
-			names = NamesData.AMERICAN_NAMES;
-			break;
-		}
-		// get the column corresponding to the experience
-		String[] h = names[experience.ordinal()];
-		return h[(int) (Math.random() * (h.length - 1))];
 	}
 
 	@Override
@@ -139,15 +109,10 @@ public class Soldier extends Unit {
 			return;
 
 		if (sprite != null) {
-			((SoldierSprite) sprite).setOrder(order);
+			((CannonSprite) sprite).setOrder(order);
 		}
-		super.setOrder(order);
-	}
 
-	@Override
-	public void died(Battle battle) {
-		((SoldierSprite) sprite).died();
-		super.died(battle);
+		super.setOrder(order);
 	}
 
 }

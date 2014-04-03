@@ -2,7 +2,7 @@ package com.glevel.wwii.game.graphics;
 
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
-import org.andengine.opengl.texture.region.ITextureRegion;
+import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 import com.glevel.wwii.game.GraphicsFactory;
@@ -22,8 +22,8 @@ public class TankSprite extends UnitSprite {
 	private transient boolean isMoving = false;
 	private transient AnimatedSprite moveSmoke;
 
-	public TankSprite(GameElement gameElement, InputManager inputManager, float pX, float pY, ITextureRegion pTextureRegion,
-			VertexBufferObjectManager mVertexBufferObjectManager) {
+	public TankSprite(GameElement gameElement, InputManager inputManager, float pX, float pY,
+			TiledTextureRegion pTextureRegion, VertexBufferObjectManager mVertexBufferObjectManager) {
 		super(gameElement, inputManager, pX, pY, pTextureRegion, mVertexBufferObjectManager);
 		addTurretSprite();
 		addVehicleSmokeSprite();
@@ -32,13 +32,15 @@ public class TankSprite extends UnitSprite {
 	}
 
 	private void addTurretSprite() {
-		turretSprite = new CenteredSprite(0, 0, GraphicsFactory.mGfxMap.get(getGameElement().getSpriteName().replace(".png", "") + "_turret.png"),
-				getVertexBufferObjectManager());
+		turretSprite = new CenteredSprite(0, 0, GraphicsFactory.mGfxMap.get(getGameElement().getSpriteName().replace(
+				".png", "")
+				+ "_turret.png"), getVertexBufferObjectManager());
 		attachChild(turretSprite);
 	}
 
 	private void addVehicleSmokeSprite() {
-		moveSmoke = new AnimatedSprite(30, 92, GraphicsFactory.mTiledGfxMap.get("tank_move_smoke.png"), getVertexBufferObjectManager());
+		moveSmoke = new AnimatedSprite(30, 92, GraphicsFactory.mGfxMap.get("tank_move_smoke.png"),
+				getVertexBufferObjectManager());
 		moveSmoke.setScale(1.0f, 0.8f);
 		moveSmoke.setRotation(180);
 		moveSmoke.setVisible(false);
@@ -46,12 +48,14 @@ public class TankSprite extends UnitSprite {
 	}
 
 	private void addMuzzleFlashSprites() {
-		secondaryWeaponMuzzle = new Sprite(76, -5, GraphicsFactory.mGfxMap.get("muzzle_flash.png"), getVertexBufferObjectManager());
+		secondaryWeaponMuzzle = new Sprite(76, -5, GraphicsFactory.mGfxMap.get("muzzle_flash.png"),
+				getVertexBufferObjectManager());
 		secondaryWeaponMuzzle.setScale(0.8f);
 		secondaryWeaponMuzzle.setVisible(false);
 		attachChild(secondaryWeaponMuzzle);
 
-		mainWeaponMuzzle = new Sprite(62, -61, GraphicsFactory.mGfxMap.get("muzzle_flash.png"), getVertexBufferObjectManager());
+		mainWeaponMuzzle = new Sprite(62, -61, GraphicsFactory.mGfxMap.get("muzzle_flash.png"),
+				getVertexBufferObjectManager());
 		if (getGameElement().getSpriteName().equals("shermanM4A1.png")) {
 			mainWeaponMuzzle.setPosition(65, -65);
 		}

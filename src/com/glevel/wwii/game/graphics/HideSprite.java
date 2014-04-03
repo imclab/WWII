@@ -1,6 +1,6 @@
 package com.glevel.wwii.game.graphics;
 
-import org.andengine.opengl.texture.region.TextureRegion;
+import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 public class HideSprite extends CenteredSprite {
@@ -11,7 +11,8 @@ public class HideSprite extends CenteredSprite {
 	private static final float INITIAL_SCALE = 0.3f;
 	private boolean mIsGrowing = true;
 
-	public HideSprite(final TextureRegion pTextureRegion, final VertexBufferObjectManager pVertexBufferObjectManager) {
+	public HideSprite(final ITiledTextureRegion pTextureRegion,
+			final VertexBufferObjectManager pVertexBufferObjectManager) {
 		super(-50, -50, pTextureRegion, pVertexBufferObjectManager);
 		this.setColor(0.0f, 1.0f, 0.0f);
 		this.setScale(INITIAL_SCALE);

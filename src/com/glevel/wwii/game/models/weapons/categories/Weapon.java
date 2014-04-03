@@ -10,6 +10,7 @@ import com.glevel.wwii.game.andengine.custom.CustomColors;
 import com.glevel.wwii.game.logic.MapLogic;
 import com.glevel.wwii.game.models.Battle;
 import com.glevel.wwii.game.models.map.Tile.TerrainType;
+import com.glevel.wwii.game.models.units.Cannon;
 import com.glevel.wwii.game.models.units.Soldier;
 import com.glevel.wwii.game.models.units.categories.Unit;
 import com.glevel.wwii.game.models.units.categories.Unit.Action;
@@ -43,8 +44,8 @@ public abstract class Weapon implements Serializable {
 	// price
 	private static final int WEAPON_BASE_PRICE = 2;
 
-	public Weapon(int name, int image, int apPower, int atPower, int range, int nbMagazines, int cadence, int magazineSize, int reloadSpeed, int shootSpeed,
-			int[] accuracy, String sound) {
+	public Weapon(int name, int image, int apPower, int atPower, int range, int nbMagazines, int cadence,
+			int magazineSize, int reloadSpeed, int shootSpeed, int[] accuracy, String sound) {
 		this.name = name;
 		this.image = image;
 		this.apPower = apPower;
@@ -184,7 +185,7 @@ public abstract class Weapon implements Serializable {
 
 	protected void resolveDamageDiceRoll(int tohit, Unit shooter, Unit target) {
 
-		if (target instanceof Soldier) {
+		if (target instanceof Soldier || target instanceof Cannon) {
 			int diceRoll = (int) (Math.random() * 100);
 			if (diceRoll < tohit) {
 				// hit !
@@ -211,7 +212,8 @@ public abstract class Weapon implements Serializable {
 
 			// back and sides of tanks are more vulnerable
 			int sidesBonus = 0;
-			float absoluteAngle = Math.abs(MapLogic.getAngle(target.getSprite(), shooter.getSprite().getX(), shooter.getSprite().getY()));
+			float absoluteAngle = Math.abs(MapLogic.getAngle(target.getSprite(), shooter.getSprite().getX(), shooter
+					.getSprite().getY()));
 			if (absoluteAngle > 135.0f) {
 				// back
 				sidesBonus = 2;
@@ -238,7 +240,8 @@ public abstract class Weapon implements Serializable {
 	}
 
 	public boolean canUseWeapon(Unit shooter, Unit target, boolean canSeeTarget) {
-		if (target instanceof Vehicle && atPower < ((Vehicle) target).getArmor() || target instanceof Soldier && apPower == 0) {
+		if (target instanceof Vehicle && atPower < ((Vehicle) target).getArmor() || apPower == 0
+				&& (target instanceof Soldier || target instanceof Cannon)) {
 			// weapon is useless against target
 			return false;
 		} else if (ammoAmount <= 0) {
@@ -259,7 +262,7 @@ public abstract class Weapon implements Serializable {
 	}
 
 	public int getEfficiencyAgainst(Unit target) {
-		if (target instanceof Soldier) {
+		if (target instanceof Soldier || target instanceof Cannon) {
 			return apPower;
 		} else {
 			return atPower;

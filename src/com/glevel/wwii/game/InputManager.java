@@ -25,9 +25,9 @@ import com.glevel.wwii.game.models.orders.DefendOrder;
 import com.glevel.wwii.game.models.orders.FireOrder;
 import com.glevel.wwii.game.models.orders.HideOrder;
 import com.glevel.wwii.game.models.orders.MoveOrder;
+import com.glevel.wwii.game.models.units.Cannon;
 import com.glevel.wwii.game.models.units.categories.Unit;
 import com.glevel.wwii.game.models.units.categories.Vehicle;
-import com.glevel.wwii.game.models.weapons.Turret;
 import com.glevel.wwii.game.models.weapons.categories.IndirectWeapon;
 import com.glevel.wwii.utils.ApplicationUtils;
 
@@ -73,19 +73,22 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
 	 * Map scrolling
 	 */
 	@Override
-	public void onScrollStarted(final ScrollDetector pScollDetector, final int pPointerID, final float pDistanceX, final float pDistanceY) {
+	public void onScrollStarted(final ScrollDetector pScollDetector, final int pPointerID, final float pDistanceX,
+			final float pDistanceY) {
 		final float zoomFactor = this.mCamera.getZoomFactor();
 		this.mCamera.offsetCenter(-pDistanceX / zoomFactor, -pDistanceY / zoomFactor);
 	}
 
 	@Override
-	public void onScroll(final ScrollDetector pScollDetector, final int pPointerID, final float pDistanceX, final float pDistanceY) {
+	public void onScroll(final ScrollDetector pScollDetector, final int pPointerID, final float pDistanceX,
+			final float pDistanceY) {
 		final float zoomFactor = this.mCamera.getZoomFactor();
 		this.mCamera.offsetCenter(-pDistanceX / zoomFactor, -pDistanceY / zoomFactor);
 	}
 
 	@Override
-	public void onScrollFinished(final ScrollDetector pScollDetector, final int pPointerID, final float pDistanceX, final float pDistanceY) {
+	public void onScrollFinished(final ScrollDetector pScollDetector, final int pPointerID, final float pDistanceX,
+			final float pDistanceY) {
 		final float zoomFactor = this.mCamera.getZoomFactor();
 		this.mCamera.offsetCenter(-pDistanceX / zoomFactor, -pDistanceY / zoomFactor);
 	}
@@ -99,12 +102,14 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
 	}
 
 	@Override
-	public void onPinchZoom(final PinchZoomDetector pPinchZoomDetector, final TouchEvent pTouchEvent, final float pZoomFactor) {
+	public void onPinchZoom(final PinchZoomDetector pPinchZoomDetector, final TouchEvent pTouchEvent,
+			final float pZoomFactor) {
 		this.mCamera.setZoomFactor(this.mPinchZoomStartedCameraZoomFactor * pZoomFactor);
 	}
 
 	@Override
-	public void onPinchZoomFinished(final PinchZoomDetector pPinchZoomDetector, final TouchEvent pTouchEvent, final float pZoomFactor) {
+	public void onPinchZoomFinished(final PinchZoomDetector pPinchZoomDetector, final TouchEvent pTouchEvent,
+			final float pZoomFactor) {
 		this.mCamera.setZoomFactor(this.mPinchZoomStartedCameraZoomFactor * pZoomFactor);
 	}
 
@@ -160,7 +165,8 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
 		if (unitSprite.isVisible()) {
 			selectedElement = unitSprite;
 			mGameActivity.selectionCircle.setColor(selectedElement.getGameElement().getSelectionColor());
-			mGameActivity.selectionCircle.setPosition((selectedElement.getWidth() - mGameActivity.selectionCircle.getWidth()) / 2,
+			mGameActivity.selectionCircle.setPosition(
+					(selectedElement.getWidth() - mGameActivity.selectionCircle.getWidth()) / 2,
 					(selectedElement.getHeight() - mGameActivity.selectionCircle.getHeight()) / 2);
 			if (selectedElement.getGameElement() instanceof Vehicle) {
 				mGameActivity.selectionCircle.setScale(1.5f);
@@ -188,12 +194,13 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
 			if (selectedElement.getGameElement() instanceof Unit) {
 				Unit unit = (Unit) selectedElement.getGameElement();
 				UnitSprite g = getElementAtCoordinates(x, y);
-				if (!unit.isDead() && g != null && g.getGameElement() instanceof Unit && g != selectedElement && !((Unit) g.getGameElement()).isDead()
+				if (!unit.isDead() && g != null && g.getGameElement() instanceof Unit && g != selectedElement
+						&& !((Unit) g.getGameElement()).isDead()
 						&& ((Unit) g.getGameElement()).getArmy() != ((Unit) selectedElement.getGameElement()).getArmy()) {
 					unit.setOrder(new FireOrder((Unit) g.getGameElement()));
 				} else if (!unit.isDead() && unit.canMove()) {
 					unit.setOrder(new MoveOrder(x, y));
-				} else if (!unit.canMove() && unit.getWeapons().get(0) instanceof Turret) {
+				} else if (unit instanceof Cannon) {
 					unit.setOrder(new FireOrder(x, y));
 				}
 			}
@@ -206,7 +213,8 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
 			TMXTile tmxtile = mGameActivity.tmxLayer.getTMXTileAt(x, y);
 			Tile tile = mGameActivity.battle.getMap().getTiles()[tmxtile.getTileRow()][tmxtile.getTileColumn()];
 			int[] deploymentBoundaries = mGameActivity.battle.getDeploymentBoundaries(mGameActivity.battle.getMe());
-			if (tmxtile != null && tmxtile.getTileColumn() >= deploymentBoundaries[0] && tmxtile.getTileColumn() < deploymentBoundaries[1]
+			if (tmxtile != null && tmxtile.getTileColumn() >= deploymentBoundaries[0]
+					&& tmxtile.getTileColumn() < deploymentBoundaries[1]
 					&& ((Unit) gameSprite.getGameElement()).canBeDeployedThere(mGameActivity.battle, tile)) {
 				gameSprite.setPosition(x, y);
 				gameSprite.getGameElement().setTilePosition(mGameActivity.battle, tile);
@@ -218,11 +226,13 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
 			// during combat phase
 			mGameActivity.orderLine.setPosition(gameSprite.getX(), gameSprite.getY(), x, y);
 			UnitSprite g = getElementAtCoordinates(x, y);
-			if (g != null && g.isVisible() && g != gameSprite && g.getGameElement() instanceof Unit && !((Unit) g.getGameElement()).isDead() && g.isVisible()
+			if (g != null && g.isVisible() && g != gameSprite && g.getGameElement() instanceof Unit
+					&& !((Unit) g.getGameElement()).isDead() && g.isVisible()
 					&& ((Unit) g.getGameElement()).getArmy() != ((Unit) selectedElement.getGameElement()).getArmy()) {
 				// attack
 				if (((Unit) selectedElement.getGameElement()).getWeapons().get(0) instanceof IndirectWeapon
-						|| MapLogic.canSee(mGameActivity.battle.getMap(), selectedElement.getGameElement(), g.getGameElement())) {
+						|| MapLogic.canSee(mGameActivity.battle.getMap(), selectedElement.getGameElement(),
+								g.getGameElement())) {
 					mGameActivity.orderLine.setColor(Color.RED);
 				} else {
 					mGameActivity.orderLine.setColor(Color.BLACK);
@@ -230,12 +240,15 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
 				mGameActivity.crossHairLine.setColor(Color.RED);
 				mGameActivity.crossHairLine.setPosition(x, y);
 				mGameActivity.crossHairLine.setVisible(true);
-				mGameActivity.crossHairLine.updateDistanceLabel(distance, mGameActivity.battle, (Unit) gameSprite.getGameElement(), (Unit) g.getGameElement());
+				mGameActivity.crossHairLine.updateDistanceLabel(distance, mGameActivity.battle,
+						(Unit) gameSprite.getGameElement(), (Unit) g.getGameElement());
 				mGameActivity.protection.setVisible(false);
 			} else if (!((Unit) gameSprite.getGameElement()).canMove()) {
 				// immobile units
-				if (((Unit) selectedElement.getGameElement()).getWeapons().get(0) instanceof IndirectWeapon || g != null
-						&& MapLogic.canSee(mGameActivity.battle.getMap(), selectedElement.getGameElement(), g.getGameElement())
+				if (((Unit) selectedElement.getGameElement()).getWeapons().get(0) instanceof IndirectWeapon
+						|| g != null
+						&& MapLogic.canSee(mGameActivity.battle.getMap(), selectedElement.getGameElement(),
+								g.getGameElement())
 						|| MapLogic.canSee(mGameActivity.battle.getMap(), selectedElement.getGameElement(), x, y)) {
 					mGameActivity.orderLine.setColor(Color.RED);
 				} else {
@@ -243,7 +256,8 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
 				}
 				mGameActivity.crossHairLine.setColor(Color.TRANSPARENT);
 				mGameActivity.crossHairLine.setPosition(x, y);
-				mGameActivity.crossHairLine.updateDistanceLabel(distance, mGameActivity.battle, (Unit) gameSprite.getGameElement(), null);
+				mGameActivity.crossHairLine.updateDistanceLabel(distance, mGameActivity.battle,
+						(Unit) gameSprite.getGameElement(), null);
 				mGameActivity.crossHairLine.setVisible(true);
 				mGameActivity.protection.setVisible(false);
 			} else {
@@ -260,7 +274,8 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
 				}
 
 				mGameActivity.crossHairLine.setPosition(x, y);
-				mGameActivity.crossHairLine.updateDistanceLabel(distance, mGameActivity.battle, (Unit) gameSprite.getGameElement(), null);
+				mGameActivity.crossHairLine.updateDistanceLabel(distance, mGameActivity.battle,
+						(Unit) gameSprite.getGameElement(), null);
 				mGameActivity.crossHairLine.setVisible(true);
 				mGameActivity.orderLine.setColor(Color.GREEN);
 			}
@@ -282,7 +297,8 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
 		} else if (lastY > screenDimensions.y - AUTO_SCROLLING_EDGE_DISTANCE_THRESHOLD) {
 			py = 1;
 		}
-		mCamera.offsetCenter(px * AUTO_SCROLLING_SPEED / mCamera.getZoomFactor(), py * AUTO_SCROLLING_SPEED / mCamera.getZoomFactor());
+		mCamera.offsetCenter(px * AUTO_SCROLLING_SPEED / mCamera.getZoomFactor(),
+				py * AUTO_SCROLLING_SPEED / mCamera.getZoomFactor());
 	}
 
 	public void hideOrderLine() {
@@ -294,7 +310,8 @@ public class InputManager implements IOnSceneTouchListener, IScrollDetectorListe
 	private UnitSprite getElementAtCoordinates(float x, float y) {
 		for (Player p : mGameActivity.battle.getPlayers()) {
 			for (Unit g : p.getUnits()) {
-				if (Math.abs(g.getSprite().getX() - x) < HOVER_UNIT_RADIUS_THRESHOLD && Math.abs(g.getSprite().getY() - y) < HOVER_UNIT_RADIUS_THRESHOLD) {
+				if (Math.abs(g.getSprite().getX() - x) < HOVER_UNIT_RADIUS_THRESHOLD
+						&& Math.abs(g.getSprite().getY() - y) < HOVER_UNIT_RADIUS_THRESHOLD) {
 					return g.getSprite();
 				}
 			}

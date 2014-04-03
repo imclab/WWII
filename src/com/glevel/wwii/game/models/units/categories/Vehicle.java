@@ -51,11 +51,9 @@ public abstract class Vehicle extends Unit {
 		LIGHT, TANK
 	}
 
-	public Vehicle(ArmiesData army, int name, int image, Experience experience,
-			List<Weapon> weapons, int moveSpeed, VehicleType type, int armor,
-			int width, int height, String spriteName, float spriteScale) {
-		super(army, name, image, experience, weapons, moveSpeed, spriteName,
-				spriteScale);
+	public Vehicle(ArmiesData army, int name, int image, Experience experience, List<Weapon> weapons, int moveSpeed,
+			VehicleType type, int armor, int width, int height, String spriteName, float spriteScale) {
+		super(army, name, image, experience, weapons, moveSpeed, spriteName, spriteScale);
 		this.vehicleType = type;
 		this.armor = armor;
 		this.width = width;
@@ -158,8 +156,7 @@ public abstract class Vehicle extends Unit {
 	public boolean canMoveIn(Node node) {
 		Tile tile = (Tile) node;
 		if (tile.getTerrain() != null && tile.getTerrain() != TerrainType.field
-				&& tile.getTerrain() != TerrainType.bush
-				&& tile.getTerrain() != TerrainType.tree) {
+				&& tile.getTerrain() != TerrainType.bush && tile.getTerrain() != TerrainType.tree) {
 			return false;
 		}
 
@@ -194,6 +191,9 @@ public abstract class Vehicle extends Unit {
 
 	@Override
 	public void setOrder(Order order) {
+		if (isDead())
+			return;
+
 		// nextX = -1.0f;
 		// nextY = -1.0f;
 		if (sprite != null) {
@@ -233,26 +233,19 @@ public abstract class Vehicle extends Unit {
 		float dx = x - sprite.getX();
 		float dy = y - sprite.getY();
 		double angle = Math.atan(dy / dx);
-		float dd = moveSpeed
-				* 10
-				* 0.04f
-				* getUnitSpeed()
-				* (rotationStatus == RotationStatus.REVERSE ? REVERSE_SPEED
-						: 1.0f);
+		float dd = moveSpeed * 10 * 0.04f * getUnitSpeed()
+				* (rotationStatus == RotationStatus.REVERSE ? REVERSE_SPEED : 1.0f);
 
 		boolean hasArrived = false;
-		float distanceLeft = MapLogic.getDistanceBetween(x, y, sprite.getX(),
-				sprite.getY());
+		float distanceLeft = MapLogic.getDistanceBetween(x, y, sprite.getX(), sprite.getY());
 		if (distanceLeft < dd) {
 			hasArrived = true;
 			dd = distanceLeft;
 		}
 
-		float[] newPosition = MapLogic.getCoordinatesAfterTranslation(
-				sprite.getX(), sprite.getY(), dd, angle, dx > 0);
+		float[] newPosition = MapLogic.getCoordinatesAfterTranslation(sprite.getX(), sprite.getY(), dd, angle, dx > 0);
 
-		Tile nextTile = MapLogic.getTileAtCoordinates(battle.getMap(),
-				newPosition[0], newPosition[1]);
+		Tile nextTile = MapLogic.getTileAtCoordinates(battle.getMap(), newPosition[0], newPosition[1]);
 		if (nextTile == null) {
 			return;
 		}
@@ -269,8 +262,7 @@ public abstract class Vehicle extends Unit {
 
 		sprite.setPosition(newPosition[0], newPosition[1]);
 
-		if (nextTile.getTileX() != getTilePosition().getTileX()
-				|| nextTile.getTileY() != getTilePosition().getTileY()) {
+		if (nextTile.getTileX() != getTilePosition().getTileX() || nextTile.getTileY() != getTilePosition().getTileY()) {
 			setTilePosition(battle, nextTile);
 		}
 
@@ -281,8 +273,7 @@ public abstract class Vehicle extends Unit {
 	}
 
 	@Override
-	protected RotationStatus updateUnitRotation(float xDestination,
-			float yDestination) {
+	protected RotationStatus updateUnitRotation(float xDestination, float yDestination) {
 		RotationStatus rotationStatus = RotationStatus.NONE;
 
 		float dx = xDestination - sprite.getX();
@@ -297,8 +288,7 @@ public abstract class Vehicle extends Unit {
 
 		// reverse if not far !
 		if (Math.abs(dTau) > 135.0f
-				&& MapLogic.getDistanceBetween(xDestination, yDestination,
-						sprite.getX(), sprite.getY()) < REVERSE_THRESHOLD) {
+				&& MapLogic.getDistanceBetween(xDestination, yDestination, sprite.getX(), sprite.getY()) < REVERSE_THRESHOLD) {
 			if (dx > 0) {
 				finalAngle -= 180;
 			} else {
@@ -322,8 +312,7 @@ public abstract class Vehicle extends Unit {
 		}
 		sprite.setRotation((float) (sprite.getRotation() + rotationStep));
 
-		return Math.abs(rotationStep) < ROTATION_SPEED ? rotationStatus
-				: RotationStatus.ROTATING;
+		return Math.abs(rotationStep) < ROTATION_SPEED ? rotationStatus : RotationStatus.ROTATING;
 	}
 
 	@Override
@@ -336,8 +325,7 @@ public abstract class Vehicle extends Unit {
 			if (getWeapons().get(0) instanceof Turret) {
 				// turrets take time to rotate
 				Turret turret = (Turret) getWeapons().get(0);
-				boolean isRotatingOver = turret.rotateTurret(sprite,
-						fireOrder.getXDestination(),
+				boolean isRotatingOver = turret.rotateTurret(sprite, fireOrder.getXDestination(),
 						fireOrder.getYDestination());
 				if (!isRotatingOver) {
 					return;
@@ -357,8 +345,7 @@ public abstract class Vehicle extends Unit {
 		// get most suitable weapon
 		boolean canShoot = false;
 		for (Weapon weapon : getWeapons()) {
-			if (weapon.canUseWeapon(this, target,
-					MapLogic.canSee(battle.getMap(), this, target))) {
+			if (weapon.canUseWeapon(this, target, MapLogic.canSee(battle.getMap(), this, target))) {
 				fireWithWeapon(battle, weapon, target);
 				canShoot = true;
 			}
@@ -383,11 +370,9 @@ public abstract class Vehicle extends Unit {
 			if (weapon instanceof Turret && target instanceof Vehicle) {
 				// canons cannot shoot while moving but can rotate
 				Turret turret = (Turret) weapon;
-				turret.rotateTurret(sprite, target.getSprite().getX(), target
-						.getSprite().getY());
+				turret.rotateTurret(sprite, target.getSprite().getX(), target.getSprite().getY());
 				return true;
-			} else if (Math.abs(MapLogic.getAngle(sprite, target.getSprite()
-					.getX(), target.getSprite().getY())) >= MG_MAX_FIRE_ANGLE) {
+			} else if (Math.abs(MapLogic.getAngle(sprite, target.getSprite().getX(), target.getSprite().getY())) >= MG_MAX_FIRE_ANGLE) {
 				return false;
 			}
 
@@ -403,15 +388,12 @@ public abstract class Vehicle extends Unit {
 					}
 					// aiming
 					this.currentAction = Action.AIMING;
-				} else if (battle.getGameCounter()
-						% (11 - weapon.getShootSpeed()) == 0) {
+				} else if (battle.getGameCounter() % (11 - weapon.getShootSpeed()) == 0) {
 					// firing !!!
 					currentAction = Action.FIRING;
 
 					if (weapon.getAimCounter() == weapon.getCadence()) {
-						battle.getOnNewSoundToPlay()
-								.playSound(weapon.getSound(), sprite.getX(),
-										sprite.getY());
+						battle.getOnNewSoundToPlay().playSound(weapon.getSound(), sprite.getX(), sprite.getY());
 					}
 
 					// add muzzle flash sprite
@@ -471,15 +453,11 @@ public abstract class Vehicle extends Unit {
 		}
 
 		realTilesPosition = new ArrayList<Tile>();
-		List<Tile> adjacentTiles = MapLogic.getAdjacentTiles(
-				battle.getMap(),
-				getTilePosition(),
-				(int) Math.ceil(VEHICLE_RADIUS_SIZE * GameUtils.PIXEL_BY_METER
-						/ GameUtils.PIXEL_BY_TILE), true);
+		List<Tile> adjacentTiles = MapLogic.getAdjacentTiles(battle.getMap(), getTilePosition(),
+				(int) Math.ceil(VEHICLE_RADIUS_SIZE * GameUtils.PIXEL_BY_METER / GameUtils.PIXEL_BY_TILE), true);
 		for (Tile t : adjacentTiles) {
 			// run over soldiers
-			if (battle.getPhase() == Phase.combat
-					&& t.getContent() instanceof Soldier) {
+			if (battle.getPhase() == Phase.combat && t.getContent() instanceof Soldier) {
 				Soldier soldier = (Soldier) t.getContent();
 				instantlyKilledSomeone(battle, soldier);
 			}
@@ -491,11 +469,8 @@ public abstract class Vehicle extends Unit {
 
 	@Override
 	public boolean canBeDeployedThere(Battle battle, Tile tile) {
-		List<Tile> adjacentTiles = MapLogic.getAdjacentTiles(
-				battle.getMap(),
-				tile,
-				(int) Math.ceil(VEHICLE_RADIUS_SIZE * GameUtils.PIXEL_BY_METER
-						/ GameUtils.PIXEL_BY_TILE), true);
+		List<Tile> adjacentTiles = MapLogic.getAdjacentTiles(battle.getMap(), tile,
+				(int) Math.ceil(VEHICLE_RADIUS_SIZE * GameUtils.PIXEL_BY_METER / GameUtils.PIXEL_BY_TILE), true);
 		for (Tile t : adjacentTiles) {
 			if (t.getContent() != null && t.getContent() != this) {
 				return false;

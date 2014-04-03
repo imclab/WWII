@@ -1,7 +1,7 @@
 package com.glevel.wwii.game.graphics;
 
 import org.andengine.input.touch.TouchEvent;
-import org.andengine.opengl.texture.region.ITextureRegion;
+import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 import com.glevel.wwii.game.InputManager;
@@ -20,8 +20,8 @@ public abstract class UnitSprite extends CenteredSprite {
 	private transient boolean wasSelected = false;
 	private transient boolean canBeDragged = false;
 
-	public UnitSprite(GameElement gameElement, InputManager inputManager, float pX, float pY, ITextureRegion pTextureRegion,
-			VertexBufferObjectManager mVertexBufferObjectManager) {
+	public UnitSprite(GameElement gameElement, InputManager inputManager, float pX, float pY,
+			ITiledTextureRegion pTextureRegion, VertexBufferObjectManager mVertexBufferObjectManager) {
 		super(pX, pY, pTextureRegion, mVertexBufferObjectManager);
 		mGameElement = gameElement;
 		mInputManager = inputManager;
@@ -29,7 +29,8 @@ public abstract class UnitSprite extends CenteredSprite {
 	}
 
 	@Override
-	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
+	public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX,
+			final float pTouchAreaLocalY) {
 		switch (pSceneTouchEvent.getAction()) {
 		case TouchEvent.ACTION_DOWN:
 			// element is selected
@@ -39,8 +40,11 @@ public abstract class UnitSprite extends CenteredSprite {
 			mIsSelected = true;
 			break;
 		case TouchEvent.ACTION_MOVE:
-			if (canBeDragged && mIsSelected && !mIsGrabbed
-					&& (Math.abs(pTouchAreaLocalX) + Math.abs(pTouchAreaLocalY) > ACTION_MOVE_THRESHOLD || mInputManager.isDeploymentPhase())) {
+			if (canBeDragged
+					&& mIsSelected
+					&& !mIsGrabbed
+					&& (Math.abs(pTouchAreaLocalX) + Math.abs(pTouchAreaLocalY) > ACTION_MOVE_THRESHOLD || mInputManager
+							.isDeploymentPhase())) {
 				// element is dragged
 				mIsGrabbed = true;
 			}
@@ -57,7 +61,8 @@ public abstract class UnitSprite extends CenteredSprite {
 					// give order to unit
 					mInputManager.giveOrderToUnit(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
 				}
-			} else if (wasSelected && Math.abs(pSceneTouchEvent.getX() - getX()) + Math.abs(pSceneTouchEvent.getY() - getY()) < VALID_ORDER_THRESHOLD) {
+			} else if (wasSelected
+					&& Math.abs(pSceneTouchEvent.getX() - getX()) + Math.abs(pSceneTouchEvent.getY() - getY()) < VALID_ORDER_THRESHOLD) {
 				mInputManager.giveHideOrder(this);
 			}
 			mInputManager.hideOrderLine();

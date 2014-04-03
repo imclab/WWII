@@ -1,7 +1,7 @@
 package com.glevel.wwii.game.graphics;
 
 import org.andengine.entity.text.Text;
-import org.andengine.opengl.texture.region.TextureRegion;
+import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.color.Color;
 
@@ -22,15 +22,15 @@ public class Crosshair extends CenteredSprite {
     private Text mDistanceText = null;
     private boolean mIsGrowing = true;
 
-    public Crosshair(final TextureRegion pTextureRegion, final VertexBufferObjectManager pVertexBufferObjectManager,
+    public Crosshair(final ITiledTextureRegion pTextureRegion, final VertexBufferObjectManager pVertexBufferObjectManager,
             Text distanceText) {
         super(0, 0, pTextureRegion, pVertexBufferObjectManager);
         setScale(INITIAL_SCALE);
         this.mDistanceText = distanceText;
     }
 
-    public Crosshair(final TextureRegion pTextureRegion, final VertexBufferObjectManager pVertexBufferObjectManager) {
-        super(0, 0, pTextureRegion, pVertexBufferObjectManager);
+    public Crosshair(final ITiledTextureRegion tiledTextureRegion, final VertexBufferObjectManager pVertexBufferObjectManager) {
+        super(0, 0, tiledTextureRegion, pVertexBufferObjectManager);
         setScale(INITIAL_SCALE);
     }
 
