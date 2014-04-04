@@ -135,10 +135,7 @@ public class Soldier extends Unit {
 
 	@Override
 	public void setOrder(Order order) {
-		if (isDead())
-			return;
-
-		if (sprite != null) {
+		if (!isDead() && sprite != null) {
 			((SoldierSprite) sprite).setOrder(order);
 		}
 		super.setOrder(order);

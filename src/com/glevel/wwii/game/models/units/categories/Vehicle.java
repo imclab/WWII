@@ -40,7 +40,7 @@ public abstract class Vehicle extends Unit {
 	private static final float REVERSE_SPEED = 0.5f;
 	private static final float ROTATION_SPEED = 0.6f;
 	private transient List<Tile> realTilesPosition = new ArrayList<Tile>();
-	private static final float VEHICLE_RADIUS_SIZE = 2.5f;// in meters
+	private static final float VEHICLE_RADIUS_SIZE = 2.0f;// in meters
 
 	// fire
 	private static final float MG_MAX_FIRE_ANGLE = 30.0f;
@@ -191,12 +191,9 @@ public abstract class Vehicle extends Unit {
 
 	@Override
 	public void setOrder(Order order) {
-		if (isDead())
-			return;
-
 		// nextX = -1.0f;
 		// nextY = -1.0f;
-		if (sprite != null) {
+		if (!isDead() && sprite != null) {
 			if (order instanceof MoveOrder) {
 				((TankSprite) sprite).updateMovingAnimation(true);
 			} else {

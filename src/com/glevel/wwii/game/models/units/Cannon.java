@@ -105,10 +105,7 @@ public class Cannon extends Unit {
 
 	@Override
 	public void setOrder(Order order) {
-		if (isDead())
-			return;
-
-		if (sprite != null) {
+		if (!isDead() && sprite != null) {
 			((CannonSprite) sprite).setOrder(order);
 		}
 

@@ -235,7 +235,9 @@ public abstract class Unit extends GameElement implements MovingElement {
 
 		sprite.setPosition(newPosition[0], newPosition[1]);
 
-		if (nextTile.getTileX() != getTilePosition().getTileX() || nextTile.getTileY() != getTilePosition().getTileY()) {
+		if (getTilePosition() != null
+				&& (nextTile.getTileX() != getTilePosition().getTileX() || nextTile.getTileY() != getTilePosition()
+						.getTileY())) {
 			setTilePosition(battle, nextTile);
 		}
 
